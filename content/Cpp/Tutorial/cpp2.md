@@ -1,4 +1,4 @@
-Title: Typy danych, zmienne i operatory
+Title: C/C++: Typy danych, zmienne i operatory
 Date: 2016-10-31 01:00
 Category: C/C++
 Tags: blog, tutorial, programming
