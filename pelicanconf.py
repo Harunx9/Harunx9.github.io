@@ -5,6 +5,9 @@ from __future__ import unicode_literals
 AUTHOR = u'Szymon Wanot'
 SITENAME = u'Programming warfare'
 SITEURL = u'https://harunx9.github.io'
+FEED_DOMAIN = SITEURL
+FEED_ALL_ATOM = 'feeds/all.atom.xml'
+CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
 
 PATH = 'content'
 
