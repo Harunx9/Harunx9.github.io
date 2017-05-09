@@ -12,7 +12,7 @@ Po pierwsze chciałbym tworzyć wpisy w znacznej części poświęcone tworzeniu
 Co do Akka.NET i C++ to postaram się ją w miarę możliwości dokończyć, ale zmiana kierunku będzie bardziej widoczna. Musiałem podjąć takie kroki,
 ponieważ nie byłem zadowolony z tego co do tej pory publikowałem. Co jakiś czas postaram się napisać to czy tamto na temat web developmentu, ale tylko i
 wyłącznie jak będę miał temat, który mnie personalnie zainteresował.
-Drugą sprawą jest  tegoroczna edycja konkursu  "Daj się poznać" organizowana przez Macieja Aniserowicza. Zostawiam link dla zainteresowanych TU. W
+Drugą sprawą jest  tegoroczna edycja konkursu  "Daj się poznać" organizowana przez Macieja Aniserowicza. Zostawiam link dla zainteresowanych -> [TU](http://devstyle.pl/daj-sie-poznac/). W
 dużym skrócie myślałem, aby podjąć rękawice i spróbować zawalczyć (przy okazji "zmusić się" do odświeżenia C++). Co do projektu,
 który miałbym realizować to mam kilka pomysłów:
 

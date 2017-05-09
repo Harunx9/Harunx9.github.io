@@ -5,27 +5,29 @@ from __future__ import unicode_literals
 AUTHOR = u'Szymon Wanot'
 SITENAME = u'Programming warfare'
 SITEURL = u'https://harunx9.github.io'
-FEED_DOMAIN = SITEURL
-FEED_ALL_ATOM = 'feeds/all.atom.xml'
-CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
-
+# SITEURL = u'http://localhost:8000'
+AVATAR = "/images/avatar.jpg"
 PATH = 'content'
 
 TIMEZONE = 'Europe/Warsaw'
 
 DEFAULT_LANG = u'pl'
 
-THEME = u"pelican-blueidea"
-
+THEME = u"notebook"
 DISQUS_SITENAME = "programmingwarfare"
 
 GOOGLE_ANALYTICS = "UA-85776912-1"
-
 STATIC_PATHS = ['images']
 # Feed generation is usually not desired when developing
-FEED_ALL_ATOM = None
-CATEGORY_FEED_ATOM = None
+FEED_DOMAIN = SITEURL
+FEED_ATOM = 'feeds/feeds.atom.xml'
+FEED_ALL_ATOM = 'feeds/all.atom.xml'
+CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
 TRANSLATION_FEED_ATOM = None
+FEED_RSS = 'feeds/feeds.rss.xml'
+CATEGORY_FEED_RSS = 'feeds/%s.rss.xml'
+FEED_ALL_RSS = 'feeds/all.rss.xml'
+TAG_FEED_RSS = 'feeds/%stag.rss.xml'
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 

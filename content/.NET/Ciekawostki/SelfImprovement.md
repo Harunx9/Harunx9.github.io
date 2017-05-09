@@ -1,0 +1,21 @@
+Title: Alternatywne ścieżki rozwoju programisty
+Date: 2017-04-03 17:40
+Category: Inne
+Tags: DSP2017, Nauka
+Authors: Szymon Wanot
+Status: published
+
+Cześć. Dziś opowiem nieco o mojej przygodzie z tworzeniem gier oraz o tym dlaczego taką a nie inną obrałem drogę swojego rozwoju programistycznego. 
+
+Na początku chciałem napisać o tym dlaczego mnie to zainteresowało. Po pierwsze sam chce się rozwijać, ale jako, że przez 8 godzin dziennie jestem web developerem  - programowanie własnej web aplikacji po godzinach było by dla mnie bardziej meczące niż rozwijające. Na początku oczywiście uczyłem się nowych bibliotek, frameworków, ale po pewnym czasie stwierdziłem, że mam to codziennie w pracy i tak wszystkie te rzeczy idą dość szybko do przodu, więc tak na prawdę musiał bym co miesiąc poznać nową bibliotekę front-endową, a co rok nowe MVC. Dodatkowo nie mam gwarancji, że jej kiedykolwiek użyję, bo jeżeli projekt nad którym pracuję ma Angulara w wersji 1.+ to raczej nikt nie będzie tego przepisywał, żeby tylko wersja była najnowsza. Podobnie sprawa wygląda, jeżeli chodzi o biblioteki .NET, ponieważ aktualizacja może kosztować wiele refactoringów, jeżeli z wersji na wersje jakiś lib szybko się rozwija.
+Z wyżej wymienionych powodów doszedłem do wniosku, że dużo lepiej będzie postawić na własny pisany bez pośpiechu projekt gry komputerowej, gdzie będę uczył się architektury, wzorców projektowych i prowadził to wszystko zgodnie ze sztuką, testując i refakturując kod kiedy uznam, że dane rozwiązanie było nietrafione. Dodatkowo, jeżeli stwierdzę, że ten projekt nie jest już do rozwoju ze względu na błędnie podjęte decyzje, mogę go porzucić w cholerę i zacząć pisać wszystko od zera, ponieważ nie ma nade mną klienta, który płaci za moje godziny. Inną korzyścią było to, że jak uda mi się coś skończyć, to zawsze mogę to spróbować sprzedać, co zasili mój domowy budżet.
+
+Od momentu podjęcia tej decyzji minęło około 4 lata przez które napisałem parę prototypów i popróbowałem kilku języków programowania. Nie stałem się jakąś gwiazda Indie Game Devu, ale mimo to dało mi to pewne wymierne korzyści. 
+
+Po pierwsze nauczyłem się programować. Jeśli ktoś gdzieś tam mnie śledzi na mediach społecznościowych wie, że jestem absolwentem po socjologii i informatykę studiować dopiero nieco później. Spowodowało to, że w pierwszym roku musiałem przypomnieć sobie matematykę, fizykę, inne przedmioty ścisłe oraz nauczyć się w miarę programować, aby zdać i nie wylecieć z uczelni zaraz po pierwszym semestrze. W tym momencie pisanie prostych gierek okazało się zbawienne dlatego, że łącza one w sobie wszystkie rzeczy, które musiałem sobie przyswoić, a przy okazji miałem przy tym trochę zabawy. Oczywiście musiałem też uczyć się normlanie, ale mimo wszystko takie eksperymenty pozwoliły mi nieco szybciej opanować pewne rzeczy. 
+
+Po drugie gry dały mi możliwość znalezienia pracy. Większość studentów na 2 lub 3 roku biega za zaliczeniami i poprawkami. Ja dzięki temu, że mocno przysiadłem nie miałem takich problemów. W wolnym czasie, którego miałem sporo udało mi się za to skończyć małą gierkę "Drop" na Androida. Miałem pierwszy własny skończony produkt. Nie był on piękny, ani za specjalnie grywalny, ale był. Dawało mi to możliwości na pójście na parę rozmów kwalifikacyjnych oraz to, że z końcem drugiego roku studiów dostałem swoją pierwszą pracę w programowaniu.
+
+Po trzecie ciągle uczę się nowych wzorców, algorytmów czy podejścia do architektury oprogramowania. Programowanie webowe rządzi się oczywiście nieco innymi prawami od gier komputerowych. W innych miejscach jest nacisk na optymalizacje, występują inne problemy. Mimo to na pewnym poziomie abstrakcji można wykorzystać pewne doświadczenia w obu tych światach mimo tego, że są one tak od siebie różne. 
+
+Dla jasności, nie odrzucam w ogóle rozwoju w programowaniu webowym, ponieważ uczę się Akka.NET czy Nancy, mimo to gry dają mi poczucie pewnej wolności twórczej, dlatego z nich nie rezygnuję. Polecam taką drogę każdemu kto ma choć trochę pasji twórczej w sobie. Obecnie gry dotykają praktycznie każdego tematu, więc każdy może spróbować wrazić w nich samego siebie.
