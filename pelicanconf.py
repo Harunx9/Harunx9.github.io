@@ -5,15 +5,15 @@ from __future__ import unicode_literals
 AUTHOR = u'Szymon Wanot'
 SITENAME = u'Programming warfare'
 SITEURL = u'https://harunx9.github.io'
-# SITEURL = u'http://localhost:8000'
-AVATAR = "/images/avatar.jpg"
+#SITEURL = u'http://localhost:8000'
+SITELOGO = "/images/avatar.jpg"
 PATH = 'content'
 
 TIMEZONE = 'Europe/Warsaw'
 
 DEFAULT_LANG = u'pl'
 
-THEME = u"notebook"
+THEME = u"Flex"
 DISQUS_SITENAME = "programmingwarfare"
 
 GOOGLE_ANALYTICS = "UA-85776912-1"
@@ -30,6 +30,9 @@ FEED_ALL_RSS = 'feeds/all.rss.xml'
 TAG_FEED_RSS = 'feeds/%stag.rss.xml'
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
+
+JINJA_ENVIRONMENT = {
+}
 
 # Blogroll
 LINKS = ()
