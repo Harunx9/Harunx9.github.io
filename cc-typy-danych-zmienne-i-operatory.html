@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Witam ponownie, jeżeli to czytasz to znaczy, że wróciłeś po więcej C++. W tym wpisie postaram się przedstawić typy danych, operatory i koncepcję zmiennej. Zaczniemy od tego jakie możemy mieć zmienne w C++. Typów podstawowych jest sporo, więc postaram się omówić najpopularniejsze i najczęściej używane: int min: -2147483648 max: 2147483647 …" />
+<meta name="keywords" content="blog, tutorial, programming">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="C/C++: Typy danych, zmienne i operatory"/>
+<meta property="og:description" content="Witam ponownie, jeżeli to czytasz to znaczy, że wróciłeś po więcej C++. W tym wpisie postaram się przedstawić typy danych, operatory i koncepcję zmiennej. Zaczniemy od tego jakie możemy mieć zmienne w C++. Typów podstawowych jest sporo, więc postaram się omówić najpopularniejsze i najczęściej używane: int min: -2147483648 max: 2147483647 …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/cc-typy-danych-zmienne-i-operatory.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-10-31 01:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="C/C++"/>
+<meta property="article:tag" content="blog"/>
+<meta property="article:tag" content="tutorial"/>
+<meta property="article:tag" content="programming"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; C/C++: Typy danych, zmienne i operatory</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="cc-typy-danych-zmienne-i-operatory">C/C++: Typy danych, zmienne i operatory</h1>
+    <p>
+          Posted on Mon 31 October 2016 in <a href="http://localhost:8000/category/cc.html">C/C++</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Witam ponownie, jeżeli to czytasz to znaczy, że wróciłeś po więcej C++. W tym wpisie postaram się przedstawić typy danych, operatory i koncepcję zmiennej. Zaczniemy od tego jakie możemy mieć zmienne w C++. 
+Typów podstawowych jest sporo, więc postaram się omówić najpopularniejsze i najczęściej używane:</p>
+<ul>
+<li>int min: -2147483648 max: 2147483647 (liczby całkowite),</li>
+<li>float min: 1.17549e-38 max: 3.40282e+38 (liczby zmiennoprzecinkowe pojedynczej precyzji),</li>
+<li>double min: 2.22507e-308 max: 1.79769e+308 (liczby zmiennoprzecinkowe pojedynczej precyzji),</li>
+<li>short min: -32768 max: 32767 (małe liczby całkowite),</li>
+<li>long min: -2147483648 max: 2147483647 (duże liczby całkowite),</li>
+<li>char min: -127 max: 127 (typ do zapisu znaków),</li>
+<li>bool (typ logiczny posiadający dwie wartości: true (prawda) oraz false (fałsz)).</li>
+</ul>
+<p>Do typów liczbowych możemy dodatkowo dodać przedrostek unsigned, co spowoduje, iż typ będzie mógł reprezentować tylko liczby dodatnie. Nie są to wszystkie możliwe typy danych, ale na początek powinno wystarczyć. </p>
+<p>Kolejną sprawą, którą chciałem omówić są zmienne i operatory. Zmienne mówiąc najprościej są to pojemniki w których przechowuje się różne wartości. Ponieważ C++ jest językiem silnie typowanym każda zmienna musi mieć jasno określony typ. W kodzie możemy zapisać to w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">myVariable</span><span class="p">;</span> <span class="c1">// deklaracja zmiennej</span>
+    <span class="n">myVariable</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="c1">// przypisanie wartości do zmiennej</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">myVariable</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// wypisanie wartości zmiennej na konsole</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Co ważne, jeśli nie przypiszemy wartości do zmiennej podczas uruchomienia programu otrzymamy błąd. Cały zapis da się nieco uprościć do niniejszej postaci:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">myVariable</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span> <span class="c1">// definicja zmiennej zmiennej</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">myVariable</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// wypisanie wartości zmiennej na konsole</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Jak można zauważyć deklaracja zmiennej z przypisaniem do niej wartości to tzw. definicja zmiennej. Spoko już wiemy czym są zmienne, możemy przejść do operatorów. Dzielą się one na kilka typów. Jako pierwsze na tapetę weźmiemy operatory matematyczne:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>   <span class="c1">//dodawanie</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>   <span class="c1">//odejmowanie</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>   <span class="c1">//mnożenie</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">b</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">//dzielenie</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">b</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>   <span class="c1">//modulo</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;pre: &quot;</span> <span class="o">&lt;&lt;</span> <span class="o">++</span><span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; post: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">b</span><span class="o">++</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>   <span class="c1">// pre i post inkrementacja</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;pre: &quot;</span> <span class="o">&lt;&lt;</span> <span class="o">--</span><span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; post: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">b</span><span class="o">--</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>   <span class="c1">// pre i post dekrementacja</span>
+    <span class="n">a</span> <span class="o">+=</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// operator łączony w tym przypadku oznacza a = a + b</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>  
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Poza operatorami matematycznymi C++ posiada również operatory logiczne:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="n">a</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+
+    <span class="kt">bool</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">||</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// lub</span>
+    <span class="kt">bool</span> <span class="n">d</span> <span class="o">=</span> <span class="n">a</span> <span class="o">&amp;&amp;</span> <span class="n">b</span><span class="p">;</span>  <span class="c1">// i</span>
+
+
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">d</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">!</span><span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// negacja</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Kolejną grupą są operatory służące do porównywania wartości:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span>
+
+
+    <span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// czy a jest równe b</span>
+    <span class="kt">int</span> <span class="n">d</span> <span class="o">=</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">;</span>    <span class="c1">// czy a mniejsze od b</span>
+    <span class="kt">int</span> <span class="n">dd</span> <span class="o">=</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="n">b</span><span class="p">;</span><span class="c1">// czy a mniejsze lub równe b</span>
+    <span class="kt">int</span> <span class="n">f</span> <span class="o">=</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">;</span>    <span class="c1">// czy a większe od b</span>
+    <span class="kt">int</span> <span class="n">ff</span> <span class="o">=</span> <span class="n">a</span> <span class="o">&gt;=</span> <span class="n">b</span><span class="p">;</span><span class="c1">// czy a większe lub równe b</span>
+    <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">;</span>    <span class="c1">// czy a różne od b</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Pozostaje jeszcze kwestia operatorów bitowych, ale ze względu na złożoność tematu zostaną one omówione w późniejszych wpisach. W obecnym momencie nie będą one potrzebne do omawiania kolejnych elementów języka C++.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/blog.html">blog</a>
+      <a href="http://localhost:8000/tag/tutorial.html">tutorial</a>
+      <a href="http://localhost:8000/tag/programming.html">programming</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

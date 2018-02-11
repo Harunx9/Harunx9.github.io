@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć, dawno nic nie pisałem na temat projektu, ale nie oznacza to, że nic w tym temacie się nie dzieje. Mam parę problemów natury filozoficznej przy podejmowaniu kilku decyzji, ale o tym może później. Zacznijmy od tego co udało się zrobić, co jest w trakcie realizacji. Z rzeczy zrealizowanych należało …" />
+<meta name="keywords" content="DSP2017, 2DXngine">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="2DXngine podsumowanie pierwszego miesiąca pracy"/>
+<meta property="og:description" content="Cześć, dawno nic nie pisałem na temat projektu, ale nie oznacza to, że nic w tym temacie się nie dzieje. Mam parę problemów natury filozoficznej przy podejmowaniu kilku decyzji, ale o tym może później. Zacznijmy od tego co udało się zrobić, co jest w trakcie realizacji. Z rzeczy zrealizowanych należało …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/2dxngine-podsumowanie-pierwszego-miesiaca-pracy.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-04-08 20:40:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="2DXngine"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; 2DXngine podsumowanie pierwszego miesiąca pracy</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="2dxngine-podsumowanie-pierwszego-miesiaca-pracy">2DXngine podsumowanie pierwszego miesiąca pracy</h1>
+    <p>
+          Posted on Sat 08 April 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć, dawno nic nie pisałem na temat projektu, ale nie oznacza to, że nic w tym temacie się nie dzieje. Mam parę problemów natury filozoficznej przy podejmowaniu kilku decyzji, ale o tym może później. Zacznijmy od tego co udało się zrobić, co jest w trakcie realizacji. Z rzeczy zrealizowanych należało by wymienić:</p>
+<ul>
+<li>system rozpoznawania typów,</li>
+<li>system GameObjectów,</li>
+<li>component model,</li>
+<li>eventy,</li>
+<li>system scen.</li>
+</ul>
+<p>Właściwie do wszystkiego mam też napisane testy. Jedynie pominąłem system scen ze względu na to, że nie wiem jeszcze czy po implementacji renderera i zarządzania assetami nie będę musiał wykonać w nim jakiś większych zmian. Zmieniłem teraz też podejście do tego co chcę zrobić. Po pierwsze chciałbym mieć do końca tego miesiąca proof of concpet, który jest działający, czyli mogę dodać do sceny game object i wyrenderować go, poruszać nim i w ogóle. Wiem, że to nie cały silnik, ale pozwoli mi to zboczyć czy idę w dobrym kierunku. Po zakończeniu tego etapu dopisze testy dla sceny i elementów nie Open GL'owych. 
+W obecnym momencie skupiam, się więc nad następującymi rzeczami :</p>
+<ul>
+<li>wczytywaniem tekstur,</li>
+<li>zarządzaniem assetami,</li>
+<li>renderowaniem 2d</li>
+</ul>
+<p>Każdą z tych rzeczy mam mocno rozgrzebaną, dodatkowo jeżeli chodzi o renderowanie jak już pisałem mam pewne problemy, co do wyboru technologii. Open GL jest już na rynku parę lat i jest co powoduje, że różnych materiałów na jego temat jest sporo. Z drugiej strony mamy nowe api czyli Vulcan'a, które jak już napisałem jest nowe co powoduje, że mniej na jego temat informacji. Bardzo dużo czasu zajął mi więc wybór pomiędzy tymi bibliotekami, jednak ostatecznie uznałem, że użyje Open GL z tym, że postaram się go na tyle opakować w swoje klasy, żeby w momencie kiedy będę gotowy przejść na Vulcana, to to zrobię bez zmiany api w samym silniku lub niewielkimi zmianami. Zobaczymy oczywiście jak to wyjdzie. 
+Kolejną sprawą do której się przymierzam to wielowątkowości. W obecnym momencie silnik działa w jednym wątku, ale czytam na ten temat, więc myślę, że za jakiś czas spróbuje coś zadziałać, aby jakieś elementy działały w osobnych wątkach.<br>
+To na razie na tyle zobaczymy co przeniesie ten miesiąc i na ile uda mi się zrobić to co chciałbym, aby było skończone.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/2dxngine.html">2DXngine</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

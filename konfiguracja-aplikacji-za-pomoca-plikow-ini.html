@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. Dziś zajmiemy się konfiguracją aplikacji w C++. Temat przedstawię od strony mojego silnika 2DXngine. W przypadku C++ temat zewnętrznej konfiguracji nie jest tak oczywisty jak w przypadku C# i .NET, gdzie mamy pliki App i Web config. Taką konfiguracje w C++ możemy zapisać w plikach XML, ale jest to …" />
+<meta name="keywords" content="programming, Gamedev">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Konfiguracja aplikacji za pomocą plików ini"/>
+<meta property="og:description" content="Cześć. Dziś zajmiemy się konfiguracją aplikacji w C++. Temat przedstawię od strony mojego silnika 2DXngine. W przypadku C++ temat zewnętrznej konfiguracji nie jest tak oczywisty jak w przypadku C# i .NET, gdzie mamy pliki App i Web config. Taką konfiguracje w C++ możemy zapisać w plikach XML, ale jest to …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/konfiguracja-aplikacji-za-pomoca-plikow-ini.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-07-21 21:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="C/C++"/>
+<meta property="article:tag" content="programming"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Konfiguracja aplikacji za pomocą plików ini</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="konfiguracja-aplikacji-za-pomoca-plikow-ini">Konfiguracja aplikacji za pomocą plików ini</h1>
+    <p>
+          Posted on Fri 21 July 2017 in <a href="http://localhost:8000/category/cc.html">C/C++</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. Dziś zajmiemy się konfiguracją aplikacji w C++. Temat przedstawię od strony mojego silnika 2DXngine. W przypadku C++ temat zewnętrznej konfiguracji nie jest tak oczywisty jak w przypadku C# i .NET, gdzie mamy pliki App i Web config. Taką konfiguracje w C++ możemy zapisać w plikach XML, ale jest to moim zdaniem format nie do końca czytelny dla człowieka. W swoich aplikacjach w C++ preferuję format ini, który wygląda następująco:</p>
+<div class="highlight"><pre><span></span><span class="k">[NazwaSekcji1]</span>
+<span class="na">Właściwość1</span><span class="o">=</span><span class="s">Wartość1</span>
+<span class="na">Właściwość2</span><span class="o">=</span><span class="s">Wartość2</span>
+<span class="na">Właściwość3</span><span class="o">=</span><span class="s">Wartość3</span>
+<span class="na">Właściwość4</span><span class="o">=</span><span class="s">Wartość4</span>
+<span class="k">[NazwaSekcji2]</span>
+<span class="na">Właściwość1</span><span class="o">=</span><span class="s">Wartość1</span>
+<span class="na">Właściwość2</span><span class="o">=</span><span class="s">Wartość2</span>
+<span class="na">Właściwość3</span><span class="o">=</span><span class="s">Wartość3</span>
+<span class="na">Właściwość4</span><span class="o">=</span><span class="s">Wartość4</span>
+</pre></div>
+
+
+<p>Jak dla mnie ten format jest dużo bardziej czytelny niż XML i dlatego go stosuje. W przypadku C++ w bibliotece standardowej nie ma klas i funkcji parsujących ini, musimy posilić się jakąś gotową biblioteką lub samemu napisać parsowanie takich plików. Jako, że programista powinien być leniwy w swojej pracy, to i ja zdecydowałem się skorzystać z czegoś gotowego. W C++ mamy sporo takich bibliotek ze względu na to, że potrzebowałam oprócz parsowania jeszcze dodatkowo zapis plików ini zdecydowałem się na <a href="https://github.com/brofield/simpleini">SimpleIni</a>. Sama nazwa już mówi ze biblioteka jest dość mała. Całość to właściwie jeden plik nagłówkowy, nop jeszcze 2 pliki pomocne przy encodingu UTF8 i to tyle. Z tego powodu nie budowałem biblioteki jaklo .lib tylko dodałem jej pliki do projektu. Teraz jak to wykorzystać:</p>
+<div class="highlight"><pre><span></span><span class="n">CSimpleIniA</span> <span class="n">inifile</span><span class="p">;</span> 
+<span class="n">inifile</span><span class="p">.</span><span class="n">Load</span><span class="p">(</span><span class="s">&quot;cfg.ini&quot;</span><span class="p">);</span> <span class="c1">// wczytanie pliku</span>
+<span class="c1">//wczytanie wartości z pliku</span>
+<span class="kt">bool</span> <span class="n">isFullScreen</span> <span class="o">=</span> <span class="n">inifile</span><span class="p">.</span><span class="n">GetBoolValue</span><span class="p">(</span><span class="s">&quot;Graphics&quot;</span><span class="p">,</span> <span class="s">&quot;FullScreen&quot;</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">windowWidth</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">inifile</span><span class="p">.</span><span class="n">GetLongValue</span><span class="p">(</span><span class="s">&quot;Graphics&quot;</span><span class="p">,</span> <span class="s">&quot;WindowWidth&quot;</span><span class="p">,</span> <span class="mi">640</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">windowHeight</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">inifile</span><span class="p">.</span><span class="n">GetLongValue</span><span class="p">(</span><span class="s">&quot;Graphics&quot;</span><span class="p">,</span> <span class="s">&quot;WindowHeight&quot;</span><span class="p">,</span> <span class="mi">360</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">openGLMinorVerion</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">inifile</span><span class="p">.</span><span class="n">GetLongValue</span><span class="p">(</span><span class="s">&quot;Graphics&quot;</span><span class="p">,</span> <span class="s">&quot;GLMinor&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">openGLMajorVerion</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">inifile</span><span class="p">.</span><span class="n">GetLongValue</span><span class="p">(</span><span class="s">&quot;Graphics&quot;</span><span class="p">,</span> <span class="s">&quot;GLMajor&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">doubleBufferToggle</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">inifile</span><span class="p">.</span><span class="n">GetLongValue</span><span class="p">(</span><span class="s">&quot;Graphics&quot;</span><span class="p">,</span> <span class="s">&quot;DoubleBuffer&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</pre></div>
+
+
+<p>Jak widać odczyt danych jest dość prosty podajemy nazwę sekcji i nazwę właściwości oraz wartość która ma się pojawić defaultowo jak nie będzie jej w pliku. Jeżeli chcemy coś zapisać to musimy postąpić w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="n">CSimpleIniA</span> <span class="n">inifile</span><span class="p">;</span>
+<span class="n">inifile</span><span class="p">.</span><span class="n">SetBoolValue</span><span class="p">(</span><span class="s">&quot;Graphics&quot;</span><span class="p">,</span> <span class="s">&quot;FullScreen&quot;</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+<span class="n">inifile</span><span class="p">.</span><span class="n">SetLongValue</span><span class="p">(</span><span class="s">&quot;Graphics&quot;</span><span class="p">,</span> <span class="s">&quot;WindowWidth&quot;</span><span class="p">,</span> <span class="mi">640</span><span class="p">);</span>
+<span class="n">inifile</span><span class="p">.</span><span class="n">SetLongValue</span><span class="p">(</span><span class="s">&quot;Graphics&quot;</span><span class="p">,</span> <span class="s">&quot;WindowHeight&quot;</span><span class="p">,</span> <span class="mi">360</span><span class="p">);</span>
+
+<span class="n">inifile</span><span class="p">.</span><span class="n">SaveFile</span><span class="p">(</span><span class="s">&quot;newcfg.ini&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<p>Zapisywanie wartości jest również dość proste, podobnie jak w odczycie podajemy nazwę sekcji, nazwę pola i wartość jaka ma być do niego zapisana. Na koniec wywołujemy funkcję save file ze ścieżką do  pliku w którym ma być to zapisane. W tym miejscu należy wspomnieć jak to działa w systemie Windows. Mianowicie jak mamy aplikacje zainstalowana w program files, to nie możemy tam zapisać plików bez uprawnień administratora, dlatego należy zapisywać dane w katalogu lokalnego użytkownika. W większości przypadków będzie to ścieżka:</p>
+<div class="highlight"><pre><span></span>C:/Users/NazwaUsera/Documents/
+</pre></div>
+
+
+<p>SDL pozwala na pobranie ścieżki to tego katalogu za pomocą funkcji SDL_GetPrefPath("companyname", "appname"); więc jeżeli chcemy instalować u kogoś innego naszą aplikację należy o tym pamiętać, żeby konfiguracja użytkownika mogła zostać zapisana. To na razie na tyle jeżeli chodzi o konfigurację. Oczywiście samo SimpleIni powinno się opakować w jakieś własne klasy konfiguracyjne, tak żeby można było mieć to tego jakiś wygodny dostęp wszędzie w programie.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/programming.html">programming</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

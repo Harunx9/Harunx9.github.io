@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. W dzisiejszych czasach bardzo popularne są gry sieciowe, więc opierające się o interakcje z innymi graczami. Mimo to sztuczna inteligencja nawet w nich jest potrzeba, aby tworzyć bossów czy jakieś ciekawe eventy wraz z NPC w świecie gry. W dzisiejszym artykule przyjrzymy się jak stworzyć sztuczną inteligencje na miarę …" />
+<meta name="keywords" content="DSP2017, Gamedev">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Ogólna architektura silnika - sztuczna inteligencja"/>
+<meta property="og:description" content="Cześć. W dzisiejszych czasach bardzo popularne są gry sieciowe, więc opierające się o interakcje z innymi graczami. Mimo to sztuczna inteligencja nawet w nich jest potrzeba, aby tworzyć bossów czy jakieś ciekawe eventy wraz z NPC w świecie gry. W dzisiejszym artykule przyjrzymy się jak stworzyć sztuczną inteligencje na miarę …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/ogolna-architektura-silnika-sztuczna-inteligencja.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-04-22 18:30:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Ogólna architektura silnika - sztuczna inteligencja</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="ogolna-architektura-silnika-sztuczna-inteligencja">Ogólna architektura silnika - sztuczna inteligencja</h1>
+    <p>
+          Posted on Sat 22 April 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. W dzisiejszych czasach bardzo popularne są gry sieciowe, więc opierające się o interakcje z innymi graczami. Mimo to sztuczna inteligencja nawet w  nich jest potrzeba, aby tworzyć bossów czy jakieś ciekawe eventy wraz z NPC w świecie gry. W dzisiejszym artykule przyjrzymy się jak stworzyć sztuczną inteligencje na miarę naszej gry, tak aby była ona wyzwaniem i spełniała pokładane w niej oczekiwania.</p>
+<p>Chciałem tutaj przejść przez parę podejść do tematu i oprzeć je na paru przykładach. Temat niestety jest szeroki, a i ja nie mam pojęcia o wszystkich możliwych podejściach, więc ograniczę się do tego co w miarę znam - a wy jeżeli znacie jeszcze coś o czym tu nie piszę, to zapraszam jak zawsze do sekcji komentarzy. Nie przedłużając lećmy, więc z tematem.</p>
+<p>SI podejście naiwne</p>
+<p>Zakładając, że piszemy swoją pierwszą grę obiektowo, bez komponent modelu, nasza sztuczna inteligencja dla danego GameObjectu będzie znajdowała się w jego funkcji update. Może to wyglądać w następujący sposób</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="kt">float</span> <span class="n">deltaTime</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">PlayerIsVisible</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">AttackPlayer</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">CollideFromLeft</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">MoveRight</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="n">MoveLeft</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Widzimy mniej więcej do czego takie podejście prowadzi. W pewnym momencie dodając kolejne interakcje metoda update stanie się nieczytelna. Jak już powiedziałem w artykule o GameObjectach na jakiś PoC czy prosty projekt jest to to ok, ale wyobraźmy sobie w taki sposób programować SI dla gry RTS.</p>
+<p>Zaawansowe SI: Planner</p>
+<p>Planner jest jednym z zaawansownych podejść do tworzenia SI w grach. Jako przykład użycia wyobraźmy sobie grę typu city builder (np. Banished). Każemy naszym osadnikom  wybudować dom. Zadanie to może być wykonywanie przez 5 ludzi na raz i potrzeba do niego 20 jednostek drewna i 5 jednostek kamienia. Planner powinien zachować się w następujący sposób:</p>
+<ul>
+<li>przydzielić nam 5 osadników,</li>
+<li>sprawdzić, czy w magazynie mamy 20 jednostek drewna, jeśli nie to wysłać osadników, aby je wytworzyli,</li>
+<li>sprawdzić czy w magazynie mamy 5 jednostek drewna, jeśli nie to wysłać osadników, aby je wytworzyli,</li>
+<li>kazać osadnikom przynieść surowce na miejsce budowy,</li>
+<li>kazać osadnikom wybudować dom,</li>
+<li>po zakończeniu zadania przydzielić osadników do innych prac.</li>
+</ul>
+<p>Jak możemy zauważyć planer działa w następujący sposób:</p>
+<p><img alt="Planner" src="/images/si/planner_graph.png"></p>
+<p>Jest to globalny system zarządzający każdym elementem SI na planszy. Mimo to świetnie sprawdza się w grach strategicznych czy city builderach, pewnie znalazłbym jeszcze inne zastosowanie.</p>
+<p>Zaawansowane SI: Drzewo zachowań</p>
+<p>Jest to bardziej modularne podejście do tematu sztucznej inteligencji. Sama nazwa mówi, że jest to podejście oparte na grafach. Pozwala ono pisać poszczególne zachowania, tworzyć jako osobne klasy, dzięki czemu komponujemy je ze sobą. W drzewie zachowań wyróżniamy następujące elementy:</p>
+<ul>
+<li>behavior - są to liście drzewa, które zwierając w sobie ewaluacje i sposób wykonaniu danego zachowania,</li>
+<li>selector - jest to kontener przechowujący zachowania, który podczas ewaluacji wybiera jedno ze swoich dzieci i rozpoczyna jego wykonanie,</li>
+<li>repeater - podobnie jak selektor pełni on role kontenera na zachowania z tym, że włącza on je cyklicznie jedno po drugim.</li>
+</ul>
+<p>Dla dopełniania tego rozwiązania potrzebne są nam jeszcze 2 elementy evaluator, czyli komponent który sprawdzi czy nasze drzewo jest poprawnie skonstruowane oraz egzekutor, który zajmie się wybraniem i odpaleniem zachowania z drzewa, które jest w danym momencie adekwatne do zaistniałej w świecie gry sytuacji. Przykładowe drzewo może wyglądać w następujący sposób:</p>
+<p><img alt="BT" src="/images/si/bt_graph.png"></p>
+<p>Ewaluacja zachowania zaczyna się zawsze od noda "Root" przechodzimy wszerz przez wszytkie kontenery i wybieramy  odpowiednie zachowanie. Istotne jest to, aby dobrze określić warunek wykonania danego zachowania, bądź kontenera tak, aby nie miał on kolizji z innymi elementami drzewa. </p>
+<p>To było by na tyle w tym poście. Piszcie w kometach jakie wy znacie inne podejścia do SI w grach komputerowych.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

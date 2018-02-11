@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Hi everyone. This will be my first post in English, so I believe that it will be worst. I&#39;ve made decision lately about that to make some simple 2DXngine tutorial. Writeing this in English language can reach bigger audience I believe. Let&#39;s start from the beginning. 2DXngine is my project …" />
+<meta name="keywords" content="2DXngineTutorial, 2DXngine, gamedev">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="2DXngine tutorial - Engine overview"/>
+<meta property="og:description" content="Hi everyone. This will be my first post in English, so I believe that it will be worst. I&#39;ve made decision lately about that to make some simple 2DXngine tutorial. Writeing this in English language can reach bigger audience I believe. Let&#39;s start from the beginning. 2DXngine is my project …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/2dxngine-tutorial-engine-overview.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-10-28 16:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="2DXngine"/>
+<meta property="article:tag" content="2DXngineTutorial"/>
+<meta property="article:tag" content="2DXngine"/>
+<meta property="article:tag" content="gamedev"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; 2DXngine tutorial - Engine overview</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="2dxngine-tutorial-engine-overview">2DXngine tutorial - Engine overview</h1>
+    <p>
+          Posted on Sat 28 October 2017 in <a href="http://localhost:8000/category/2dxngine.html">2DXngine</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Hi everyone. This will be my first post in English, so I believe that it will be worst. I've made decision lately about that to make some simple 2DXngine tutorial. Writeing this in English language can reach bigger audience I believe. Let's start from the beginning. 2DXngine is my project which I started this year for Get Noticed 2017 competition. For now this project is actively developed from 8 months. During this time I implemented base 2D engine functionality and some additional features (and possibly some bugs). More or less complete feature list you find on <a href="https://github.com/Harunx9/2DXngine">github</a>. For now  engine should works on Windows with CPP 2017 redistribute package. I also have plan to port it to MacOS(OSX) and Linux, but for now this is distant future. Ok, so let's move to overall architecture:</p>
+<p><img alt="2dxngine" src="/images/Xngienarch.png"></p>
+<p>As you can see window and input backend is build on top SDL2 with OpenGL and GLEW for 2D rendering. I also use other 3'rd party libraries:</p>
+<ul>
+<li>Pugi Xml,</li>
+<li>GLM,</li>
+<li>Soil,</li>
+<li>SLD2_mixer,</li>
+<li>Freetype font,</li>
+<li>Simpleini,</li>
+<li>Google Test.</li>
+</ul>
+<p>Like you see I have testing library in my stack, so I try to cover as much as I can with Unit/Integration Tests. Not all code is covered but I try cover some all more complex features. </p>
+<p>I also try to make architecture flexible that you can use only thing that you need . For example you don’t want to use scene system and component model no problem. You can take Spritebatch from graphics library and game handler as build your own scene/game state system with our own entity system. If you need some specific service you also can add one and register it in service locator. There are some couplings with some elements, but generally there are possibility to extend any functionality in desire way.</p>
+<p>2DXngine also provide scene system with component model. Scene API provide game object manager which can be populated by game object with components. For now you can create three type of components:</p>
+<ul>
+<li>Plain component which can contain data and so on,</li>
+<li>Updateable Component  contain behavior for game objects, </li>
+<li>Drawable Component this can contain draw logic using scene renderer with spritebatch.</li>
+</ul>
+<p>Any component you create should be register for type cache in order to have possibility to find them via type.  I also want to automate this process but I don’t figure out any good solution for that. </p>
+<p>If you want to check out what features I currently focus on please go to <a href="https://trello.com/b/wJGa7Jm5">this</a> Trello board. I try to update this frequently, so this is the most fresh information about development. In next post I show some simple game implementation to show you some of engine possibilities. Like always I invite you to comment section to share your opinions with me.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/2dxnginetutorial.html">2DXngineTutorial</a>
+      <a href="http://localhost:8000/tag/2dxngine.html">2DXngine</a>
+      <a href="http://localhost:8000/tag/gamedev.html">gamedev</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

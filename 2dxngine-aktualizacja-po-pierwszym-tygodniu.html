@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć, jako, że mija pierwszy tydzień developmentu należało by wrzucić jakiś status update dotyczący projektu konkursowego. Jak wiadomo początki są trudne. Instalacja bibliotek ciągła się w nieskończoność, ale w końcu się udało. Ogólna struktura projektu w Visual Studio wygląda następująco: Tak jak napisałem nie mam jakiś alternatywnych build systemów, a …" />
+<meta name="keywords" content="DSP2017, 2DXngine">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="2DXngine: aktualizacja po pierwszym tygodniu"/>
+<meta property="og:description" content="Cześć, jako, że mija pierwszy tydzień developmentu należało by wrzucić jakiś status update dotyczący projektu konkursowego. Jak wiadomo początki są trudne. Instalacja bibliotek ciągła się w nieskończoność, ale w końcu się udało. Ogólna struktura projektu w Visual Studio wygląda następująco: Tak jak napisałem nie mam jakiś alternatywnych build systemów, a …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/2dxngine-aktualizacja-po-pierwszym-tygodniu.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-03-10 19:40:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="2DXngine"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; 2DXngine: aktualizacja po pierwszym tygodniu</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="2dxngine-aktualizacja-po-pierwszym-tygodniu">2DXngine: aktualizacja po pierwszym tygodniu</h1>
+    <p>
+          Posted on Fri 10 March 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć, jako, że mija pierwszy tydzień developmentu należało by wrzucić jakiś status update dotyczący projektu konkursowego. Jak wiadomo początki są trudne. Instalacja bibliotek ciągła się w nieskończoność, ale w końcu się udało. Ogólna struktura projektu w Visual Studio wygląda następująco:
+<img alt="2DXngine struktura projektu" src="/images/engine_project.png"> 
+Tak jak napisałem nie mam jakiś alternatywnych build systemów, a chciałem mieć testy, stąd taka a nie inna struktura, ponieważ w C++ testy odpalają się normalnie z exe, a to co chcę testować musi być biblioteką. Jeżeli ma ktoś inny pomysł jak zrobić to lepiej to czekam, bo obecna konfiguracja idealna nie jest, ale pozwala pracować w miarę stosując TDD. Z tymi testami jeszcze zobaczymy jak będzie, ponieważ pewnie nie będę w stanie przetestować wszystkiego np. generowanie grafiki czy bardziej złożone interakcje. 
+Zaimplementowałem podstawową klasę aplikacji dla Windowsa. Wyświetla ona okienko, inicjalizuje podstawowe zmienne, odpala pętle główną i będzie podstawą reszty silnika. Dodatkowo udało mi się dodać service locator i timer.
+W trakcie implementacji jest system GameObjectów i scen, ponieważ te komponenty są od siebie zależne muszę je na razie implementować równolegle. Obecnie mocno działam, aby skończyć implementacje systemu komponentów. Niestety blokuje mnie na razie to jak zrobić w C++ system rozpoznawania typów obiektów. Nie chcę używać standardowego RTTI dlatego, że mądrzejsi ode mnie twierdzą, że wolne to i nie powinno się w grach tego stosować. Mocno zagłębiłem się już w ten temat i znalazłem parę przykładów implementacji, więc myślę, że na dniach uda mi się to skończyć możliwe, że nawet kiedy czytacie ten tekst system jest już w miarę ogarnięty. Poza tym kiedy uda mi się to zrobić planuję artkułów na ten temat, bo temat jest ciekawy i potrzebny.
+Staram się również w miarę możliwości aktualizować <a href="https://trello.com/b/wJGa7Jm5/2dxngine">tablice</a> na trello. Na chwilę obecną pare tasków zyskało checklisty a parę nowych tasków dojdzie do implementacji.
+Z rzeczy których nie udało się zrobić to niestety nie udało mi się mierzyć czasu na toggl jak początkowo planowałem, więc będę musiał to zrobić od tej soboty, ponieważ planuje, że tydzień prac będę liczył od soboty do piątku. </p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/2dxngine.html">2DXngine</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

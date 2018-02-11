@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Ostatnio udało mi się skończyć renderowanie w 2DXngine, chciałbym opisać jak działa zaimplementowane przeze mnie rozwiązanie. Zaczniemy od struktur danych, które są nam potrzebne aby działało renderowanie 2D. Jako pierwsze przyjrzymy się jak zaimplementować teksturę oraz jak ją wczytać z dysku, co nie do końca może być takie oczywiste w …" />
+<meta name="keywords" content="DSP2017, Gamedev, OpenGL">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Renderowanie 2D część 1: Tekstury"/>
+<meta property="og:description" content="Ostatnio udało mi się skończyć renderowanie w 2DXngine, chciałbym opisać jak działa zaimplementowane przeze mnie rozwiązanie. Zaczniemy od struktur danych, które są nam potrzebne aby działało renderowanie 2D. Jako pierwsze przyjrzymy się jak zaimplementować teksturę oraz jak ją wczytać z dysku, co nie do końca może być takie oczywiste w …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/renderowanie-2d-czesc-1-tekstury.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-05-17 17:30:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="OpenGL"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="article:tag" content="OpenGL"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Renderowanie 2D część 1: Tekstury</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="renderowanie-2d-czesc-1-tekstury">Renderowanie 2D część 1: Tekstury</h1>
+    <p>
+          Posted on Wed 17 May 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Ostatnio udało mi się skończyć renderowanie w 2DXngine, chciałbym opisać jak działa zaimplementowane przeze mnie rozwiązanie. Zaczniemy od struktur danych, które są nam potrzebne aby działało renderowanie 2D. Jako pierwsze przyjrzymy się jak zaimplementować teksturę oraz jak ją wczytać z dysku, co nie do końca może być takie oczywiste w C++. W mojej implementacji separuje dane wczytane od tekstury za pomocą klasy bitmapy, a jej interfejs prezentuje się następująco:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Bitmap</span> 
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+
+    <span class="n">Bitmap</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">data</span><span class="p">,</span> <span class="n">GLuint</span> <span class="n">width</span><span class="p">,</span> <span class="n">GLuint</span> <span class="n">height</span><span class="p">);</span>
+    <span class="n">Bitmap</span><span class="p">();</span>
+    <span class="o">~</span><span class="n">Bitmap</span><span class="p">();</span>
+
+    <span class="k">static</span> <span class="n">Bitmap</span><span class="o">*</span> <span class="nf">load</span><span class="p">(</span><span class="n">AssetPath</span> <span class="n">assetPath</span><span class="p">);</span>
+    <span class="k">static</span> <span class="n">Bitmap</span> <span class="nf">empty</span><span class="p">(</span><span class="n">GLuint</span> <span class="n">width</span><span class="p">,</span> <span class="n">GLuint</span> <span class="n">height</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">Bitmap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="nf">remove</span><span class="p">();</span>
+
+    <span class="n">READONLY_PROPERTY</span><span class="p">(</span><span class="n">GLfloat</span><span class="p">,</span> <span class="n">texelWidth</span><span class="p">)</span>
+    <span class="n">READONLY_PROPERTY</span><span class="p">(</span><span class="n">GLfloat</span><span class="p">,</span> <span class="n">texelHeight</span><span class="p">)</span>
+    <span class="n">READONLY_PROPERTY</span><span class="p">(</span><span class="n">GLuint</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+    <span class="n">READONLY_PROPERTY</span><span class="p">(</span><span class="n">GLuint</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+    <span class="n">READONLY_PROPERTY</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>W implementacji zastosowałem macro READONLY_PROPERTY, generuje ono publiczny getter i prywatne pole. Obiekty typu Bitmap służą tylko za kontenery danych, stąd też ciekawa w nich tylko jest metoda load, i jej implementacja wygląda następująco:</p>
+<div class="highlight"><pre><span></span><span class="n">Bitmap</span><span class="o">*</span> <span class="n">Bitmap</span><span class="o">::</span><span class="n">load</span><span class="p">(</span><span class="n">AssetPath</span> <span class="n">assetPath</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="n">path</span> <span class="o">=</span> <span class="n">assetPath</span><span class="p">.</span><span class="n">toCStr</span><span class="p">();</span>
+    <span class="k">auto</span> <span class="n">imageData</span> <span class="o">=</span> <span class="n">SOIL_load_image</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">width</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SOIL_LOAD_RGBA</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">Bitmap</span><span class="p">(</span><span class="n">imageData</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Do wczytywania obrazków wykorzystuję bibliotekę SOIL, którą można znaleźć -&gt; <a href="http://www.lonesock.net/soil.html">TU</a> pobieramy kompilujemy i działamy. Generalnie mógłbym użyć samego stb_image, ale nie wiem czy nie będę korzystał z jakiś innych funkcji tej biblioteki, więc na razie zostawiam ją w całości. Jeżeli chodzi o teksturę to jej interfejs wygląda w taki sposób:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Texture</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Asset</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">static</span> <span class="n">Texture</span> <span class="o">*</span> <span class="n">load</span><span class="p">(</span><span class="n">AssetPath</span> <span class="n">assetPath</span><span class="p">);</span>
+
+    <span class="n">Texture</span><span class="p">(</span><span class="n">AssetPath</span> <span class="n">assetPath</span><span class="p">,</span> <span class="n">Bitmap</span><span class="o">*</span> <span class="n">bitmap</span><span class="p">);</span>
+    <span class="o">~</span><span class="n">Texture</span><span class="p">();</span>
+
+    <span class="kt">void</span> <span class="nf">bind</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="n">READONLY_PROPERTY</span><span class="p">(</span><span class="n">GLuint</span><span class="p">,</span> <span class="n">textureId</span><span class="p">)</span>
+    <span class="n">READONLY_PROPERTY</span><span class="p">(</span><span class="n">Bitmap</span><span class="o">*</span><span class="p">,</span> <span class="n">bitmap</span><span class="p">)</span>
+<span class="k">protected</span><span class="o">:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">generate</span><span class="p">();</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>Ze względu na to, że wymaga tego konwencja każda klasa asset będzie posiadać statyczną metodę load. W przyszłości może zrobię osobno loadery, żeby się tego pozbyć i lepiej pilnować konwencji, ale na razie tak to zostanie. Metoda generate powstała natomiast ze względu na klasy potomne, ale o tym później. Sama metoda ma za zadanie tworzyć teksturę w kontekście OpenGl i jej implementacja wygląda następująco:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">Texture</span><span class="o">::</span><span class="n">generate</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">glGenTextures</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_textureId</span><span class="p">);</span>
+    <span class="n">glBindTexture</span><span class="p">(</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_textureId</span><span class="p">);</span>
+
+    <span class="n">glTexImage2D</span><span class="p">(</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">GL_RGBA</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_bitmap</span><span class="o">-&gt;</span><span class="n">get_width</span><span class="p">(),</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_bitmap</span><span class="o">-&gt;</span><span class="n">get_height</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">GL_RGBA</span><span class="p">,</span> <span class="n">GL_UNSIGNED_BYTE</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_bitmap</span><span class="o">-&gt;</span><span class="n">get_data</span><span class="p">());</span>
+
+    <span class="n">glBindTexture</span><span class="p">(</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Ostatnią rzeczą związaną z teksturami jest RenderTarget. Reprezentuje on pustą teksturę na której renderowane są inne obiekty. Jest to przydatne kiedy chcemy wprowadzić postprocessing czy warstwowość renderowania. Dodatkowo w mojej implementacji zastępuję on FrameBufferObject, w tym momencie przydaje się wydzielenie bindowania tekstury do metody generate, ponieważ jej nadpisanie w RenderTarget wygląda następująco:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">RenderTarget</span><span class="o">::</span><span class="n">generate</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">glBindFramebuffer</span><span class="p">(</span><span class="n">GL_FRAMEBUFFER</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_fbo</span><span class="p">);</span>
+    <span class="n">Texture</span><span class="o">::</span><span class="n">generate</span><span class="p">();</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">();</span>
+    <span class="n">glFramebufferTexture</span><span class="p">(</span><span class="n">GL_FRAMEBUFFER</span><span class="p">,</span> <span class="n">GL_COLOR_ATTACHMENT0</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">get_textureId</span><span class="p">(),</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">GLenum</span> <span class="n">drawBuffers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">GL_COLOR_ATTACHMENT0</span> <span class="p">};</span>
+    <span class="n">glDrawBuffers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">drawBuffers</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">glCheckFramebufferStatus</span><span class="p">(</span><span class="n">GL_FRAMEBUFFER</span><span class="p">)</span> <span class="o">!=</span> <span class="n">GL_FRAMEBUFFER_COMPLETE</span><span class="p">)</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">terminate</span><span class="p">();</span>
+    <span class="n">glBindFramebuffer</span><span class="p">(</span><span class="n">GL_FRAMEBUFFER</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>To chyba na tyle. Całość kodu jest na GitHubie, więc nie będę omawiał dokładnie wszystkiego, w razie potrzeby można tam zajrzeć. W razie pytań czy uwag jak zawsze zapraszam do sekcji komentarzy.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+      <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

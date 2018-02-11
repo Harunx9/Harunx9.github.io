@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Sampler to dość nowa rzecz w OpenGL, dostępna od wersji 3.3. Jest to taki kontener, który pozwala na przechowywanie parametrów potrzeb renderowania tekstur. Jego ustawienia są wykorzystywane przez fragment shader. W poprzednich wersjach OpenGL ustawienia te trzeba było ustawiać w teksturze przez funkcje glTexParameteri(), ale w momencie kiedy mamy …" />
+<meta name="keywords" content="Gamedev, OpenGL">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Renderowanie 2d część 3: Sampler State"/>
+<meta property="og:description" content="Sampler to dość nowa rzecz w OpenGL, dostępna od wersji 3.3. Jest to taki kontener, który pozwala na przechowywanie parametrów potrzeb renderowania tekstur. Jego ustawienia są wykorzystywane przez fragment shader. W poprzednich wersjach OpenGL ustawienia te trzeba było ustawiać w teksturze przez funkcje glTexParameteri(), ale w momencie kiedy mamy …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/renderowanie-2d-czesc-3-sampler-state.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-06-11 08:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="OpenGL"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="article:tag" content="OpenGL"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Renderowanie 2d część 3: Sampler State</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="renderowanie-2d-czesc-3-sampler-state">Renderowanie 2d część 3: Sampler State</h1>
+    <p>
+          Posted on Sun 11 June 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Sampler to dość nowa rzecz w OpenGL, dostępna od wersji 3.3. Jest to taki kontener, który pozwala na przechowywanie parametrów potrzeb renderowania tekstur. Jego ustawienia są wykorzystywane przez fragment shader. W poprzednich wersjach OpenGL ustawienia te trzeba było ustawiać w teksturze przez funkcje glTexParameteri(), ale w momencie kiedy mamy do dyspozycji sampler, to używać będziemy właśnie jego. 
+Sam interfejs klasy wygląda w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">TextureWrap</span>
+<span class="p">{</span>
+    <span class="n">REPEAT</span> <span class="o">=</span> <span class="n">GL_REPEAT</span><span class="p">,</span>
+    <span class="n">MIRRORED_REPEAT</span> <span class="o">=</span> <span class="n">GL_MIRRORED_REPEAT</span><span class="p">,</span>
+    <span class="n">CLAMP_TO_EDGE</span> <span class="o">=</span> <span class="n">GL_CLAMP_TO_EDGE</span><span class="p">,</span>
+    <span class="n">CLAMP_TO_BORDER</span> <span class="o">=</span> <span class="n">GL_CLAMP_TO_BORDER</span>
+<span class="p">};</span>
+
+<span class="k">enum</span> <span class="n">TextureFilter</span>
+<span class="p">{</span>
+    <span class="n">POINT</span> <span class="o">=</span> <span class="n">GL_NEAREST</span><span class="p">,</span>
+    <span class="n">LINEAR</span> <span class="o">=</span> <span class="n">GL_LINEAR</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">SamplerState</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">SamplerState</span><span class="p">(</span><span class="n">TextureWrap</span> <span class="n">wrap</span><span class="p">,</span> <span class="n">TextureFilter</span> <span class="n">filter</span><span class="p">);</span>
+    <span class="o">~</span><span class="n">SamplerState</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">bind</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">unbind</span><span class="p">();</span>
+
+    <span class="kt">void</span> <span class="nf">changeFilter</span><span class="p">(</span><span class="n">TextureFilter</span> <span class="n">filter</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">changeWrap</span><span class="p">(</span><span class="n">TextureWrap</span> <span class="n">wrap</span><span class="p">);</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">GLuint</span> <span class="n">_samplerId</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>Funkcje Bind i unbind służą do aktywowania i dezaktywacji samplera, dla danej tekstury i ich implementacje wyglądają w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">SamplerState</span><span class="o">::</span><span class="n">bind</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">glBindSampler</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_samplerId</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">SamplerState</span><span class="o">::</span><span class="n">unbind</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">glBindSampler</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Do zmiany parametrów renderowania tekstur używamy natomiast poniższych funkcji:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">SamplerState</span><span class="o">::</span><span class="n">changeFilter</span><span class="p">(</span><span class="n">TextureFilter</span> <span class="n">filter</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">glSamplerParameteri</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_samplerId</span><span class="p">,</span> <span class="n">GL_TEXTURE_MAG_FILTER</span><span class="p">,</span> <span class="n">filter</span><span class="p">);</span>
+    <span class="n">glSamplerParameteri</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_samplerId</span><span class="p">,</span> <span class="n">GL_TEXTURE_MIN_FILTER</span><span class="p">,</span> <span class="n">filter</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">SamplerState</span><span class="o">::</span><span class="n">changeWrap</span><span class="p">(</span><span class="n">TextureWrap</span> <span class="n">wrap</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">glSamplerParameteri</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_samplerId</span><span class="p">,</span> <span class="n">GL_TEXTURE_WRAP_S</span><span class="p">,</span> <span class="n">wrap</span><span class="p">);</span>
+    <span class="n">glSamplerParameteri</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_samplerId</span><span class="p">,</span> <span class="n">GL_TEXTURE_WRAP_T</span><span class="p">,</span> <span class="n">wrap</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>To tyle z elementów potrzebnych do renderowania 2D. W następnym poście zacznę od tego, że poskładamy to wszystko razem i zaimplementujemy Spritebach, który pozwoli na rysowanie 2D .</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+      <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

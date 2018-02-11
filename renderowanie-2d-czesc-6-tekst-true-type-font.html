@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Renderowanie tekstu jest nieco bardziej skomplikowane od wyświetlania prostych obrazków. Wyświetlanie tekstu możemy zrealizować na dwa sposoby: renderowanie SpriteFontów, renderowanie True Type Font. Pierwszy sposób polega na wygenerowaniu sobie z pliku czcionki tekstury oraz pliku opisującego układ znaków na teksturze. Potem podczas renderowania wycinamy za pomocą tych danych odpowiednie obszary …" />
+<meta name="keywords" content="Gamedev, OpenGL">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Renderowanie 2D cześć 6: Tekst True Type Font"/>
+<meta property="og:description" content="Renderowanie tekstu jest nieco bardziej skomplikowane od wyświetlania prostych obrazków. Wyświetlanie tekstu możemy zrealizować na dwa sposoby: renderowanie SpriteFontów, renderowanie True Type Font. Pierwszy sposób polega na wygenerowaniu sobie z pliku czcionki tekstury oraz pliku opisującego układ znaków na teksturze. Potem podczas renderowania wycinamy za pomocą tych danych odpowiednie obszary …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/renderowanie-2d-czesc-6-tekst-true-type-font.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-08-06 13:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="OpenGL"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="article:tag" content="OpenGL"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Renderowanie 2D cześć 6: Tekst True Type Font</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="renderowanie-2d-czesc-6-tekst-true-type-font">Renderowanie 2D cześć 6: Tekst True Type Font</h1>
+    <p>
+          Posted on Sun 06 August 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Renderowanie tekstu jest nieco bardziej skomplikowane od wyświetlania prostych obrazków. Wyświetlanie tekstu możemy zrealizować na dwa sposoby:</p>
+<ul>
+<li>renderowanie SpriteFontów,</li>
+<li>renderowanie True Type Font. </li>
+</ul>
+<p>Pierwszy sposób polega na wygenerowaniu sobie z pliku czcionki tekstury oraz pliku opisującego układ znaków na teksturze. Potem podczas renderowania wycinamy za pomocą tych danych odpowiednie obszary z tekstury i w ten sposób konstruujemy napisy. Ten sposób jest oczywiście jak najbardziej ok i wiele z silników z niego korzysta. Ja w 2DXngine postanowiłem pójść drugą drogą, czyli zaimplementować renderowanie bezpośrednio z plików czcionek True Type Font. Podejście to wymaga zainstalowanie dodatkowo biblioteki <a href="https://www.freetype.org">freetype</a>, ponieważ będzie ona nam potrzebna do wygenerowania glifów, które później będziemy wyświetlali. Dodatkowo potrzeba jest jeszcze biblioteka <a href="https://www.zlib.net/">zlib1</a>. Jako pierwsze przyjrzymy się implementacji tworzenia elementów do wyświetlenia. Podstawowe metryki fonta reprezentuje poniższy rysunek: </p>
+<p><img alt="Alt metrics" src="/images/metrics.png"></p>
+<p>Dodatkowe informacje można znaleźć na stronie <a href="https://www.freetype.org/freetype2/docs/glyphs/index.html">free type project</a>. Jak już się zaznajomimy z metrykami to możemy stworzyć strukturę reprezentująca glif:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Glyph</span>
+<span class="p">{</span>
+    <span class="n">Texture</span><span class="o">*</span> <span class="n">tex</span><span class="p">;</span>
+    <span class="n">glm</span><span class="o">::</span><span class="n">ivec2</span> <span class="n">bearing</span><span class="p">;</span>
+    <span class="n">glm</span><span class="o">::</span><span class="n">ivec2</span> <span class="n">advance</span><span class="p">;</span>
+    <span class="n">GlyphState</span> <span class="n">state</span><span class="p">;</span>
+
+    <span class="k">static</span> <span class="n">Glyph</span> <span class="nf">empty</span><span class="p">()</span> 
+    <span class="p">{</span>
+        <span class="n">Glyph</span> <span class="n">glyph</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="k">nullptr</span><span class="p">,</span>
+            <span class="n">glm</span><span class="o">::</span><span class="n">ivec2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">glm</span><span class="o">::</span><span class="n">ivec2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">EMPTY_GLYPH</span>
+        <span class="p">};</span>
+
+        <span class="k">return</span> <span class="n">glyph</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>Samo generowanie czcionek dla podsawowych znaków ASCII wygląda w następujący sposób:</p>
+<div class="highlight"><pre><span></span> <span class="n">glPixelStorei</span><span class="p">(</span><span class="n">GL_UNPACK_ALIGNMENT</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">FT_Library</span> <span class="n">ft</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">FT_Init_FreeType</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ft</span><span class="p">))</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">auto</span> <span class="n">strPath</span> <span class="o">=</span> <span class="n">path</span><span class="p">.</span><span class="n">get_fullPath</span><span class="p">();</span>
+    <span class="k">auto</span> <span class="n">charPath</span> <span class="o">=</span> <span class="n">strPath</span><span class="p">.</span><span class="n">c_str</span><span class="p">();</span>
+
+    <span class="n">FT_Face</span> <span class="n">face</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">FT_New_Face</span><span class="p">(</span><span class="n">ft</span><span class="p">,</span> <span class="n">charPath</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">face</span><span class="p">))</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;ERROR::FREETYPE: Failed to load font&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+    <span class="n">FT_Set_Pixel_Sizes</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">48</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">GLubyte</span> <span class="n">letter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">letter</span> <span class="o">&lt;</span> <span class="mi">128</span><span class="p">;</span> <span class="n">letter</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">FT_Load_Char</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">letter</span><span class="p">,</span> <span class="n">FT_LOAD_RENDER</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;ERROR::FREETYTPE: Failed to load Glyph&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">Bitmap</span><span class="o">*</span> <span class="n">bmp</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Bitmap</span><span class="p">(</span><span class="n">face</span><span class="o">-&gt;</span><span class="n">glyph</span><span class="o">-&gt;</span><span class="n">bitmap</span><span class="p">.</span><span class="n">buffer</span><span class="p">,</span> <span class="n">face</span><span class="o">-&gt;</span><span class="n">glyph</span><span class="o">-&gt;</span><span class="n">bitmap</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="n">face</span><span class="o">-&gt;</span><span class="n">glyph</span><span class="o">-&gt;</span><span class="n">bitmap</span><span class="p">.</span><span class="n">rows</span><span class="p">);</span>
+        <span class="n">Texture</span><span class="o">*</span> <span class="n">texture</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Texture</span><span class="p">(</span><span class="n">AssetPath</span><span class="o">::</span><span class="n">empty</span><span class="p">(),</span> <span class="n">bmp</span><span class="p">,</span> <span class="n">GL_RED</span><span class="p">);</span>
+
+        <span class="n">Glyph</span> <span class="n">character</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">texture</span><span class="p">,</span>
+            <span class="n">glm</span><span class="o">::</span><span class="n">ivec2</span><span class="p">(</span><span class="n">face</span><span class="o">-&gt;</span><span class="n">glyph</span><span class="o">-&gt;</span><span class="n">bitmap_left</span><span class="p">,</span> <span class="n">face</span><span class="o">-&gt;</span><span class="n">glyph</span><span class="o">-&gt;</span><span class="n">bitmap_top</span><span class="p">),</span>
+            <span class="n">glm</span><span class="o">::</span><span class="n">ivec2</span><span class="p">(</span><span class="n">face</span><span class="o">-&gt;</span><span class="n">glyph</span><span class="o">-&gt;</span><span class="n">advance</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="n">face</span><span class="o">-&gt;</span><span class="n">glyph</span><span class="o">-&gt;</span><span class="n">advance</span><span class="p">.</span><span class="n">y</span><span class="p">),</span>
+            <span class="n">GlyphState</span><span class="o">::</span><span class="n">FILL_GLYPH</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_characterMap</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">GLchar</span><span class="p">,</span> <span class="n">Glyph</span><span class="o">&gt;</span><span class="p">(</span><span class="n">letter</span><span class="p">,</span> <span class="n">character</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="n">FT_Done_Face</span><span class="p">(</span><span class="n">face</span><span class="p">);</span>
+    <span class="n">FT_Done_FreeType</span><span class="p">(</span><span class="n">ft</span><span class="p">);</span>
+</pre></div>
+
+
+<p>Powyższy kod generuje kolekcje bitmap, które przechowują obrazek każdego glifu w grayscale - aby poprawnie wyświetlić taką czcionkę potrzebujemy podmienić standardowy fragment shader, na taki jak poniżej:</p>
+<div class="highlight"><pre><span></span><span class="cp">#version 330 core</span>
+<span class="n">layout</span> <span class="p">(</span><span class="n">location</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">out</span> <span class="n">vec4</span> <span class="n">color</span><span class="p">;</span>
+<span class="n">in</span> <span class="n">vec2</span> <span class="n">fragmentTexCoord</span><span class="p">;</span>
+<span class="n">in</span> <span class="n">vec4</span> <span class="n">fragmentColor</span><span class="p">;</span>
+<span class="n">uniform</span> <span class="n">sampler2D</span> <span class="n">tex</span><span class="p">;</span>
+<span class="n">uniform</span> <span class="kt">float</span> <span class="n">global_alpha</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+     <span class="n">color</span> <span class="o">=</span> <span class="n">vec4</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">texture</span><span class="p">(</span><span class="n">tex</span><span class="p">,</span> <span class="n">fragmentTexCoord</span><span class="p">).</span><span class="n">r</span><span class="p">)</span> <span class="o">*</span> <span class="n">fragmentColor</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Do samego rysowania użyłem spritebatcha, który już zaimplementowałem w silniku:</p>
+<div class="highlight"><pre><span></span> <span class="n">batch</span><span class="o">-&gt;</span><span class="n">begin</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_fontShader</span><span class="p">,</span> <span class="n">TextureWrap</span><span class="o">::</span><span class="n">CLAMP_TO_EDGE</span><span class="p">,</span> <span class="n">TextureFilter</span><span class="o">::</span><span class="n">LINEAR_FILTER</span><span class="p">,</span> <span class="n">camera</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="nl">c</span> <span class="p">:</span> <span class="n">text</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Glyph</span> <span class="n">g</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_characterMap</span><span class="p">[</span><span class="n">c</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">GlyphState</span><span class="o">::</span><span class="n">EMPTY_GLYPH</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">//compute base pos variables</span>
+            <span class="kt">float</span> <span class="n">x</span> <span class="o">=</span> <span class="n">position</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">g</span><span class="p">.</span><span class="n">bearing</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">scale</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+            <span class="kt">float</span> <span class="n">y</span> <span class="o">=</span> <span class="n">position</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">g</span><span class="p">.</span><span class="n">bearing</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">scale</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+
+            <span class="kt">float</span> <span class="n">width</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">tex</span><span class="o">-&gt;</span><span class="n">get_bitmap</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">get_width</span><span class="p">()</span> <span class="o">*</span> <span class="n">scale</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+            <span class="kt">float</span> <span class="n">height</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">tex</span><span class="o">-&gt;</span><span class="n">get_bitmap</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">get_height</span><span class="p">()</span> <span class="o">*</span> <span class="n">scale</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+
+            <span class="n">batch</span><span class="o">-&gt;</span><span class="n">draw</span><span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">tex</span><span class="p">,</span> <span class="n">RectangleI</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span> <span class="n">color</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+            <span class="n">position</span><span class="p">.</span><span class="n">x</span> <span class="o">+=</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">advance</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">6</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+            <span class="n">position</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">advance</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;&gt;</span> <span class="mi">6</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">batch</span><span class="o">-&gt;</span><span class="n">end</span><span class="p">();</span>
+</pre></div>
+
+
+<p>I to w sumie tyle jeśli chodzi o renderowanie czcionek. Całość implementacji znajduje się już w repozytorium, więc ciekawskich zapraszam na githuba. </p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+      <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

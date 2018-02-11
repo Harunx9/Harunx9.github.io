@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Programming warfare - 2DXngine</title><link href="http://localhost:8000/" rel="alternate"></link><link href="http://localhost:8000/feeds/2dxngine.atom.xml" rel="self"></link><id>http://localhost:8000/</id><updated>2017-10-28T16:00:00+02:00</updated><entry><title>2DXngine tutorial - Engine overview</title><link href="http://localhost:8000/2dxngine-tutorial-engine-overview.html" rel="alternate"></link><published>2017-10-28T16:00:00+02:00</published><updated>2017-10-28T16:00:00+02:00</updated><author><name>Szymon Wanot</name></author><id>tag:localhost,2017-10-28:/2dxngine-tutorial-engine-overview.html</id><summary type="html">&lt;p&gt;Hi everyone. This will be my first post in English, so I believe that it will be worst. I've made decision lately about that to make some simple 2DXngine tutorial. Writeing this in English language can reach bigger audience I believe. Let's start from the beginning. 2DXngine is my project …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hi everyone. This will be my first post in English, so I believe that it will be worst. I've made decision lately about that to make some simple 2DXngine tutorial. Writeing this in English language can reach bigger audience I believe. Let's start from the beginning. 2DXngine is my project which I started this year for Get Noticed 2017 competition. For now this project is actively developed from 8 months. During this time I implemented base 2D engine functionality and some additional features (and possibly some bugs). More or less complete feature list you find on &lt;a href="https://github.com/Harunx9/2DXngine"&gt;github&lt;/a&gt;. For now  engine should works on Windows with CPP 2017 redistribute package. I also have plan to port it to MacOS(OSX) and Linux, but for now this is distant future. Ok, so let's move to overall architecture:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="2dxngine" src="/images/Xngienarch.png"&gt;&lt;/p&gt;
+&lt;p&gt;As you can see window and input backend is build on top SDL2 with OpenGL and GLEW for 2D rendering. I also use other 3'rd party libraries:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pugi Xml,&lt;/li&gt;
+&lt;li&gt;GLM,&lt;/li&gt;
+&lt;li&gt;Soil,&lt;/li&gt;
+&lt;li&gt;SLD2_mixer,&lt;/li&gt;
+&lt;li&gt;Freetype font,&lt;/li&gt;
+&lt;li&gt;Simpleini,&lt;/li&gt;
+&lt;li&gt;Google Test.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Like you see I have testing library in my stack, so I try to cover as much as I can with Unit/Integration Tests. Not all code is covered but I try cover some all more complex features. &lt;/p&gt;
+&lt;p&gt;I also try to make architecture flexible that you can use only thing that you need . For example you don’t want to use scene system and component model no problem. You can take Spritebatch from graphics library and game handler as build your own scene/game state system with our own entity system. If you need some specific service you also can add one and register it in service locator. There are some couplings with some elements, but generally there are possibility to extend any functionality in desire way.&lt;/p&gt;
+&lt;p&gt;2DXngine also provide scene system with component model. Scene API provide game object manager which can be populated by game object with components. For now you can create three type of components:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Plain component which can contain data and so on,&lt;/li&gt;
+&lt;li&gt;Updateable Component  contain behavior for game objects, &lt;/li&gt;
+&lt;li&gt;Drawable Component this can contain draw logic using scene renderer with spritebatch.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Any component you create should be register for type cache in order to have possibility to find them via type.  I also want to automate this process but I don’t figure out any good solution for that. &lt;/p&gt;
+&lt;p&gt;If you want to check out what features I currently focus on please go to &lt;a href="https://trello.com/b/wJGa7Jm5"&gt;this&lt;/a&gt; Trello board. I try to update this frequently, so this is the most fresh information about development. In next post I show some simple game implementation to show you some of engine possibilities. Like always I invite you to comment section to share your opinions with me.&lt;/p&gt;</content><category term="2DXngineTutorial"></category><category term="2DXngine"></category><category term="gamedev"></category></entry></feed>

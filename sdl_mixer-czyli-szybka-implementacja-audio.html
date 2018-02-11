@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Prawdopodobnie każdy twórca gier chce, by jego gra powodowała większą immersję, dlatego też należałoby do niej dodać oprócz grafiki takżę dźwięk oraz muzykę. Ze względu na to, że 2DXngine używa SDL2 postanowiłem iść dalej tą drogą i do odczytywania wykorzystać plugin SDL_mixer. Jest to mała wtyczka do SDL2, która pozwala …" />
+<meta name="keywords" content="Gamedev">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="SDL_mixer, czyli szybka implementacja audio"/>
+<meta property="og:description" content="Prawdopodobnie każdy twórca gier chce, by jego gra powodowała większą immersję, dlatego też należałoby do niej dodać oprócz grafiki takżę dźwięk oraz muzykę. Ze względu na to, że 2DXngine używa SDL2 postanowiłem iść dalej tą drogą i do odczytywania wykorzystać plugin SDL_mixer. Jest to mała wtyczka do SDL2, która pozwala …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/sdl_mixer-czyli-szybka-implementacja-audio.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-07-09 21:20:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; SDL_mixer, czyli szybka implementacja audio</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="sdl_mixer-czyli-szybka-implementacja-audio">SDL_mixer,  czyli szybka implementacja audio</h1>
+    <p>
+          Posted on Sun 09 July 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Prawdopodobnie każdy twórca gier chce, by jego gra powodowała większą immersję, dlatego też należałoby do niej dodać oprócz grafiki takżę dźwięk oraz muzykę. 
+Ze względu na to, że 2DXngine używa SDL2 postanowiłem iść dalej tą drogą i do odczytywania wykorzystać plugin SDL_mixer. Jest to mała wtyczka do SDL2, która pozwala odczytywać muzykę i dźwięki w różnych formatach. Moje rozwiązanie jest oparte o klasy i przyjrzymy się mu w perspektywie plików MP3 i WAV. 
+Muzyka i dźwięki posiadają swoje klasy bazowe Sound i Music, które wyglądają w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">SoundState</span> <span class="p">{</span>
+    <span class="n">STOPPED</span><span class="p">,</span>
+    <span class="n">PLAYING</span><span class="p">,</span>
+    <span class="n">PAUSED</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Sound</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Asset</span>
+<span class="p">{</span>
+<span class="k">protected</span><span class="o">:</span>
+    <span class="n">SoundState</span> <span class="n">_currentState</span><span class="p">;</span>
+    <span class="n">Sound</span><span class="p">(</span><span class="n">AssetPath</span> <span class="n">path</span><span class="p">,</span> <span class="k">const</span> <span class="n">AssetType</span><span class="o">*</span> <span class="n">type</span><span class="p">)</span> <span class="o">:</span> <span class="n">Asset</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">type</span><span class="p">)</span> <span class="p">{}</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Sound</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">play</span><span class="p">(</span><span class="kt">bool</span> <span class="n">repeat</span> <span class="o">=</span> <span class="nb">false</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">pause</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">resume</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">SoundState</span> <span class="nf">get_soundState</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_currentState</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Music</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Asset</span>
+<span class="p">{</span>
+<span class="k">protected</span><span class="o">:</span>
+    <span class="n">SoundState</span> <span class="n">_currentState</span><span class="p">;</span>
+    <span class="n">Music</span><span class="p">(</span><span class="n">AssetPath</span> <span class="n">path</span><span class="p">,</span> <span class="k">const</span> <span class="n">AssetType</span><span class="o">*</span> <span class="n">type</span><span class="p">)</span> <span class="o">:</span> <span class="n">Asset</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">type</span><span class="p">)</span> <span class="p">{}</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Music</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">play</span><span class="p">(</span><span class="kt">bool</span> <span class="n">repeat</span> <span class="o">=</span> <span class="nb">false</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">pause</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">resume</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">stop</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">SoundState</span> <span class="nf">get_musicState</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_currentState</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>W przypadku pliku MP3 ładowanie pliku odbywa się w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="n">Mp3Sound</span><span class="o">::</span><span class="n">Mp3Sound</span><span class="p">(</span><span class="n">AssetPath</span> <span class="n">path</span><span class="p">)</span> <span class="o">:</span> <span class="n">Music</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">DefaultAssetType</span><span class="o">::</span><span class="n">MP3_TYPE</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">fPathStr</span> <span class="o">=</span> <span class="n">path</span><span class="p">.</span><span class="n">get_fullPath</span><span class="p">();</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">soundPath</span> <span class="o">=</span> <span class="n">fPathStr</span><span class="p">.</span><span class="n">c_str</span><span class="p">();</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_musicData</span> <span class="o">=</span> <span class="n">Mix_LoadMUS</span><span class="p">(</span><span class="n">soundPath</span><span class="p">);</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_currentState</span> <span class="o">=</span> <span class="n">SoundState</span><span class="o">::</span><span class="n">STOPPED</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>W przypadku Wav wygląda to podobnie tylko funkcja Mix_LoadMUS(const char<em> path) zamienia się na Mix_LoadWAV(const char</em> path). Różnice występują natomiast w odtwarzaniu, aby odegrać muzykę używam serwisu MusicService, który trzyma referencje na odgrywany kawałek. Za jego pomocą mogę również zatrzymywać, wznawiać lub zakończyć odrywanie danej muzyki.
+W przypadku dźwięku sprawa ma się nieco inaczej, o ile muzyka odpaloną jedną ścieżkę na raz to dźwięki można ze sobą mixować i odpalać je kilka w jednym czasie. W tym przypadku w SoundService inicjalizuję kanały dla dźwięku zanim zacznę serwisu używać:</p>
+<div class="highlight"><pre><span></span><span class="n">Mix_AllocateChannels</span><span class="p">(</span><span class="mi">256</span><span class="p">);</span>
+</pre></div>
+
+
+<p>Jest to o tyle ważne, ponieważ podczas odtwarzania dźwięku pobieramy pierwszy wolny kanał i na nim odtwarzamy dźwięk, jeżeli chcemy potem zatrzymać dźwięk to musimy podać kanał na którym odgrywany jest dźwięk. W mojej implementacji wygląda to następująco:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">WavSound</span><span class="o">::</span><span class="n">play</span><span class="p">(</span><span class="kt">bool</span> <span class="n">repeat</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">loop</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">repeat</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_channel</span> <span class="o">=</span> <span class="n">Mix_PlayChannel</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_soundData</span><span class="p">,</span> <span class="n">loop</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_channel</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_currentState</span> <span class="o">=</span> <span class="n">SoundState</span><span class="o">::</span><span class="n">PLAYING</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">WavSound</span><span class="o">::</span><span class="n">pause</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Mix_Pause</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_channel</span><span class="p">);</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_currentState</span> <span class="o">=</span> <span class="n">SoundState</span><span class="o">::</span><span class="n">PAUSED</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">WavSound</span><span class="o">::</span><span class="n">stop</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Mix_HaltChannel</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_channel</span><span class="p">);</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_channel</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_currentState</span> <span class="o">=</span> <span class="n">SoundState</span><span class="o">::</span><span class="n">STOPPED</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Oprócz MP3 zaimplementowałem jeszcze format OGG. Zobaczymy czy go będę używał, ale jakby ktoś potrzebował to jest. Zobaczymy jak muzyka będzie się sprawowała podczas implementacji gry, ale na razie z testów wynika, że powinno być ok. To chyba wszystko w temacie SDL_mixer w razie gdybym czegoś się jeszcze w tym temacie dowiedział, to opiszę na blogu.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

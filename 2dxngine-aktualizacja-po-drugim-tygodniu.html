@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. Mija drugi tydzień konkursu &#34;Daj się poznać &#34; pora więc na podsumowanie tygodnia prac nad projektem 2DXngine. Niestety z braku czasu w tym tygodniu prace nieco spowolniły, ale mimo to udało się skończyć mi prace nad systemem typów, ale po kolei. W tym tygodniu znowu średnio szło mi ze śledzeniem …" />
+<meta name="keywords" content="DSP2017, 2DXngine">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="2DXngine: aktualizacja po drugim tygodniu"/>
+<meta property="og:description" content="Cześć. Mija drugi tydzień konkursu &#34;Daj się poznać &#34; pora więc na podsumowanie tygodnia prac nad projektem 2DXngine. Niestety z braku czasu w tym tygodniu prace nieco spowolniły, ale mimo to udało się skończyć mi prace nad systemem typów, ale po kolei. W tym tygodniu znowu średnio szło mi ze śledzeniem …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/2dxngine-aktualizacja-po-drugim-tygodniu.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-03-17 21:40:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="2DXngine"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; 2DXngine: aktualizacja po drugim tygodniu</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="2dxngine-aktualizacja-po-drugim-tygodniu">2DXngine: aktualizacja po drugim tygodniu</h1>
+    <p>
+          Posted on Fri 17 March 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. Mija drugi tydzień konkursu "Daj się poznać " pora więc na podsumowanie tygodnia prac nad projektem 2DXngine. Niestety z braku czasu w tym tygodniu prace nieco spowolniły, ale mimo to udało się skończyć mi prace nad systemem typów, ale po kolei. W tym tygodniu znowu średnio szło mi ze śledzeniem swojego czasu pracy, ale mogę powiedzieć, że spędziłem nad projektem około 14 godzin. Nie cały ten czas poszedł jednak na development, ponieważ musiałem mocno się douczyć. Po pierwsze zderzyłem się z makrami do tej pory nie musiałem ich nigdy używać a i też w książkach, które czytałem opisy co można z nimi zrobić były dość lakoniczne. Po drugie kiedy już myślałem, że wszystko elegancko działa nagle okazało się, że jeszcze parę rzeczy muszę doimplementować. Dobra koniec narzekania przejdźmy do tego co udało mi się zrobić. Aby prawu cytatu stało się za dość a i kudosy za ułatwienie mi pracy poszły w odpowiednie miejsce to implementację swojego rozwiązanie oparłem o pewien artykuł który znajdziecie <a href="http://www.axelmenzel.de/articles/rtti">TU</a>. Na potrzeby component modelu zaimplementowałem prosty system rozpoznawania typów - pozwala on wyciągnąć z zarejesrtowanych klas typ za pomocą metody getType. Typ posiada swój identyfikator i nazwę oraz identyfikator typu bazowego (w przypadku kiedy go nie ma jest to wartość -1). Niestety postawiłem pewne ograniczenia, a mianowicie nie można dziedziczyć po więcej niż jednej klasie, można natomiast dziedziczyć dowolnie głęboko, ponieważ typ posiada możliwość sprawdzenia czy w jego bazowych typach nie znajdują się typy wyższe pozwala to np. wyszukać wszystkie komponenty dziedziczące po jakieś wspólnej abstrakcji. 
+Oprócz klasy reprezentującej typ na rozwiązania składają się następujące elementy:</p>
+<ul>
+<li>TypeCache - elementy agregujący wszystkie typu korzystają z niego inne elementy dodając lub pobierając informacje o typie ,</li>
+<li>makro definiujące i deklarujące typ - służą one do rejestracji, a dzięki zastosowaniu sztuczki ze statycznym wywołaniem klasy rejestracyjnej wywołują się przed funkcją main, co czyni to rozwiązanie bezpieczne dla wielowątkowości i w miarę zautomatyzowane,</li>
+<li>macro dodające do klasy funkcje getType, dzięki której jesteśmy w stanie pobrać typ z instancji klasy.</li>
+</ul>
+<p>Dokładnie z przykładami kodu postaram opisać się to rozwiązanie w przyszłych postach. Całość jest już na GitHubie, więc jeżeli ktoś jest ciekawy to zapraszam do zapoznania się z kodzikiem. Jeżeli ktoś z czytających mnie osób zajmuje się  C++ i ma do polecenia jakieś ciekawe książki to zapraszam do sekcji komentarzy. Tymczasem w tym tygodniu planuje dalej rozwijać GameObject i komponenty, może uda mi się zacząć coś ze scenami. Pierwszą sprawą jest jednak to abym dopisał więcej testów do istniejących funkcjonalności, więc tym zajmę się w najbliższych dniach.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/2dxngine.html">2DXngine</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

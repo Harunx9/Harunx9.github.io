@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć, Jako, że &#34;Daj Się Poznać 2017&#34; dziś wystartowało, to ja również chciałbym wystartować z projektem konkursowmym. Po długim namyśle zdecydowałem się na napisanie silnika w C++. Zanim przejdę do pokazania co zrobiłem, chciałem po krótce określić ramy projektu. Napisanie kompletnego silnika z edytorem w czasie 3 miesięcy z moim …" />
+<meta name="keywords" content="DSP2017, 2DXngine">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="2DXngine: start projektu"/>
+<meta property="og:description" content="Cześć, Jako, że &#34;Daj Się Poznać 2017&#34; dziś wystartowało, to ja również chciałbym wystartować z projektem konkursowmym. Po długim namyśle zdecydowałem się na napisanie silnika w C++. Zanim przejdę do pokazania co zrobiłem, chciałem po krótce określić ramy projektu. Napisanie kompletnego silnika z edytorem w czasie 3 miesięcy z moim …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/2dxngine-start-projektu.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-03-01 16:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="2DXngine"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; 2DXngine: start projektu</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="2dxngine-start-projektu">2DXngine: start projektu</h1>
+    <p>
+          Posted on Wed 01 March 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć,
+Jako, że "Daj Się Poznać 2017" dziś wystartowało, to ja również chciałbym wystartować z projektem konkursowmym.
+Po długim namyśle zdecydowałem się na napisanie silnika w C++. Zanim przejdę do pokazania co zrobiłem, chciałem po krótce  określić ramy projektu.  Napisanie kompletnego silnika z edytorem w czasie 3 miesięcy z moim obecnym stanem wiedzy o C++ jest nierealne, więc  ograniczyłem zakres prac tak, aby udało się zrobić coś działającego. 
+Do implementacji tzw.  "must have" powinny wejść:</p>
+<ul>
+<li>game objecty z component modelem,</li>
+<li>bazowe komponenty,</li>
+<li>system scen,</li>
+<li>system sztucznej inteligencji oparty na drzewach zachowań,</li>
+<li>asset loader,</li>
+<li>obsługa dźwięku i muzyki,</li>
+<li>renderer 2D pozwalający na obsługę shaderów GLSL,</li>
+<li>wczytywanie animacji poklatkowych,</li>
+<li>prosty system fizyki i/lub integracja z Box2D,</li>
+</ul>
+<p>Przygotowałem jeszcze takie rzeczy z kategorii "nice to have" (gdy uda mi się zaimplementować rzeczy z powyższej listy):</p>
+<ul>
+<li>wczytywanie mapy z plików Tmx generowanych przez edytor Tiled,</li>
+<li>możliwość pracowania z Tiled w trybie livereload,</li>
+<li>kompilator assetów pozwalający je pakować w zdefiniowane paczki,</li>
+<li>streaming poziomów pozwalający doczytywać dynamiczne dane (pozwoli to na wyeliminowanie doczytywania pomiędzy lokacjami),</li>
+<li>integracja z językiem skryptowym Lua.</li>
+</ul>
+<p>Ze wszystkich "nice to have" najfajniej było by zrobić te z Tiledem oraz skryptowanie Lua, ale zobaczymy jak mi pójdzie.
+Kolejną fajną rzeczą była by wielowątkowa pętla gry z render commandami, ale to już wyższa szkoła jazdy i na pewno teraz nie dam rady tego zaimplementować. 
+Jako, że projekt startuje nie będzie w tym poście za dużo kodu raczej opowiem o tym co i jak będę robił. 
+Po pierwsze link do repo na github jest -&gt; <a href="https://github.com/Harunx9/2DXngine">TU</a>. 
+Druga sprawa to taka krótka prezentacja bibliotek z których będę korzystał:</p>
+<ul>
+<li>SDL2 - jest to bibliotek ułatwiająca wiele spraw mutliplatformowych takich jak korzystanie z systemu plików, wyświetlanie okienka, proste rysowanie 2D, przechwytywanie inputu z urządzeń wskazujących itd. Generalnie jest to taki toolbox pomagający pisać mniej kodu. Po więcej odsyłam do dokumentacji -&gt; <a href="https://wiki.libsdl.org/FrontPage">TU</a></li>
+<li>Glm - biblioteka matematyczna udostępniona przez G-Truc Creations  -&gt; <a href="https://www.opengl.org/sdk/libs/GLM/">TU</a>. Jest to lib typu single header więc wystarcza jeden plik nagłówkowy aby jej używać. Dodatkowo zawiera ona wszystkie typy matematyczne takie jak macierze czy wektory które potrzebne są w pracy z opengl.</li>
+<li>GLEW - bibliotek pozwalająca pisać multiplatformowy kod OpenGl. Teoretycznie do renderowania grafiki mógłbym użyć tego co daje mi SDL2, ale musiałbym zrezygnować z shaderów. Ze wzgleu na to, że shadery dają fajne możliwości do robienia efektów specjalnych renderer 2D zaimplementuję sam co pozwoli na skorzystanie z całości API OpenGL 4+.</li>
+</ul>
+<p>Z ciekawych rzeczy myślałem aby użyć jakiegoś multiplatformowego build systemu np. Cmake czy Scons. Po namyśle stwierdziłem jednak, że na razie będę używał tego co oferuje w temacie Visual Studio 2015, czyli MSBuild. Jeśli w przyszłości zajdzie taka potrzeba spróbuje coś zmienić w tym temacie.
+Kolejną sprawą jest jakość kodu. Postaram się z mojej strony wykorzystywać nowości języka C++ a, że jest ich sporo to pewnie nieraz będę się zastanawiał co wybrać. 
+Drugą sprawą w temacie jakości jest pisanie kodu zgodnie z zasadami Data-Oriented Design. Jeżeli ktoś nie wie o czym mówię polecam obejrzeć tą prezentacje -&gt; <a href="https://www.youtube.com/watch?v=rX0ItVEVjHc">TU</a>. 
+W telegraficznym skrócie chodzi o to, aby tworzyć kod przyjazny dla cache naszego procesora a nie koniecznie z zasadami SOLID. Pozwala to bardzo mocno zoptymalizować czas wykonania algorytmów. Jak sam się poduczę tego to napiszę o tym jakiś osobny wpis. 
+Ostatnią sprawą jest moja potrzeba porządkowania i mierzenia swojej pracy. Zobaczymy jak to pójdzie ale engine będzie miał taki quasi kanbanowy board na Trello będę się starał tam wypisywać taski jakie realizuje -&gt; <a href="https://trello.com/b/wJGa7Jm5/2dxngine">TU</a>. Poza tym po pierwszym miesiącu postaram się zdać raport ile godzin udało mi się zainwestować w rozwój silnika.
+To chyba na tyle w tym tygodniu postaram się pospinać biblioteki uporządkować repo i zrobić jakieś takie podstawy na których potem będziemy budować resztę silnika.</p>
+<p>PS. Taski na Trello są na razie bardzo ogóle podejrzewam, że jak będę implementował konkretny feature to to jakoś podzielę.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/2dxngine.html">2DXngine</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

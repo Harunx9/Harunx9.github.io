@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+    <meta name="author" content="Szymon Wanot" />
+    <meta name="description" content="" />
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:type" content="blog"/>
+<meta property="og:title" content="Programming warfare"/>
+<meta property="og:description" content=""/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash;     Category OpenGL
+</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+
+
+<article>
+  <header>
+    <h2><a href="http://localhost:8000/renderowanie-2d-czesc-6-tekst-true-type-font.html#renderowanie-2d-czesc-6-tekst-true-type-font">Renderowanie 2D cześć 6: Tekst True Type Font</a></h2>
+    <p>
+          Posted on Sun 06 August 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>,              <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </header>
+  <div>
+      <p>Renderowanie tekstu jest nieco bardziej skomplikowane od wyświetlania prostych obrazków. Wyświetlanie tekstu możemy zrealizować na dwa sposoby:</p>
+<ul>
+<li>renderowanie SpriteFontów,</li>
+<li>renderowanie True Type Font. </li>
+</ul>
+<p>Pierwszy sposób polega na wygenerowaniu sobie z pliku czcionki tekstury oraz pliku opisującego układ znaków na teksturze. Potem podczas renderowania wycinamy za pomocą tych danych odpowiednie obszary …</p>
+      <br>
+      <a class="btn" href="http://localhost:8000/renderowanie-2d-czesc-6-tekst-true-type-font.html#renderowanie-2d-czesc-6-tekst-true-type-font">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="http://localhost:8000/renderowanie-2d-czesc-5-kamera.html#renderowanie-2d-czesc-5-kamera">Renderowanie 2D cześć 5: Kamera</a></h2>
+    <p>
+          Posted on Sun 02 July 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>,              <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </header>
+  <div>
+      <p>Cześć. W poprzednich artykułach opisałem jak zaimplementowałem renderowanie 2D, dziś jeszcze jeden element dotyczący grafiki, czyli kamera 2D. Kamera jest elementem za pomocą, którego możemy manipulować viewport'em.
+Sam interfejs klasy kamery jest dość prosty:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Camera</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Camera</span><span class="p">(</span><span class="kt">int</span> <span class="n">viewportWidth</span><span class="p">,</span> <span class="kt">int</span> <span class="n">viewportHeight</span><span class="p">);</span>
+    <span class="o">~</span><span class="n">Camera</span><span class="p">();</span>
+
+    <span class="kr">inline</span> <span class="kt">float</span> <span class="nf">get_rotation</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_rotation …</span></pre></div>
+      <br>
+      <a class="btn" href="http://localhost:8000/renderowanie-2d-czesc-5-kamera.html#renderowanie-2d-czesc-5-kamera">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="http://localhost:8000/renderowanie-2d-czesc-42-spritebatch.html#renderowanie-2d-czesc-42-spritebatch">Renderowanie 2D część 4.2: Spritebatch</a></h2>
+    <p>
+          Posted on Wed 21 June 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>,              <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </header>
+  <div>
+      <p>Cześć. W poprzedniej części napisałem nieco o tym jak przebiega rysowanie a właściwie dokładanie elementów do narysowania. W tym artykule zajmiemy się dokładnie tym jak działa pipeline rysowania SpriteBatchem. Aby narysować jaką teksturę należy napisać taki oto kodzik:</p>
+<div class="highlight"><pre><span></span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_device</span><span class="o">-&gt;</span><span class="n">clear</span><span class="p">(</span><span class="n">Colors</span><span class="o">::</span><span class="n">black</span><span class="p">);</span>
+<span class="n">batch</span><span class="o">-&gt;</span><span class="n">begin</span><span class="p">(</span><span class="n">TextureWrap</span><span class="o">::</span><span class="n">REPEAT</span><span class="p">,</span> <span class="n">TextureFilter</span><span class="o">::</span><span class="n">POINT_FILTER</span><span class="p">);</span>
+
+    <span class="n">batch …</span></pre></div>
+      <br>
+      <a class="btn" href="http://localhost:8000/renderowanie-2d-czesc-42-spritebatch.html#renderowanie-2d-czesc-42-spritebatch">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="http://localhost:8000/renderowanie-2d-czesc-41-spritebatch.html#renderowanie-2d-czesc-41-spritebatch">Renderowanie 2D część 4.1: Spritebatch</a></h2>
+    <p>
+          Posted on Sun 18 June 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>,              <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </header>
+  <div>
+      <p>W poprzednich postach opisałem składowe potrzebne do napisania właściwego renderowania, dziś zajmiemy się właśnie Spritebatchem, który będzie służył w silniku 2DXngine do renderowania 2D. Zacznijmy jak zawsze od  interfejsu klasy, którą będziemy omawiać:</p>
+<div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">FlipEffect</span>
+<span class="p">{</span>
+    <span class="n">NONE_FLIP</span><span class="p">,</span>
+    <span class="n">FLIP_HORIZONTAL</span><span class="p">,</span>
+    <span class="n">FLIP_VERTICAL</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">enum</span> <span class="n">SortMode</span>
+<span class="p">{</span>
+    <span class="n">NONE_SORT</span><span class="p">,</span>
+    <span class="n">FRONT_TO_BACK</span><span class="p">,</span>
+    <span class="n">BACK_TO_FRONT</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">SpriteBatch</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">SpriteBatch</span><span class="p">(</span><span class="n">GraphicDevice</span><span class="o">*</span> <span class="n">device</span><span class="p">);</span>
+    <span class="o">~</span><span class="n">SpriteBatch …</span></pre></div>
+      <br>
+      <a class="btn" href="http://localhost:8000/renderowanie-2d-czesc-41-spritebatch.html#renderowanie-2d-czesc-41-spritebatch">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="http://localhost:8000/renderowanie-2d-czesc-3-sampler-state.html#renderowanie-2d-czesc-3-sampler-state">Renderowanie 2d część 3: Sampler State</a></h2>
+    <p>
+          Posted on Sun 11 June 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>,              <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </header>
+  <div>
+      <p>Sampler to dość nowa rzecz w OpenGL, dostępna od wersji 3.3. Jest to taki kontener, który pozwala na przechowywanie parametrów potrzeb renderowania tekstur. Jego ustawienia są wykorzystywane przez fragment shader. W poprzednich wersjach OpenGL ustawienia te trzeba było ustawiać w teksturze przez funkcje glTexParameteri(), ale w momencie kiedy mamy …</p>
+      <br>
+      <a class="btn" href="http://localhost:8000/renderowanie-2d-czesc-3-sampler-state.html#renderowanie-2d-czesc-3-sampler-state">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="http://localhost:8000/renderowanie-2d-czesc-2-shadery.html#renderowanie-2d-czesc-2-shadery">Renderowanie 2D część 2: Shadery</a></h2>
+    <p>
+          Posted on Sat 20 May 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>,              <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>,              <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </header>
+  <div>
+      <p>Shadery to programy wykonywane podczas procesu renderowania OpenGL. Nie będę tu opisywał całego pipeline, ponieważ to byłby temat na cały osobny artykuł, więc wspomnę tylko, że dla renderowania 2D istotne jest wipięcie się w fazę vertex shadera i fragment shadera. Ten pierwszy opowiada za umiejscowienie naszego spritea w przestrzeni, jego …</p>
+      <br>
+      <a class="btn" href="http://localhost:8000/renderowanie-2d-czesc-2-shadery.html#renderowanie-2d-czesc-2-shadery">    Continue reading
+</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="http://localhost:8000/renderowanie-2d-czesc-1-tekstury.html#renderowanie-2d-czesc-1-tekstury">Renderowanie 2D część 1: Tekstury</a></h2>
+    <p>
+          Posted on Wed 17 May 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+          &#8226;     Tagged with
+
+              <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>,              <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>,              <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </header>
+  <div>
+      <p>Ostatnio udało mi się skończyć renderowanie w 2DXngine, chciałbym opisać jak działa zaimplementowane przeze mnie rozwiązanie. Zaczniemy od struktur danych, które są nam potrzebne aby działało renderowanie 2D. Jako pierwsze przyjrzymy się jak zaimplementować teksturę oraz jak ją wczytać z dysku, co nie do końca może być takie oczywiste w …</p>
+      <br>
+      <a class="btn" href="http://localhost:8000/renderowanie-2d-czesc-1-tekstury.html#renderowanie-2d-czesc-1-tekstury">    Continue reading
+</a>
+  </div>
+</article>
+
+  <div class="pagination">
+  </div>
+
+
+
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

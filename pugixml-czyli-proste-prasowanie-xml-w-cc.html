@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. Jakiś czas temu stanąłem przed potrzebą wyboru jakiegoś rozwiązania do pracy z plikami XML. W C/C++ jest kilka bibliotek do obsługi XML&#39;i: TinyXML, RapidXML, LibXML2, BoostXML, PugiXML. Jak pewnie można się domyślić po tytule, to mój wybór padł na bibliotekę pugixml. Wybrałem tak dlatego, że jej Api najbardziej …" />
+<meta name="keywords" content="programming, Gamedev">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="PugiXML, czyli proste prasowanie XML w C/C++"/>
+<meta property="og:description" content="Cześć. Jakiś czas temu stanąłem przed potrzebą wyboru jakiegoś rozwiązania do pracy z plikami XML. W C/C++ jest kilka bibliotek do obsługi XML&#39;i: TinyXML, RapidXML, LibXML2, BoostXML, PugiXML. Jak pewnie można się domyślić po tytule, to mój wybór padł na bibliotekę pugixml. Wybrałem tak dlatego, że jej Api najbardziej …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/pugixml-czyli-proste-prasowanie-xml-w-cc.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-10-11 19:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="C/C++"/>
+<meta property="article:tag" content="programming"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; PugiXML, czyli proste prasowanie XML w C/C++</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="pugixml-czyli-proste-prasowanie-xml-w-cc">PugiXML, czyli proste prasowanie XML w C/C++</h1>
+    <p>
+          Posted on Wed 11 October 2017 in <a href="http://localhost:8000/category/cc.html">C/C++</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. Jakiś czas temu stanąłem przed potrzebą wyboru jakiegoś rozwiązania do pracy z plikami XML. W C/C++ jest kilka bibliotek do obsługi XML'i:</p>
+<ul>
+<li>TinyXML,</li>
+<li>RapidXML,</li>
+<li>LibXML2,</li>
+<li>BoostXML,</li>
+<li>PugiXML.</li>
+</ul>
+<p>Jak pewnie można się domyślić po tytule, to mój wybór padł na bibliotekę <a href="https://pugixml.org/">pugixml</a>. Wybrałem tak dlatego, że jej Api najbardziej przypomina to co mamy w C# pod nazwą XDocument i jest to składająca się z 3 plików biblioteka, więc możemy ją po prostu wrzucić w projekt i  nie trzeba się bawić z dodawaniem lib i dll co w C++ jest momentami nieco trudne. Skoro już wiadomo co i jak to przyjrzyjmy się jak można używać biblioteki. Przykłady będą oparte na wczytywaniu spritesheet'a animacji w 2DXngine, ponieważ tam też tej biblioteki użyłem. Załóżmy, że mamy oto taki XML:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;animations&gt;</span>
+    <span class="nt">&lt;animation</span> <span class="na">name=</span><span class="s">&quot;animationName1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;frame</span> <span class="na">number=</span><span class="s">&quot;0&quot;</span> <span class="na">x=</span><span class="s">&quot;0&quot;</span> <span class="na">y=</span><span class="s">&quot;0&quot;</span> <span class="na">width=</span><span class="s">&quot;50&quot;</span> <span class="na">height=</span><span class="s">&quot;50&quot;</span> <span class="na">offsetx=</span><span class="s">&quot;0&quot;</span> <span class="na">offsety=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;frame</span> <span class="na">number=</span><span class="s">&quot;0&quot;</span> <span class="na">x=</span><span class="s">&quot;0&quot;</span> <span class="na">y=</span><span class="s">&quot;0&quot;</span> <span class="na">width=</span><span class="s">&quot;50&quot;</span> <span class="na">height=</span><span class="s">&quot;50&quot;</span> <span class="na">offsetx=</span><span class="s">&quot;0&quot;</span> <span class="na">offsety=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;frame</span> <span class="na">number=</span><span class="s">&quot;0&quot;</span> <span class="na">x=</span><span class="s">&quot;0&quot;</span> <span class="na">y=</span><span class="s">&quot;0&quot;</span> <span class="na">width=</span><span class="s">&quot;50&quot;</span> <span class="na">height=</span><span class="s">&quot;50&quot;</span> <span class="na">offsetx=</span><span class="s">&quot;0&quot;</span> <span class="na">offsety=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;frame</span> <span class="na">number=</span><span class="s">&quot;0&quot;</span> <span class="na">x=</span><span class="s">&quot;0&quot;</span> <span class="na">y=</span><span class="s">&quot;0&quot;</span> <span class="na">width=</span><span class="s">&quot;50&quot;</span> <span class="na">height=</span><span class="s">&quot;50&quot;</span> <span class="na">offsetx=</span><span class="s">&quot;0&quot;</span> <span class="na">offsety=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/animation&gt;</span>
+    <span class="nt">&lt;animation</span> <span class="na">name=</span><span class="s">&quot;animationName2&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;frame</span> <span class="na">number=</span><span class="s">&quot;0&quot;</span> <span class="na">x=</span><span class="s">&quot;0&quot;</span> <span class="na">y=</span><span class="s">&quot;0&quot;</span> <span class="na">width=</span><span class="s">&quot;50&quot;</span> <span class="na">height=</span><span class="s">&quot;50&quot;</span> <span class="na">offsetx=</span><span class="s">&quot;0&quot;</span> <span class="na">offsety=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;frame</span> <span class="na">number=</span><span class="s">&quot;0&quot;</span> <span class="na">x=</span><span class="s">&quot;0&quot;</span> <span class="na">y=</span><span class="s">&quot;0&quot;</span> <span class="na">width=</span><span class="s">&quot;50&quot;</span> <span class="na">height=</span><span class="s">&quot;50&quot;</span> <span class="na">offsetx=</span><span class="s">&quot;0&quot;</span> <span class="na">offsety=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;frame</span> <span class="na">number=</span><span class="s">&quot;0&quot;</span> <span class="na">x=</span><span class="s">&quot;0&quot;</span> <span class="na">y=</span><span class="s">&quot;0&quot;</span> <span class="na">width=</span><span class="s">&quot;50&quot;</span> <span class="na">height=</span><span class="s">&quot;50&quot;</span> <span class="na">offsetx=</span><span class="s">&quot;0&quot;</span> <span class="na">offsety=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;frame</span> <span class="na">number=</span><span class="s">&quot;0&quot;</span> <span class="na">x=</span><span class="s">&quot;0&quot;</span> <span class="na">y=</span><span class="s">&quot;0&quot;</span> <span class="na">width=</span><span class="s">&quot;50&quot;</span> <span class="na">height=</span><span class="s">&quot;50&quot;</span> <span class="na">offsetx=</span><span class="s">&quot;0&quot;</span> <span class="na">offsety=</span><span class="s">&quot;0&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/animation&gt;</span>
+<span class="nt">&lt;/animations&gt;</span>
+</pre></div>
+
+
+<p>Aby zaczytać pliczek musimy napisać takie oto linijki kodu:</p>
+<div class="highlight"><pre><span></span><span class="n">pugi</span><span class="o">::</span><span class="n">xml_document</span> <span class="n">doc</span><span class="p">;</span>
+<span class="n">pugi</span><span class="o">::</span><span class="n">xml_parse_result</span> <span class="n">result</span> <span class="o">=</span> <span class="n">doc</span><span class="p">.</span><span class="n">load_file</span><span class="p">(</span><span class="s">&quot;/path/to/file.xml&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<p>Następnie wyciągamy główny element animation który pozwoli nam potem iterować po kolejnych animacjach:</p>
+<div class="highlight"><pre><span></span><span class="k">auto</span>  <span class="n">root</span> <span class="o">=</span> <span class="n">doc</span><span class="p">.</span><span class="n">child</span><span class="p">(</span><span class="s">&quot;animations&quot;</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">animation</span> <span class="p">:</span> <span class="n">root</span><span class="p">.</span><span class="n">children</span><span class="p">(</span><span class="s">&quot;animation&quot;</span><span class="p">))</span>
+<span class="p">{</span>
+    <span class="c1">//impl</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Do atrybutów możemy się odnieść w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">frame</span><span class="p">.</span><span class="n">attribute</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">).</span><span class="n">as_int</span><span class="p">();</span>
+<span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="n">frame</span><span class="p">.</span><span class="n">attribute</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">).</span><span class="n">as_int</span><span class="p">();</span>
+<span class="kt">int</span> <span class="n">width</span> <span class="o">=</span> <span class="n">frame</span><span class="p">.</span><span class="n">attribute</span><span class="p">(</span><span class="s">&quot;width&quot;</span><span class="p">).</span><span class="n">as_int</span><span class="p">();</span>
+<span class="kt">int</span> <span class="n">height</span> <span class="o">=</span> <span class="n">frame</span><span class="p">.</span><span class="n">attribute</span><span class="p">(</span><span class="s">&quot;height&quot;</span><span class="p">).</span><span class="n">as_int</span><span class="p">();</span>
+<span class="kt">int</span> <span class="n">offsetx</span> <span class="o">=</span> <span class="n">frame</span><span class="p">.</span><span class="n">attribute</span><span class="p">(</span><span class="s">&quot;offsetx&quot;</span><span class="p">).</span><span class="n">as_int</span><span class="p">();</span>
+<span class="kt">int</span> <span class="n">offsety</span> <span class="o">=</span> <span class="n">frame</span><span class="p">.</span><span class="n">attribute</span><span class="p">(</span><span class="s">&quot;offsety&quot;</span><span class="p">).</span><span class="n">as_int</span><span class="p">();</span>
+</pre></div>
+
+
+<p>Całkiem fajną funkcjonalnością jest możliwość wymuszenia rzutowania na porządany typ. Co do zapisywania XML, to nie testowałem tego sam, ponieważ nie mam takiej potrzeby, ale w <a href="https://pugixml.org/docs/quickstart.html">dokumentacji</a> jest napisane, że się da i jakieś mega skomplikowane nie jest. Biblioteka działa szybko, co było jednym z wyznaczników kiedy wybierałem to rozwiązanie. 
+To w sumie na tyle. A wy jakich bibliotek używacie do obsługi XML?</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/programming.html">programming</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. Dużo się ostatnio naoglądałem i naczytałem o DDD i architekturze port-adapter i tak zacząłem rozmyślać jak to osiągnąć, choćby w kontekście tooli, które piszę do swojego silnika. Z tego co zauważyłem, to w projektach z którymi przyszło mi pracować, większość klas jest publiczna. Jest to zrozumiałe, chcemy mieć testy …" />
+<meta name="keywords" content="blog, .net, programming, c#">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content=".NET klasy internal a testy jednostkowe"/>
+<meta property="og:description" content="Cześć. Dużo się ostatnio naoglądałem i naczytałem o DDD i architekturze port-adapter i tak zacząłem rozmyślać jak to osiągnąć, choćby w kontekście tooli, które piszę do swojego silnika. Z tego co zauważyłem, to w projektach z którymi przyszło mi pracować, większość klas jest publiczna. Jest to zrozumiałe, chcemy mieć testy …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/net-klasy-internal-a-testy-jednostkowe.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-09-18 19:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content=".NET"/>
+<meta property="article:tag" content="blog"/>
+<meta property="article:tag" content=".net"/>
+<meta property="article:tag" content="programming"/>
+<meta property="article:tag" content="c#"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; .NET klasy internal a testy jednostkowe</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="net-klasy-internal-a-testy-jednostkowe">.NET klasy internal a testy jednostkowe</h1>
+    <p>
+          Posted on Mon 18 September 2017 in <a href="http://localhost:8000/category/net.html">.NET</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. Dużo się ostatnio naoglądałem i naczytałem o DDD i architekturze port-adapter i tak zacząłem rozmyślać jak to osiągnąć, choćby w kontekście tooli, które piszę do swojego silnika.</p>
+<p>Z tego co zauważyłem, to w projektach z którymi przyszło mi pracować, większość klas jest publiczna. Jest to zrozumiałe, chcemy mieć testy lub nie mamy testów, ale wszyscy piszą public, więc co to za problem. No niestety problem jest, wynika on z tego, że udostępniamy całe API na świat zewnętrzy, nawet jeżeli pewne komponenty nie powinny być dostępne na zewnątrz. Generalnie na zewnątrz powinniśmy udostępnić interfejsy i te implementacje, które mają być tam wykorzystane lub mogą zostać odziedziczone. W ramach powtórzenia w .NET mamy 3 specyfikatory dostępu dla klas, czyli public, internal, private oraz keyword sealed, który służy do ograniczenia możliwości dziedziczenia. Z tych wszystkich możliwości najpopularniejsze jest public, natomiast momenty gdzie widziałem zastosowanie sealed mógłbym policzyć na palcach jednej ręki. Podobnie jest w bibliotekach, choć zdarzają się momenty lepsze. Co do słowa kluczowego  internal to praktycznie w ogóle nie widziałem jego użycia i wszystkie klasy mają w większości public.</p>
+<p>Co zrobić w momencie, jeżeli chcemy pisać kod ładnie, czytelnie i udostępniać implementacje tylko tam gdzie jest ona potrzebna. Długo szukałem na to odpowiedzi jak pisać implementacje, tak abym testował to co potrzebuje a udostępniał to co chce. Mamy tu tak naprawdę 2 opcje :</p>
+<ul>
+<li>testujemy tyko publiczne API. Ma to sens, bo jest to to co chcemy udostępnić na zewnątrz, więc musi to działać i tyle. Mimo to wydaje mi się, że pisanie dodatkowych testów by się przydało.</li>
+<li>mówimy kompilatorowi do jakiego projektu udostępniamy nasze internale.</li>
+</ul>
+<p>Już widzę te pochodnie purystów, że to hack i tak nie powinno się robić, ale nie powinno się też pisać testów w dll implementujących nasze funkcjonalności. Co należy zrobić, aby klasy internal udostępnić na zewnątrz wystarczy w AssemblyInfo dodać oto takie dwie linijki:</p>
+<div class="highlight"><pre><span></span><span class="k">using</span> <span class="nn">System.Runtime.CompilerServices</span><span class="p">;</span>
+<span class="na">[assembly: InternalsVisibleTo(&quot;OUR.TEST.DLL.NAME&quot;)]</span>
+</pre></div>
+
+
+<p>Działa na pełnym .Net i Core oraz pozwala o wiele lepiej strukturyzować i testować nasz kod. Co do słowa kluczowego sealed, to polecam stosować zawsze, gdy nie jesteśmy pewni, że będzie potrzeba rozszerzania funkcjonalności klasy. W razie potrzeby ktoś świadomie będzie musiał to sealed usunąć lub w przypadku jakieś biblioteki opakować ją i na pewno spowoduje to dyskusje w zespole, czy na pewno należy tak zrobić. To na tyle. A co wy myślicie o zaprezentowanych tu praktykach. Zapraszam jak zawsze do sekcji komentarzy.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/blog.html">blog</a>
+      <a href="http://localhost:8000/tag/net.html">.net</a>
+      <a href="http://localhost:8000/tag/programming.html">programming</a>
+      <a href="http://localhost:8000/tag/c.html">c#</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

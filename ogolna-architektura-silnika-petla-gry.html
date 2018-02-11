@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Elementem, który posiada każdy silnik do gier jest pętla gry. W skrócie jest to element, który cyklicznie wykonuje całą logikę naszej gry. Wszystkie gry posiadają pewne stałe elementy, które muszą być wykonane, aby całość systemu działała. W największym uproszczeniu gra co klatkę powinna: sprawdzić sygnały z urządzeń wejścia, na podstawie …" />
+<meta name="keywords" content="DSP2017, Gamedev">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Ogólna architektura silnika - pętla gry"/>
+<meta property="og:description" content="Elementem, który posiada każdy silnik do gier jest pętla gry. W skrócie jest to element, który cyklicznie wykonuje całą logikę naszej gry. Wszystkie gry posiadają pewne stałe elementy, które muszą być wykonane, aby całość systemu działała. W największym uproszczeniu gra co klatkę powinna: sprawdzić sygnały z urządzeń wejścia, na podstawie …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/ogolna-architektura-silnika-petla-gry.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-03-04 18:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Ogólna architektura silnika - pętla gry</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="ogolna-architektura-silnika-petla-gry">Ogólna architektura silnika - pętla gry</h1>
+    <p>
+          Posted on Sat 04 March 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Elementem, który posiada każdy silnik do gier jest pętla gry. W skrócie jest to element, który cyklicznie wykonuje całą logikę naszej gry. Wszystkie gry posiadają pewne stałe elementy, które muszą być wykonane, aby całość systemu działała.</p>
+<p>W największym uproszczeniu gra co klatkę powinna:</p>
+<ul>
+<li>sprawdzić sygnały z urządzeń wejścia,</li>
+<li>na podstawie tych sygnałów wykonać logikę wszystkich obiektów uczestniczących w grze,</li>
+<li>po wykonaniu logiki narysować wszystko oraz wyświetlić to użytkownikowi.</li>
+</ul>
+<p>W najprostszym ujęciu pseudokodu (wiem miało być bez kodu, ale się nie da) powinno to wygląd tak:</p>
+<div class="highlight"><pre><span></span><span class="n">loop</span><span class="p">{</span>
+    <span class="n">HandleInput</span><span class="p">();</span>
+    <span class="n">Update</span><span class="p">();</span>
+    <span class="n">Draw</span><span class="p">();</span>
+
+    <span class="n">If</span><span class="p">(</span><span class="n">exitCondition</span> <span class="p">==</span> <span class="k">true</span><span class="p">){</span>
+        <span class="n">Exit</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>W takim ujęciu pętla wykona się tyle razy ile pozwoli na to procesor. Takiej sytuacji chcemy uniknąć, ponieważ w grze wiele rzeczy opiera się o upływ czasu musimy, więc obliczyć ile czasu upłynęło nam pomiędzy kolejnymi klatkami. Gry najczęściej działają w 60 fps lub w 30 fps, czyli na klatkę mamy 16 ms lub 30 ms. Aby zmierzyć czas powinniśmy zaimplementować timer, który zmierzy nam czas pomiędzy kolejnymi klatkami. </p>
+<div class="highlight"><pre><span></span><span class="n">timeStep</span> <span class="p">=</span> <span class="m">1</span> <span class="p">/</span> <span class="m">30f</span> <span class="p">[</span><span class="m">30f</span><span class="n">ps</span><span class="p">]</span> <span class="n">or</span> <span class="m">1</span><span class="p">/</span> <span class="m">60</span> <span class="p">[</span><span class="m">60f</span><span class="n">ps</span><span class="p">]</span>
+<span class="n">accumulator</span>  <span class="p">=</span> <span class="m">0</span><span class="p">;</span>
+<span class="n">timer</span><span class="p">.</span><span class="n">Start</span><span class="p">()</span>
+
+<span class="n">loop</span><span class="p">{</span>
+    <span class="n">deltaTime</span> <span class="p">=</span> <span class="n">timer</span><span class="p">.</span><span class="n">ElapsedTime</span><span class="p">();</span>
+    <span class="n">accumulator</span> <span class="p">=</span> <span class="n">accumulator</span> <span class="p">+</span> <span class="n">deltaTime</span><span class="p">;</span>
+
+    <span class="n">HandleInput</span><span class="p">();</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">accumulator</span> <span class="p">&gt;=</span> <span class="n">_timeStep</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Update</span><span class="p">(</span><span class="n">deltaTime</span><span class="p">);</span>
+        <span class="n">accumulator</span> <span class="p">=</span> <span class="n">accumulator</span> <span class="p">-</span> <span class="n">deltaTime</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">Draw</span><span class="p">(</span><span class="n">deltaTime</span><span class="p">);</span>
+
+    <span class="n">If</span><span class="p">(</span><span class="n">exitCondition</span> <span class="p">==</span> <span class="k">true</span><span class="p">){</span>
+        <span class="n">Exit</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Dzięki zastosowaniu timera w powyższym kodzie update wykona się tylko przy zdefiniowanym kroku czasu. Aby mieć  pewność, że czas płynie bardzo dokładnie stosuje się inne sztuczki. Mnie jednak nie było to nigdy potrzebne, gdyby jednak kogoś to mega interesowało to polecam artykuł <a href="http://gafferongames.com/game-physics/fix-your-timestep/">TU</a> tam znajdziecie jeszcze więcej sposobów odmierzania czasu w pentli gry. Dodam jeszcze, że często nie będziecie musieli pisać kodu pętli gry, ponieważ większość frameworków czy bibliotek (Monogame, LibGDX, Phaser.js, itp.) posiada już własną implementacje. Mimo to warto wiedzieć co znajduje się w bebechach, żeby zrozumieć wysokopoziomową logikę. To tyle, kolejny wpis przejdzie na nieco wyższy poziom abstrakcji w implementowaniu własnego silnika.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

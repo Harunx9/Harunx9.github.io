@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. Jakiś czas temu natchnęło mnie i postanowiłem ogarnąć coś, żeby 2DXnegine budował się na serwerze Continous Integration. Dla niezaznajomionych z tematem Continous Integration to taki twór, który po każdym commicie będzie pobierał do siebie nasze źródła, kompilował je i odpalał testy - po tym wszystkim możemy gdzieś naszą zbudowaną aplikacje …" />
+<meta name="keywords" content="inne, tools, CI, appveyor">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="AppVeyor darmowe CI dla projektów Open Source"/>
+<meta property="og:description" content="Cześć. Jakiś czas temu natchnęło mnie i postanowiłem ogarnąć coś, żeby 2DXnegine budował się na serwerze Continous Integration. Dla niezaznajomionych z tematem Continous Integration to taki twór, który po każdym commicie będzie pobierał do siebie nasze źródła, kompilował je i odpalał testy - po tym wszystkim możemy gdzieś naszą zbudowaną aplikacje …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/appveynor-darmowe-ci-dla-projektow-open-source.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-09-25 07:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Inne, tools"/>
+<meta property="article:tag" content="inne"/>
+<meta property="article:tag" content="tools"/>
+<meta property="article:tag" content="CI"/>
+<meta property="article:tag" content="appveyor"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; AppVeyor darmowe CI dla projektów Open Source</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="appveynor-darmowe-ci-dla-projektow-open-source">AppVeyor darmowe CI dla projektów Open Source</h1>
+    <p>
+          Posted on Mon 25 September 2017 in <a href="http://localhost:8000/category/inne-tools.html">Inne, tools</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. Jakiś czas temu natchnęło mnie i postanowiłem ogarnąć coś, żeby 2DXnegine budował się na serwerze Continous Integration. Dla niezaznajomionych z tematem Continous Integration to taki twór, który po każdym commicie będzie pobierał do siebie nasze źródła, kompilował je i odpalał testy - po tym wszystkim możemy gdzieś naszą zbudowaną aplikacje wystawić i robić jeszcze inne cuda, o których jeszcze nie pomyślałem. Na rynku istnieje parę usług CI dla projektów open source. Przy wyborze kierowałem się wsparciem dla MSBuild, ponieważ przez moje lenistwo nie zmieniłem jeszcze MSBuild'a na coś bardziej niezależnego od Visual Studio. To ograniczenie wykluczyło sporo serwisów, ale okazało się, że istnieje  darmowa usługa dla projektów open source wspierająca MSBuild, a jest to <a href="https://www.appveyor.com/">AppVeyor</a>. Jest to system oparty na windowsach, więc nadaje się rónież świetnie dla projetów .net'owych o czym też będzie w tym artykule. Zacznijmy od konfiguracji AppVeyor dla projektu C++. Na początku dodajemy na Dashboardzie serwisu nowy projekt z naszych repozytoriów githubowych. Jak projekt się utworzy to przechodzimy do zakładki settings i rozpoczynamy konfiguracje.
+W zakładce General konfigurujemy format numeru build'a oraz branch z jakiego chcemy robić build:</p>
+<p><img alt src="/images/ci/BasicConfig.png"></p>
+<p>Następnie w zakładce Environments konfigurujemy Visual Studio z którego chcemy buildować solucje oraz ewentulanie skrypty, kóre mają się odpalić porzed buildem. W moim przypadku musiałem dodać klonowanie submodułów git.</p>
+<p><img alt src="/images/ci/BuildEnv.png"></p>
+<p>Aby uruchomić testy należy ze skryptu odpalić exe, które je zawiera. Ja używam <a href="https://github.com/google/googletest">googletest</a>. Jedynie co musiałem zrobić to usunąć testy używające OpenGL, ponieważ AppVeyor ma jakieś problemy z tymi testami, których nie udało mi się rozwiązać.</p>
+<p><img alt src="/images/ci/TestsCI.png"></p>
+<p>Aby testy się wyświetliły w odpowiedniej zakładce trzeba wyeksportować je w odpowiednie miejsce. Skrypt eksportujący dodajemy w zakładce General. </p>
+<p><img alt src="/images/ci/TestUpload.png"></p>
+<p>Teraz jeszcze krótko na temat projektów .Net Core. Jak już mówiłem pisze również toole do swojego silnika. Postanowiłem je również dodać do CI. W przypadku .Net Core jest dużo prościej niż w C/C++. Zmianami jakie należy poczynić to dodanie restorowania nugetów przed buildem.</p>
+<p><img alt src="/images/ci/CorebeforeBuild.png"></p>
+<p>Dodatkowo, jeżeli chcemy odpalić testy to również musimy je odpalić za pomocą commandline'owego narzędzia dotnet:</p>
+<p><img alt src="/images/ci/CoreTesting.png"></p>
+<p>To w sumie tyle, każdy projekt builduje mi się na commita. W przyszłości pobawię się jeszcze z tworzeniem jakiś paczek, które będzie można pobrać zainstalować i używać, ale to na razie jeszcze pieśń przyszłości. Generalnie AppVeyor jako usługa bardzo mi się podoba ze względu na łatwość i szybkość konfiguracji. A jakie wy macie doświadczenia z usługami CI?</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/inne.html">inne</a>
+      <a href="http://localhost:8000/tag/tools.html">tools</a>
+      <a href="http://localhost:8000/tag/ci.html">CI</a>
+      <a href="http://localhost:8000/tag/appveyor.html">appveyor</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

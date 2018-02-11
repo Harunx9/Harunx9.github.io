@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć wszystkim. Wiem, że ostatnio było mało postów na temat progresu silnika - no niestety stworzenie sensownego renderowania pochłonęło masę czasu na research i implementacje. Mimo tego i tak będę miał sporo refactoringu, ale o tym napiszę później. Podczas implementacji chciałem, aby mój system renderowania był wzorowany na tym co znamy …" />
+<meta name="keywords" content="DSP2017, 2DXngine">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="2DXngine: Renderowanie 2D i inne informacje"/>
+<meta property="og:description" content="Cześć wszystkim. Wiem, że ostatnio było mało postów na temat progresu silnika - no niestety stworzenie sensownego renderowania pochłonęło masę czasu na research i implementacje. Mimo tego i tak będę miał sporo refactoringu, ale o tym napiszę później. Podczas implementacji chciałem, aby mój system renderowania był wzorowany na tym co znamy …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/2dxngine-renderowanie-2d-i-inne-informacje.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-05-06 10:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="2DXngine"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; 2DXngine: Renderowanie 2D i inne informacje</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="2dxngine-renderowanie-2d-i-inne-informacje">2DXngine: Renderowanie 2D i inne informacje</h1>
+    <p>
+          Posted on Sat 06 May 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć wszystkim. Wiem, że ostatnio było mało postów na temat progresu silnika - no niestety stworzenie sensownego renderowania pochłonęło masę czasu na research i implementacje. Mimo tego i tak będę miał sporo refactoringu, ale o tym napiszę później. Podczas implementacji chciałem, aby mój system renderowania był wzorowany na tym co znamy z Monogame, czyli spritebatchu. Technika ta pozwala na optymalizowane draw call', a dodatkowo opakowana pozwala używać wspomnianego spritebatcha do rysowania 2D oraz dodatkowych metod z graphic device do renderowania 3D. Nie mam jeszcze implementacji graphic device, ale zakładam ją w przyszłości, ponieważ chciałbym, aby silnik potrafił również obsługiwać renderowanie 3D. Jeśli chodzi o spriteach założyłem, że chciałbym go używać w następujący sposób:</p>
+<p>Batch.begin() -&gt; rozpoczynam wkładanie tego co chce renderować do batch
+Batch.draw(params) -&gt; odkładanie kolejnych obrazków do batcha
+Batch.draw(params) -&gt; odkładanie kolejnych obrazków do batcha
+Batch.draw(params) -&gt; odkładanie kolejnych obrazków do batcha
+Batch.draw(params)-&gt; odkładanie kolejnych obrazków do batcha
+Batch.end() -&gt; rysowanie batcha</p>
+<p>Kto kiedyś używał Monogame lub LibGDX, to na pewno zna powyższy pattern. Ja swojego batcha dodatkowo wzbogaciłem o sampler object(dostępny od OpenGL 3.3) tak, żeby nie trzeba podczas bindowania tekstury ustawiać filtrowania i zawijania tekstury, a można to zrobić przy każdym stracie batchowania. Całość działa całkiem dobrze i dokładnie opiszę wszystko w osobnych artykułach, ponieważ tu nie ma na to miejsca. Dodatkowo zaimplementowałem asset shadera i asset textury2D oraz render target. Ten ostatni będzie służył mi do właściwego renderowania scen, ponieważ standartowo OpenGL renderuje wszytko na back buffer, a mi chodzi żeby rendnerował do tekstury, ponieważ otwiera to możliwości postprocessingu i pozwala mi operować tylko na elementach sceny, a nie na UI. O postporcessingu też pewnie kiedyś napiszę, bo to temat dość ciekawy i mocno przydatny. Co do dalszego rozwoju to jak mam już renderowanie  2D, to mogę zająć się inputem i muzyką a to myślę, że nie będą już tak skomplikowane tematy jak samo ryzowanie. Zanim to jednak nastąpi daje sobie jeszcze tydzień na uporządkowanie kodu i dokończenie renderowania opartego o warstwy. Dodatkowo przydałoby się napisać trochę testów do tego co już zrobiłem, ponieważ nie miałem na to czasu. Myślę, że testy pozwolą mi spojrzeć na całość z nowej pespektywy i nieco zoptymalizować kod, plus sprawdzać czy wszystko działa na pewno tak jak to planowałem. Myślę, że to na razie tyle w przyszłych postach opisze dokładnie poszczególne elementy potrzebne do stworzenie renderowania 2D w OpenGL.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/2dxngine.html">2DXngine</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

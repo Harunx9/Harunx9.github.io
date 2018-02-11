@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. Wiem, że powinienem w pierwszej kolejności napisać o C++ i testowaniu, ale zeszło mi na to jakieś 3 godziny, więc może ktoś skorzysta z mojej wiedzy. Chciałem napisać prosty test sprawdzający czy klasa programu Shadera działa tak jak tego oczekuję. Napisałem więc prosty test, odpaliłem go i od tego …" />
+<meta name="keywords" content="DSP2017, Gamedev, Tools">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="OpenGL a Unit Testy"/>
+<meta property="og:description" content="Cześć. Wiem, że powinienem w pierwszej kolejności napisać o C++ i testowaniu, ale zeszło mi na to jakieś 3 godziny, więc może ktoś skorzysta z mojej wiedzy. Chciałem napisać prosty test sprawdzający czy klasa programu Shadera działa tak jak tego oczekuję. Napisałem więc prosty test, odpaliłem go i od tego …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/opengl-a-unit-testy.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-04-17 18:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="article:tag" content="Tools"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; OpenGL a Unit Testy</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="opengl-a-unit-testy">OpenGL a Unit Testy</h1>
+    <p>
+          Posted on Mon 17 April 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. Wiem, że powinienem w pierwszej kolejności napisać o C++ i testowaniu, ale zeszło mi na to jakieś 3 godziny, więc może ktoś skorzysta z mojej wiedzy. Chciałem napisać prosty test sprawdzający czy klasa programu Shadera działa tak jak tego oczekuję. Napisałem więc prosty test, odpaliłem go i od tego  momentu nastąpiła moja mocna konsternacja, która później przerodziła się w nieco większe zdenerwowanie. W projekcie używam GLEW, aby mieć dostęp do funkcji OpenGL i okazuje się, że aby działało kompilowanie shaderów muszę pomyślenie inicjalizować tą bibliotekę, bo inaczej dostane na twarz wyjątek. Po kilu próbach udało mi się pomyślnie skompilować shader w moim głównym projekcie, ale testy wymagały więcej pracy. Musiałem dodać do testów SDL i GLEW dodatkowo testowanie, które wymaga zainicjalizowania okienka i kontekstu OpenGL - robię to za pomocą takiego fixture:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ShaderTestFixture</span> <span class="o">:</span> <span class="k">public</span> <span class="o">::</span><span class="n">testing</span><span class="o">::</span><span class="n">Test</span>
+<span class="p">{</span>
+<span class="k">protected</span><span class="o">:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">SetUp</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">SDL_Init</span><span class="p">(</span><span class="n">SDL_INIT_VIDEO</span><span class="p">);</span>
+
+        <span class="n">SDL_GL_SetAttribute</span><span class="p">(</span><span class="n">SDL_GL_CONTEXT_PROFILE_MASK</span><span class="p">,</span> <span class="n">SDL_GL_CONTEXT_PROFILE_CORE</span><span class="p">);</span>
+
+        <span class="n">SDL_GL_SetAttribute</span><span class="p">(</span><span class="n">SDL_GL_CONTEXT_MAJOR_VERSION</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+        <span class="n">SDL_GL_SetAttribute</span><span class="p">(</span><span class="n">SDL_GL_CONTEXT_MINOR_VERSION</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+        <span class="n">SDL_GL_SetAttribute</span><span class="p">(</span><span class="n">SDL_GL_DOUBLEBUFFER</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="k">auto</span> <span class="n">_window</span> <span class="o">=</span> <span class="n">SDL_CreateWindow</span><span class="p">(</span><span class="s">&quot;Game Window&quot;</span><span class="p">,</span>
+            <span class="n">SDL_WINDOWPOS_UNDEFINED</span><span class="p">,</span> <span class="n">SDL_WINDOWPOS_UNDEFINED</span><span class="p">,</span>
+            <span class="mi">640</span><span class="p">,</span>
+            <span class="mi">360</span><span class="p">,</span>
+            <span class="n">SDL_WINDOW_OPENGL</span><span class="p">);</span>
+
+        <span class="k">auto</span> <span class="n">ctx</span> <span class="o">=</span> <span class="n">SDL_GL_CreateContext</span><span class="p">(</span><span class="n">_window</span><span class="p">);</span>
+
+        <span class="n">GLenum</span> <span class="n">glewError</span> <span class="o">=</span> <span class="n">glewInit</span><span class="p">();</span>
+
+    <span class="p">}</span>
+
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">TearDown</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">SDL_Quit</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>Sam przykładowy test wygląda tak:</p>
+<div class="highlight"><pre><span></span><span class="n">TEST_F</span><span class="p">(</span><span class="n">ShaderTestFixture</span><span class="p">,</span> <span class="n">shader_can_be_load_from_inline_source</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//Arrange</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">vertexSource</span> <span class="o">=</span>
+        <span class="s">&quot;#version 330 core</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;layout (location = 0) in vec4 position;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;layout (location = 1) in vec4 in_tint;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;out vec2 tex_pos;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;out vec4 tint;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;uniform mat4 projection;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;void main(void)</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;{</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;gl_Position = projection * vec4(position.x, position.y, 0.0f, 1.0f);</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;tex_pos = vec2(position.z, position.w);</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;tint = in_tint;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;}</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">fragmentSource</span> <span class="o">=</span>
+        <span class="s">&quot;#version 330 core</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;in vec2 tex_pos;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;in vec4 tint;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;out vec4 color;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;uniform sampler2D tex;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;uniform float global_alpha;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;void main(void)</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;{</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;color = vec4(tint.x, tint.y, tint.z, global_alpha * tint.w) * texture(tex, tex_pos);</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;}&quot;</span><span class="p">;</span>
+
+    <span class="k">auto</span> <span class="n">shader</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ShaderProgram</span><span class="p">(</span><span class="n">vertexSource</span><span class="p">,</span> <span class="n">fragmentSource</span><span class="p">);</span>
+
+    <span class="c1">//Act    </span>
+    <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">shader</span><span class="o">-&gt;</span><span class="n">compile</span><span class="p">();</span>
+
+    <span class="c1">//Assert</span>
+    <span class="n">ASSERT_EQ</span><span class="p">(</span><span class="n">ShaderCompileResult</span><span class="o">::</span><span class="n">COMPILATION_SUCESS</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Dobrze, że ten problem wyszedł teraz, ponieważ mogłem w łatwy sposób zmodyfikować kod. Cała sytuacja nauczyła mnie, żeby pisać testy mimo wszystko, ponieważ jak bym miał zaimplementowane więcej to musiałbym naprawdę mocno się napracować, aby znaleźć źródło problemu. Postaram się napisać inne testy dla elementów używających OpenGL i zobaczymy, czy nie mam większej ilości błędów. Nauka z tej sytuacji jest dość oczywista  - piszemy testy nawet w bardzo ograniczonym zakresie. To na razie tyle mam nadzieję, że komuś przyda się to co w tym miejscu napisałem. Można dodać możliwość konfiguracji wersji OpenGL i inne rzeczy, ale to już później. Mam nadzieję, że w następnym wpisie opisze więcej o testowaniu kodu w C++.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+      <a href="http://localhost:8000/tag/tools.html">Tools</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

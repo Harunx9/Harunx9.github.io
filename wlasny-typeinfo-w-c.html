@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć, dziś chciałem pokazać jak zrobiłem system informacji o typach obiektów w silniku 2DXngine, który powstaje w ramach konkursu &#34;Daj się poznać&#34;. Taki feature był mi porzebny do wysukiwania po typie komponentów z GameObjectu. Nie chciałem używać standardowego TypeId, ponieważ mądrzejsi ode mnie mówią, że jest to powolne, i że …" />
+<meta name="keywords" content="DSP2017, Gamedev, C++">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Własny TypeInfo w C++"/>
+<meta property="og:description" content="Cześć, dziś chciałem pokazać jak zrobiłem system informacji o typach obiektów w silniku 2DXngine, który powstaje w ramach konkursu &#34;Daj się poznać&#34;. Taki feature był mi porzebny do wysukiwania po typie komponentów z GameObjectu. Nie chciałem używać standardowego TypeId, ponieważ mądrzejsi ode mnie mówią, że jest to powolne, i że …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/wlasny-typeinfo-w-c.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-03-27 19:10:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="article:tag" content="C++"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Własny TypeInfo w C++</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="wlasny-typeinfo-w-c">Własny TypeInfo w C++</h1>
+    <p>
+          Posted on Mon 27 March 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć, dziś chciałem pokazać jak zrobiłem system informacji o typach obiektów w silniku 2DXngine, który powstaje w ramach konkursu "Daj się poznać". Taki feature był mi porzebny do wysukiwania po typie komponentów z GameObjectu. Nie chciałem używać standardowego  TypeId, ponieważ mądrzejsi ode mnie mówią, że jest to powolne, i że refleksja w  runtime jest ogólnie zła. Dlatego należy pomyśleć tak, aby jak najwięcej zrobić w compile time. Tak jak już wiecie dopiero uczę się C++, więc przejrzałem trochę Internet i w moim rozwiązaniu mocno inspirowałem się <a href="http://www.axelmenzel.de/articles/rtti">TYM</a> artykułem. Podobnie jak w nim moje rozwiązanie opiera się na makrach i TypeCache, ale po kolei. Aby zarejestrować typ używam takich oto makr:</p>
+<div class="highlight"><pre><span></span><span class="cp">#define DECLARE_TYPE_INFO(Type, BaseType)                                            \</span>
+<span class="cp">                                                                                     \</span>
+<span class="cp">template&lt;&gt;                                                                           \</span>
+<span class="cp">struct TypeIdInfo&lt;Type&gt;                                                              \</span>
+<span class="cp">{                                                                                    \</span>
+<span class="cp">    static TypeInfo getType()                                                        \</span>
+<span class="cp">    {                                                                                \</span>
+<span class="cp">        static const TypeInfo typeInfo = getOrRegisterTypeInChache(#Type, #BaseType);\</span>
+<span class="cp">        return typeInfo;                                                             \</span>
+<span class="cp">    }                                                                                \</span>
+<span class="cp">};                                                                                   \</span>
+</pre></div>
+
+
+<p>To makro dodaję w plikach .h., jeżeli nie ma bazowego typu zostawiam "" . Będę musiał to przemyśleć w przyszłości, na razie to rozwiązanie mi nie przeszkadza.</p>
+<div class="highlight"><pre><span></span><span class="cp">#define DEFINE_TYPE_INFO(Type)                                 \</span>
+<span class="cp">                                                               \</span>
+<span class="cp">template&lt;&gt;                                                     \</span>
+<span class="cp">struct RegisterType&lt;Type&gt;                                      \</span>
+<span class="cp">{                                                              \</span>
+<span class="cp">    RegisterType()                                             \</span>
+<span class="cp">    {                                                          \</span>
+<span class="cp">        TypeIdInfo&lt;Type&gt;::getType();                           \</span>
+<span class="cp">    }                                                          \</span>
+<span class="cp">};                                                             \</span>
+<span class="cp">static const RegisterType&lt;Type&gt; CAT(registerType, __COUNTER__);</span>
+</pre></div>
+
+
+<p>Powyższe makro oddaje w plikach .cpp, żeby rejestracja nastąpiła automatycznie. Wykorzystany jest tu pewien trik, a mianowicie jeśeli zdefiniujemy generyczna statyczny const, to zostanie on wywołany przed funkcją main, co daje nam therad safe przy rejestracji naszych obiektów.
+Funkcja rejestrująca wygląda w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="n">TypeInfo</span> <span class="nf">getOrRegisterTypeInChache</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">parentTypeName</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">TypeInfo</span> <span class="n">type</span><span class="p">;</span>
+
+    <span class="k">auto</span> <span class="n">typeCache</span> <span class="o">=</span> <span class="n">TypeCache</span><span class="o">::</span><span class="n">get_instance</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">typeCache</span><span class="o">-&gt;</span><span class="n">get_typeAlreadyExist</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="nb">false</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">id</span> <span class="o">=</span> <span class="n">TypeCache</span><span class="o">::</span><span class="n">get_nextId</span><span class="p">();</span>
+        <span class="kt">int</span> <span class="n">paretnId</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">parentTypeName</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">TypeInfo</span><span class="o">*</span> <span class="n">parentType</span> <span class="o">=</span> <span class="n">typeCache</span><span class="o">-&gt;</span><span class="n">get_typeByRef</span><span class="p">(</span><span class="n">parentTypeName</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">parentType</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">paretnId</span> <span class="o">=</span> <span class="n">parentType</span><span class="o">-&gt;</span><span class="n">get_id</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">type</span> <span class="o">=</span> <span class="n">TypeInfo</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">id</span><span class="p">,</span> <span class="n">paretnId</span><span class="p">);</span>
+        <span class="n">typeCache</span><span class="o">-&gt;</span><span class="n">addType</span><span class="p">(</span><span class="n">type</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">type</span> <span class="o">=</span> <span class="n">typeCache</span><span class="o">-&gt;</span><span class="n">get_typeByValue</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">type</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>W skrócie zagląda ona do TypeCache, czy dany typ jest już tam zarejestrowany i jeżeli jest to go zwraca, a jeżeli nie to tworzy nowy. W 99 procentach przypadków będzie nam oddawała już wygenerowany TypeId, ponieważ jak już napisałem rejestracja odbywa się automatycznie przed funkcją main. Ze względu na to, że całość kodu jest na githubie nie będę dokładnie omawiał implementacji TypeCache i TypeInfo, jeżeli kotś jest ciekawy to zapraszam <a href="https://github.com/Harunx9/2DXngine/tree/master/2DXngine.Core/src/TypeInformation">TU</a>. Zaimplementowany system informacji o typie pozwala mi na to, że mogę w łatwy sposób wyszukiwać instancji obiektów ,które reprezentują daną klasę, ale i wyszukiwać prze klasy bazowe. Przykładowo może poszukać wszystkich komponentów dziedziczących po UpdateableComponents. System ten ma niestety jedno ograniczenie a mianowicie, aby dawał on informacje deterministyczne obiekty mogą dziedziczyć tylko i wyłącznie po jednej klasie bazowej. Oczywiście można by go bardziej rozwinąć tak, aby wprowadzić interfejsy czy wielodziedziczenie, ale na razie nie widzę takie potrzeby, ponieważ z założenia hierarchia dziedziczenia komponentów jest raczej dość liniowa, więc myślę, że na potrzeby silnika rozwiązanie jest wystarczające. Pozostaje jeszcze kwestia optymalizacji ale to, że tak powiem wyjdzie podczas implementacji gry na silniku, więc na razie nie jestem w stanie sprawdzić jak mocno takie otrzymywanie informacji o typie spowolni wykonywanie logiki gry. To chyba na tyle, jeżeli chodzi o moje podejście to systemu informacji o typach. Jeżeli macie jakieś pytania czy uwagi to zapraszam do sekcji komentarzy.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+      <a href="http://localhost:8000/tag/c.html">C++</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

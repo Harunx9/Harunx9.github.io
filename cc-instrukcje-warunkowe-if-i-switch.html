@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Zdaję sobie sprawę z tego,że ostatni post był nieco przydługi i zostało w nim przekazane więcej elementów, dlatego zdecydowałem się na nieco mniejsze objętościowo posty (jeżeli jakiś temat będzie nieco dłuższy to podzielę go na kilka postów, zamiast starać się upchać wszystko razem). W trzeciej już części artykułów o …" />
+<meta name="keywords" content="blog, tutorial, programming">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="C/C++: Instrukcje warunkowe if i switch"/>
+<meta property="og:description" content="Zdaję sobie sprawę z tego,że ostatni post był nieco przydługi i zostało w nim przekazane więcej elementów, dlatego zdecydowałem się na nieco mniejsze objętościowo posty (jeżeli jakiś temat będzie nieco dłuższy to podzielę go na kilka postów, zamiast starać się upchać wszystko razem). W trzeciej już części artykułów o …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/cc-instrukcje-warunkowe-if-i-switch.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-11-29 01:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="C/C++"/>
+<meta property="article:tag" content="blog"/>
+<meta property="article:tag" content="tutorial"/>
+<meta property="article:tag" content="programming"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; C/C++: Instrukcje warunkowe if i switch</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="cc-instrukcje-warunkowe-if-i-switch">C/C++: Instrukcje warunkowe if i switch</h1>
+    <p>
+          Posted on Tue 29 November 2016 in <a href="http://localhost:8000/category/cc.html">C/C++</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Zdaję sobie sprawę z tego,że ostatni post był nieco przydługi i zostało w nim przekazane więcej elementów, dlatego zdecydowałem się na nieco mniejsze objętościowo posty (jeżeli jakiś temat będzie nieco dłuższy to podzielę go na kilka postów, zamiast starać się upchać wszystko razem). 
+W trzeciej już części artykułów  o C++ omówimy dwie konstrukcje tego języka. Jako pierwszą na tapetę weźmiemy konstrukcje warunkową if..else. Instrukcja służy do rozgałęziania naszego kodu w zależności od spełnionego warunku. Podstawowa konstrukcja ma następującą budowę:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">warunek</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//kod wykona się, jeżeli warunek jest prawdziwy</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+   <span class="c1">//kod wykona się, jeżeli warunek nie jest prawdziwy</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Przyjrzyjmy się na poniższy przykład: </p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">18</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">age</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;masz mniej niz 20 lat&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;masz 20 lub wiecej lat&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Powyższy kod wypisze “masz mniej niż 20 lat”, ponieważ zmienna age ma przypisaną wartość 18. W ramach instrukcji warunkowej if możemy kolejne wywołania if deklarować bezpośrednio po else:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">age</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;masz mniej niz 20 lat&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">age</span> <span class="o">==</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;masz 20 lat&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;masz 20 lub wiecej lat&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>W tym przypadku prawdziwy jest środkowy warunek, czyli “age == 20”, więc do konsoli zostanie wpisany tekst “masz 20 lat”. W C/C++ używana jest jeszcze jedna konstrukcja warunkowa a mianowicie switch. Podstawowa jej budowa wygląda w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="k">switch</span> <span class="p">(</span><span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">case</span> <span class="nl">elem1</span><span class="p">:</span>
+        <span class="c1">// kod wykona się , jeżeli element input jest równy elem1</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">elem</span> <span class="mi">2</span><span class="o">:</span>
+        <span class="c1">// kod wykona się, jeżeli element input jest równy elem2</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">default</span><span class="o">:</span>
+        <span class="c1">// kod wykona się, jeżeli element input nie </span>
+        <span class="c1">//został dopasowany z żadnym elementem powyżej</span>
+        <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Popatrzmy na kolejny przykład:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">item_count</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="k">switch</span> <span class="p">(</span><span class="n">item_count</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Nie masz zadnych przedmiotow&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Masz 1 przedmiot&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Masz 2 przedmioty&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">default</span><span class="o">:</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Masz więcej niż 2 przedmioty&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>}</p>
+<p>W tym przypadku na konsole zostanie wypisany tekst “Masz 2 przedmioty”, ponieważ zmienna item_count ma wpisaną wartość 2. Spróbuj sam zmienić wartość zmiennej item_count, aby zobaczyć różnice kiedy będzie posiadała wartość 0, 1, oraz 3 i więcej.
+Konstrukcja switch jest jednak najczęściej wykorzystywana z typem wyliczeniowym, czyli “enum”. Enum tak w największym uproszczeniu pozwala na nazwanie nam liczb, które mają znaczenie w naszej logice. Typ enum konstruujemy w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">NazwaTypu</span>
+<span class="p">{</span>
+    <span class="n">Opcja1</span><span class="p">,</span>
+    <span class="n">Opcja2</span><span class="p">,</span>
+    <span class="n">Opcja3</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>Przykładem niech będzie wypisanie typu broni w grze:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">enum</span> <span class="n">WeaponType</span>
+<span class="p">{</span>
+    <span class="n">MELLE</span><span class="p">,</span>
+    <span class="n">RANGE</span><span class="p">,</span>
+    <span class="n">THROW</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">WeaponType</span> <span class="n">type</span> <span class="o">=</span> <span class="n">WeaponType</span><span class="o">::</span><span class="n">RANGE</span><span class="p">;</span>
+
+    <span class="k">switch</span> <span class="p">(</span><span class="n">type</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">case</span> <span class="n">WeaponType</span><span class="o">::</span><span class="nl">MELLE</span> <span class="p">:</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Bron do walki w zwarciu&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="n">WeaponType</span><span class="o">::</span><span class="nl">RANGE</span><span class="p">:</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Bron do walki zasiegowej&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="n">WeaponType</span><span class="o">::</span><span class="nl">THROW</span><span class="p">:</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Bron rzucana&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>W dużej grze taki kod oczywiście nie miałby racji bytu, ale dla unaocznienia jak działa typ wyliczeniowy nadaje się jak najbardziej. W tym poście to byłoby na tyle do zobaczenia w kolejnej części kursu C/C++</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/blog.html">blog</a>
+      <a href="http://localhost:8000/tag/tutorial.html">tutorial</a>
+      <a href="http://localhost:8000/tag/programming.html">programming</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

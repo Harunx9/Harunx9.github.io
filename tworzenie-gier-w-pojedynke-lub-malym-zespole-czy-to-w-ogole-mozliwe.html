@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. W poście o alternatywnych ścieżkach rozwoju w programowaniu opowiedziałem nieco jak ja się rozwijam jako programista. Teraz chciałem opowiedzieć o implementacji takiego modelu rozwoju w prawdziwym życiu. Tworzenie gier to bardzo fajne ciekawe i mega rozwijające hobby. Oprócz programowania trzeba poznać nieco matematyki, fizyki, architektury komputera, wzorców projektowych, tworzenia …" />
+<meta name="keywords" content="DSP2017, Gamedev">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Tworzenie gier w pojedynkę lub małym zespole. Czy to w ogóle możliwe?"/>
+<meta property="og:description" content="Cześć. W poście o alternatywnych ścieżkach rozwoju w programowaniu opowiedziałem nieco jak ja się rozwijam jako programista. Teraz chciałem opowiedzieć o implementacji takiego modelu rozwoju w prawdziwym życiu. Tworzenie gier to bardzo fajne ciekawe i mega rozwijające hobby. Oprócz programowania trzeba poznać nieco matematyki, fizyki, architektury komputera, wzorców projektowych, tworzenia …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/tworzenie-gier-w-pojedynke-lub-malym-zespole-czy-to-w-ogole-mozliwe.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-04-16 14:15:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Tworzenie gier w pojedynkę lub małym zespole. Czy to w ogóle możliwe?</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="tworzenie-gier-w-pojedynke-lub-malym-zespole-czy-to-w-ogole-mozliwe">Tworzenie gier w pojedynkę lub małym zespole. Czy to w ogóle możliwe?</h1>
+    <p>
+          Posted on Sun 16 April 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. W poście o alternatywnych ścieżkach rozwoju w programowaniu opowiedziałem nieco jak ja się rozwijam jako programista. Teraz chciałem opowiedzieć o implementacji takiego modelu rozwoju w prawdziwym życiu. Tworzenie gier to bardzo fajne ciekawe i mega rozwijające hobby. Oprócz programowania trzeba poznać nieco matematyki, fizyki, architektury komputera, wzorców projektowych, tworzenia grafiki, programowania grafiki, itp. Już chyba każdy widzi dokąd to zmierza - na gry trzeba mieć masę czasu szczególnie, jeśli robimy je w zakresie hobbystycznym, po godzinach w małym zespole lub samemu - jeżeli jeszcze po ostatnim zdaniu nie zrezygnowałeś i czytasz dalej to powiem Ci, że mimo tego można stworzyć samemu grę i jest na to dość sporo przykładów. Dla mnie koronnym przykładem jest Sos i jego McPixel, oczywiście miał trochę szczęścia, ale i jego produkt jest na dobrym poziomie - jeżeli jesteś na początku swej drogi i nie masz z grami doświadczeniami powiem Ci tyle, że nie licz, iż pierwszą grę uda Ci się w ogóle skończyć. Ja swój pierwszy prototyp wyrzuciłem do kosza po 3 miesiącach developmentu. Mimo to dalej mam go na repozytorium i korzystam z jego kilku rozwiązań. Dlatego polecam na początek stworzyć cokolwiek, co można nazwać grą. Lubisz platformówki zrób ją, lubisz gry logiczne zrób grę logiczną - to naprawdę nie ma znaczenia. Pierwsza gra pozwoli Ci na zapoznanie się z wybraną przez siebie biblioteką lub framwerokeim, stworzyć pierwszy mały engine w końcu pozwoli uczyć Ci się na błędach no i oczywiści co ważne dołączyć do ludzi piszących na twitterze posty z #gamedev. Twitter to w ogóle świetne narzędzie dla ludzi kreatywnych, ale o tym to chyba inny post napiszę. Kolejnym etapem, który warto poczynić po pierwszym prototypie jest konceptualizacja. Ja swoje gry zaczynałem tworzyć w następujący sposób: grałem w jakiś typ gry, chciałem zrobić coś podobnego, bo w tym co ogrywałem czegoś brakowało, zaczynałem pisać, na pewnym etapie brakowało mi pomysłów, więc doklejałem wszystko co mogłem, porzucałem projekt, bo trzeba by było go zacząć robić od początku ze względu na błędy w kodowaniu i designie.
+Tak wygląda droga, ale należy pamiętać, że każdy z tych projektów mnie czegoś uczył i pozwalał na więcej. Obecnie pracuje znowu nad kolejną grą, ale zacząłem od nieco innej strony. W ramach DSP2017 mam nadzieje stworzyć podwaliny własnego silnika 2d. Jednocześnie konceptualizacje grę, co oznacza, że siedzę z kartka papieru i ogarniam o czym ta gra powinna być, projektuję fabułę, postaci, poziomy tak, aby stworzyć sobie zamknięty obraz całości. Wiadomo, że gra będzie się zmieniała z czasem, ale już teraz widzę, że taki plan sporo mi ułatwi, ponieważ nie będę musiał wymyślać na poczekaniu tego co chcę zrobić, tylko będę miał jakąś mniej lub bardziej określoną listę rzeczy do zrobienia. Jednym z największych problemów programisty robiącego gry jest grafika. Polecam w takim wypadku nauczyć się chociaż jakiegoś prostego pixelartu. Jeżeli nasza gra będzie popularna to na pewno grafika nie będzie najważniejsza -&gt; patrz McPixel. Tak jak napisałem istotny jest tech i plan, jeżeli mamy to powinniśmy nasza grę napisać na tyle, aby posiadał ona bazowy gameplay. Jak już to będziemy mieli, to należy zebrać feedback od użytkowników. Jest to bardzo ważny proces w którym pomogą nam takie serwisy jak IndieDb czy itch.io. W tak zwanym międzyczasie powinniśmy grę reklamować w social mediach. Weźmy pod uwagę, że na początku cała ta machina będzie rozpędzać się raczej wolno, mimo to uważam, że jeżeli będziemy konsekwentni w swoich działaniach, to powinno się udać. Ważne jest to, aby nie myśleć, że nasza pierwsza gra (ta ukończona) będzie kolejnym Minecraftem, bo ta gra była jedyna i na pewno my tyle nie zarobimy o ile w ogóle coś zarobimy. Ogóle takie myślenie, że zrobię grę czy cokolwiek i od jutra będę milionerem jest złe. Każdy biznes rozkręca się powoli, a w grach najważniejsze jest zbudowanie sobie community, które będzie w naszą grę grało. Inną sprawą jest praca dla przyjemności. Dla mnie właśnie takie jest tworzenie gier. Robię to, bo to lubię i jak na razie nie zamierzam przestać. To chyba na tyle w tym poście, jeżeli macie jakieś swoje pomysły jak tworzyć grę w małych zespołach lub samemu i nie zwariować to zapraszam do sekcji komentarzy.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

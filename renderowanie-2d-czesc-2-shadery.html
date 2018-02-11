@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Shadery to programy wykonywane podczas procesu renderowania OpenGL. Nie będę tu opisywał całego pipeline, ponieważ to byłby temat na cały osobny artykuł, więc wspomnę tylko, że dla renderowania 2D istotne jest wipięcie się w fazę vertex shadera i fragment shadera. Ten pierwszy opowiada za umiejscowienie naszego spritea w przestrzeni, jego …" />
+<meta name="keywords" content="DSP2017, Gamedev, OpenGL">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Renderowanie 2D część 2: Shadery"/>
+<meta property="og:description" content="Shadery to programy wykonywane podczas procesu renderowania OpenGL. Nie będę tu opisywał całego pipeline, ponieważ to byłby temat na cały osobny artykuł, więc wspomnę tylko, że dla renderowania 2D istotne jest wipięcie się w fazę vertex shadera i fragment shadera. Ten pierwszy opowiada za umiejscowienie naszego spritea w przestrzeni, jego …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/renderowanie-2d-czesc-2-shadery.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-05-20 18:50:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="OpenGL"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="article:tag" content="OpenGL"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Renderowanie 2D część 2: Shadery</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="renderowanie-2d-czesc-2-shadery">Renderowanie 2D część 2: Shadery</h1>
+    <p>
+          Posted on Sat 20 May 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Shadery to programy wykonywane podczas procesu renderowania OpenGL. Nie będę tu opisywał całego pipeline, ponieważ to byłby temat na cały osobny artykuł, więc wspomnę tylko, że dla renderowania 2D istotne jest wipięcie się w fazę vertex shadera i fragment shadera. Ten pierwszy opowiada za umiejscowienie naszego spritea w przestrzeni, jego transformacje itp. Drugi shader włącza się już po rasteryzacji obrazu i odpowiada za kolorowanie poszczególnych pixeli. Pogramy shadera w przypadku OpenGL pisze się w języku GLSL. Przypomina on bardzo składnią C i jest językiem strukturalnym. Możemy w programie pisanym np. w C++ przesyłać do niego dane itp. Dodatkowo składnie wzbogacają wszystkie potrzebne typy matematyczne takie jak wektory, macierze i quaterniony oraz niezbędne funkcje matematyczne. Jeżeli nie chcecie babrać się z pisaniem w C++ lub chcecie tylko potestować shadery to zapraszam na <a href="https://www.shadertoy.com/">shadertoy</a>. Jako, że GLSL jest osobnym językiem musi on zostać wczytany skompilowany i uruchomiony podczas działania programu. W tym celu zrobiłem parę rzeczy, aby to ułatwić i zamknąć w jedną całość za pomocą klas. Jako pierwszą zaimplementowałem klasę dla pojedynczego programu shadera. Jej interfejs wygląda w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">ShaderType</span>
+<span class="p">{</span>
+    <span class="n">VERTEX_SHADER</span> <span class="o">=</span> <span class="n">GL_VERTEX_SHADER</span><span class="p">,</span>
+    <span class="n">FRAGMENT_SHADER</span> <span class="o">=</span> <span class="n">GL_FRAGMENT_SHADER</span><span class="p">,</span>
+    <span class="n">GEOMERTY_SHADER</span> <span class="o">=</span> <span class="n">GL_GEOMETRY_SHADER</span>
+<span class="p">};</span>
+
+<span class="k">enum</span> <span class="n">ShaderCompileResult</span>
+<span class="p">{</span>
+    <span class="n">COMPILATION_ERROR</span><span class="p">,</span>
+    <span class="n">COMPILATION_SUCESS</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Shader</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Shader</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">path</span><span class="p">,</span> <span class="n">ShaderType</span> <span class="n">type</span><span class="p">);</span>
+    <span class="n">Shader</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">source</span><span class="p">,</span> <span class="n">ShaderType</span> <span class="n">type</span><span class="p">);</span>
+    <span class="o">~</span><span class="n">Shader</span><span class="p">();</span>
+
+    <span class="kt">bool</span> <span class="nf">tryLoad</span><span class="p">();</span>
+    <span class="n">ShaderCompileResult</span> <span class="nf">compile</span><span class="p">();</span>
+    <span class="n">READONLY_PROPERTY</span><span class="p">(</span><span class="n">GLuint</span><span class="p">,</span> <span class="n">shaderId</span><span class="p">)</span>
+    <span class="n">READONLY_PROPERTY</span><span class="p">(</span><span class="n">ShaderType</span><span class="p">,</span> <span class="n">type</span><span class="p">)</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">bool</span> <span class="n">_compiled</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_source</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_path</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>Jak widać zmapowałem stałe OpenGl na enum ShaderType, dodatkowo zrobiłem enum określający to czy kompilacja się powiodła. Wynika to z tego względu, że stosowanie wyjątków jest bardzo kosztowne w C++, dlatego zamieniłem je na takie oto rezultaty operacji. Będę to musiał jakoś spłaszczyć tak, aby rezultaty były bardziej uniwersalne. Przejdźmy do  implementacji. Funkcja try load próbuje wczytać z podanego pliku kod shadera:</p>
+<div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="n">Shader</span><span class="o">::</span><span class="n">tryLoad</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_source</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">==</span> <span class="nb">false</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">File</span><span class="o">::</span><span class="n">exist</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_path</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_source</span> <span class="o">=</span> <span class="n">File</span><span class="o">::</span><span class="n">readFileToEnd</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_path</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Funkcja compile wczytany kod kompiluje oraz zwraca czy proces ten się powiódł czy nie:</p>
+<div class="highlight"><pre><span></span><span class="n">ShaderCompileResult</span> <span class="n">Shader</span><span class="o">::</span><span class="n">compile</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_shaderId</span> <span class="o">=</span> <span class="n">glCreateShader</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_type</span><span class="p">);</span>
+    <span class="k">const</span> <span class="n">GLchar</span><span class="o">*</span> <span class="n">src</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_source</span><span class="p">.</span><span class="n">c_str</span><span class="p">();</span>
+
+    <span class="n">glShaderSource</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_shaderId</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">src</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+    <span class="n">glCompileShader</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_shaderId</span><span class="p">);</span>
+
+    <span class="n">_compiled</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+
+    <span class="n">GLint</span> <span class="n">success</span><span class="p">;</span>
+    <span class="n">glGetShaderiv</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_shaderId</span><span class="p">,</span> <span class="n">GL_COMPILE_STATUS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">success</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">success</span> <span class="o">==</span> <span class="n">GL_FALSE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ShaderCompileResult</span><span class="o">::</span><span class="n">COMPILATION_ERROR</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="n">ShaderCompileResult</span><span class="o">::</span><span class="n">COMPILATION_SUCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Zdaję sobie sprawę, że powinineim na początku kompilacji sprawdzić czy mam wczytane pliki, ale tym zajmuje się klasa Shader Program, która posiada taki oto interfejs:</p>
+<div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">ProgramCompilationResult</span>
+<span class="p">{</span>
+    <span class="n">COMPILE_ERROR</span><span class="p">,</span>
+    <span class="n">COMPILE_SUCCESS</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">ShaderProgram</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Asset</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">static</span> <span class="n">ShaderProgram</span><span class="o">*</span> <span class="n">load</span><span class="p">(</span><span class="n">AssetPath</span> <span class="n">assetPath</span><span class="p">);</span>
+    <span class="n">ShaderProgram</span><span class="p">(</span><span class="n">AssetPath</span> <span class="n">assetPat</span><span class="p">);</span>
+    <span class="n">ShaderProgram</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">vertexProgram</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">fragmentProgram</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">geometryProgram</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+    <span class="o">~</span><span class="n">ShaderProgram</span><span class="p">();</span>
+
+    <span class="n">ShaderProgram</span> <span class="o">&amp;</span> <span class="n">use</span><span class="p">();</span>
+
+    <span class="n">ProgramCompilationResult</span> <span class="nf">compile</span><span class="p">();</span>
+
+    <span class="kt">void</span> <span class="nf">setFloatParam</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">paramName</span><span class="p">,</span> <span class="kt">float</span> <span class="n">value</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">setIntParam</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">paramName</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">setVec2fParam</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">paramName</span><span class="p">,</span> <span class="kt">float</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">setVec2fParam</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">paramName</span><span class="p">,</span> <span class="k">const</span> <span class="n">glm</span><span class="o">::</span><span class="n">vec2</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">setVec3fParam</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">paramName</span><span class="p">,</span> <span class="kt">float</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">,</span> <span class="kt">float</span> <span class="n">z</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">setVec3fParam</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">paramName</span><span class="p">,</span> <span class="k">const</span> <span class="n">glm</span><span class="o">::</span><span class="n">vec3</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">setVec4fParam</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">paramName</span><span class="p">,</span> <span class="kt">float</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">,</span> <span class="kt">float</span> <span class="n">z</span><span class="p">,</span> <span class="kt">float</span> <span class="n">w</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">setVec4fParam</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">paramName</span><span class="p">,</span> <span class="k">const</span> <span class="n">glm</span><span class="o">::</span><span class="n">vec4</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="nf">setMatrix4Param</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">paramName</span><span class="p">,</span> <span class="k">const</span> <span class="n">glm</span><span class="o">::</span><span class="n">mat4</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">);</span>
+
+    <span class="n">READONLY_PROPERTY</span><span class="p">(</span><span class="n">GLuint</span><span class="p">,</span> <span class="n">programId</span><span class="p">)</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">loadShadersFromFile</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">loadShadersFromSource</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">vertexProgram</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">fragmentProgram</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">geometryProgram</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_programName</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_vertexPath</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_fragmentPath</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_geometryPath</span><span class="p">;</span>
+    <span class="n">Shader</span> <span class="o">*</span> <span class="n">_vertexShader</span><span class="p">;</span>
+    <span class="n">Shader</span> <span class="o">*</span> <span class="n">_fragmentShader</span><span class="p">;</span>
+    <span class="n">Shader</span> <span class="o">*</span> <span class="n">_geometryShader</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>Jest to klasa, która wczytuje właściwy program shadera z kilku podprogramów i linkuje je razem tak, aby działały w jednym pipelinie. W tym momencie jest możliwość wpięcia się w fazę vertex, geometry i fragment, choć jak na razie nie jest to silnik 3D. Funkcja compile wygląda w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="n">ProgramCompilationResult</span> <span class="n">ShaderProgram</span><span class="o">::</span><span class="n">compile</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">ShaderCompileResult</span> <span class="n">vertexCompileResult</span><span class="p">,</span> <span class="n">fragmentCompileResult</span><span class="p">,</span> <span class="n">geometryCompileResult</span> <span class="o">=</span> <span class="n">ShaderCompileResult</span><span class="o">::</span><span class="n">COMPILATION_ERROR</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexShader</span><span class="o">-&gt;</span><span class="n">tryLoad</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">vertexCompileResult</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexShader</span><span class="o">-&gt;</span><span class="n">compile</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">vertexCompileResult</span> <span class="o">==</span> <span class="n">ShaderCompileResult</span><span class="o">::</span><span class="n">COMPILATION_ERROR</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ProgramCompilationResult</span><span class="o">::</span><span class="n">COMPILE_ERROR</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_fragmentShader</span><span class="o">-&gt;</span><span class="n">tryLoad</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">fragmentCompileResult</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_fragmentShader</span><span class="o">-&gt;</span><span class="n">compile</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">fragmentCompileResult</span> <span class="o">==</span> <span class="n">ShaderCompileResult</span><span class="o">::</span><span class="n">COMPILATION_ERROR</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ProgramCompilationResult</span><span class="o">::</span><span class="n">COMPILE_ERROR</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_geometryShader</span><span class="o">-&gt;</span><span class="n">tryLoad</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">geometryCompileResult</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_geometryShader</span><span class="o">-&gt;</span><span class="n">compile</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">geometryCompileResult</span> <span class="o">==</span> <span class="n">ShaderCompileResult</span><span class="o">::</span><span class="n">COMPILATION_ERROR</span><span class="p">)</span> 
+            <span class="k">return</span> <span class="n">ProgramCompilationResult</span><span class="o">::</span><span class="n">COMPILE_ERROR</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_programId</span> <span class="o">=</span> <span class="n">glCreateProgram</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">vertexCompileResult</span> <span class="o">==</span> <span class="n">ShaderCompileResult</span><span class="o">::</span><span class="n">COMPILATION_SUCESS</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">glAttachShader</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_programId</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexShader</span><span class="o">-&gt;</span><span class="n">get_shaderId</span><span class="p">());</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">fragmentCompileResult</span> <span class="o">==</span> <span class="n">ShaderCompileResult</span><span class="o">::</span><span class="n">COMPILATION_SUCESS</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">glAttachShader</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_programId</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_fragmentShader</span><span class="o">-&gt;</span><span class="n">get_shaderId</span><span class="p">());</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">geometryCompileResult</span> <span class="o">==</span> <span class="n">ShaderCompileResult</span><span class="o">::</span><span class="n">COMPILATION_SUCESS</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">glAttachShader</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_programId</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_geometryShader</span><span class="o">-&gt;</span><span class="n">get_shaderId</span><span class="p">());</span>
+    <span class="p">}</span>
+
+    <span class="n">glLinkProgram</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_programId</span><span class="p">);</span>
+
+    <span class="n">GLint</span> <span class="n">success</span><span class="p">;</span>
+    <span class="n">glGetProgramiv</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_programId</span><span class="p">,</span> <span class="n">GL_LINK_STATUS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">success</span><span class="p">);</span>
+
+    <span class="k">delete</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexShader</span><span class="p">;</span>
+    <span class="k">delete</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_fragmentShader</span><span class="p">;</span>
+    <span class="k">delete</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_geometryShader</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">success</span> <span class="o">==</span> <span class="n">GL_FALSE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ProgramCompilationResult</span><span class="o">::</span><span class="n">COMPILE_ERROR</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="n">ProgramCompilationResult</span><span class="o">::</span><span class="n">COMPILE_SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Generalnie próbuje ona skompilować i zlinkować shadery vertex, geometry i fragment. Jak to się uda to zwracany jest sukces, jeżeli nie to zwracany jest błąd, który trzeba obsłużyć. Generalnie jak już pisałem, nad obsługą błędów będę musiał jeszcze popracować, ale to już coś na przyszłość. To na razie było by na tyle w następnym poście przyjrzymy się samplerom tekstur.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+      <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

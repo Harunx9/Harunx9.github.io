@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. W poprzedniej części napisałem nieco o tym jak przebiega rysowanie a właściwie dokładanie elementów do narysowania. W tym artykule zajmiemy się dokładnie tym jak działa pipeline rysowania SpriteBatchem. Aby narysować jaką teksturę należy napisać taki oto kodzik: this-&gt;_device-&gt;clear(Colors::black); batch-&gt;begin(TextureWrap::REPEAT, TextureFilter::POINT_FILTER); batch …" />
+<meta name="keywords" content="Gamedev, OpenGL">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Renderowanie 2D część 4.2: Spritebatch"/>
+<meta property="og:description" content="Cześć. W poprzedniej części napisałem nieco o tym jak przebiega rysowanie a właściwie dokładanie elementów do narysowania. W tym artykule zajmiemy się dokładnie tym jak działa pipeline rysowania SpriteBatchem. Aby narysować jaką teksturę należy napisać taki oto kodzik: this-&gt;_device-&gt;clear(Colors::black); batch-&gt;begin(TextureWrap::REPEAT, TextureFilter::POINT_FILTER); batch …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/renderowanie-2d-czesc-42-spritebatch.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-06-21 19:30:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="OpenGL"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="article:tag" content="OpenGL"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Renderowanie 2D część 4.2: Spritebatch</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="renderowanie-2d-czesc-42-spritebatch">Renderowanie 2D część 4.2: Spritebatch</h1>
+    <p>
+          Posted on Wed 21 June 2017 in <a href="http://localhost:8000/category/opengl.html">OpenGL</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. W poprzedniej części napisałem nieco o tym jak przebiega rysowanie a właściwie dokładanie elementów do narysowania. W tym artykule zajmiemy się dokładnie tym jak działa pipeline rysowania SpriteBatchem. Aby narysować jaką teksturę należy napisać taki oto kodzik:</p>
+<div class="highlight"><pre><span></span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_device</span><span class="o">-&gt;</span><span class="n">clear</span><span class="p">(</span><span class="n">Colors</span><span class="o">::</span><span class="n">black</span><span class="p">);</span>
+<span class="n">batch</span><span class="o">-&gt;</span><span class="n">begin</span><span class="p">(</span><span class="n">TextureWrap</span><span class="o">::</span><span class="n">REPEAT</span><span class="p">,</span> <span class="n">TextureFilter</span><span class="o">::</span><span class="n">POINT_FILTER</span><span class="p">);</span>
+
+    <span class="n">batch</span><span class="o">-&gt;</span><span class="n">draw</span><span class="p">(</span><span class="n">texture1</span><span class="p">,</span> <span class="n">glm</span><span class="o">::</span><span class="n">vec2</span><span class="p">(</span><span class="mf">200.f</span><span class="p">,</span> <span class="mf">200.f</span><span class="p">),</span> <span class="k">nullptr</span><span class="p">,</span> <span class="n">Colors</span><span class="o">::</span><span class="n">white</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">glm</span><span class="o">::</span><span class="n">vec2</span><span class="p">(</span><span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">FlipEffect</span><span class="o">::</span><span class="n">NONE_FLIP</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="n">batch</span><span class="o">-&gt;</span><span class="n">draw</span><span class="p">(</span><span class="n">texture2</span><span class="p">,</span> <span class="n">glm</span><span class="o">::</span><span class="n">vec2</span><span class="p">(</span><span class="mf">300.f</span><span class="p">,</span> <span class="mf">200.f</span><span class="p">),</span> <span class="k">nullptr</span><span class="p">,</span> <span class="n">Colors</span><span class="o">::</span><span class="n">white</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">glm</span><span class="o">::</span><span class="n">vec2</span><span class="p">(</span><span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="n">FlipEffect</span><span class="o">::</span><span class="n">NONE_FLIP</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+<span class="n">batch</span><span class="o">-&gt;</span><span class="n">end</span><span class="p">();</span>
+<span class="k">this</span><span class="o">-&gt;</span><span class="n">_device</span><span class="o">-&gt;</span><span class="n">swapBuffers</span><span class="p">();</span>
+</pre></div>
+
+
+<p>Zacznijmy od samej góry. Aby wyczyścić backbuffer trzeba najpierw wywołać funkcje clear() z graphic device. Potem wywołujemy jedno z przeciążeń funkcji begin, która przygotowuje wszystkie elementy SpriteBatcha do rysowania. Przykładowa implementacja wygląda tak:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">SpriteBatch</span><span class="o">::</span><span class="n">begin</span><span class="p">(</span><span class="n">ShaderProgram</span> <span class="o">*</span> <span class="n">shader</span><span class="p">,</span> <span class="n">TextureWrap</span> <span class="n">wrap</span><span class="p">,</span> <span class="n">TextureFilter</span> <span class="n">filter</span><span class="p">,</span> <span class="n">glm</span><span class="o">::</span><span class="n">mat4</span> <span class="n">viewportTransform</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_isInitialized</span> <span class="o">==</span> <span class="nb">false</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_isStarted</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_customShader</span> <span class="o">=</span> <span class="n">shader</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_viewport</span> <span class="o">=</span> <span class="n">glm</span><span class="o">::</span><span class="n">ortho</span><span class="p">(</span><span class="mf">0.f</span><span class="p">,</span>
+        <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">GLfloat</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_device</span><span class="o">-&gt;</span><span class="n">get_viewport</span><span class="p">().</span><span class="n">width</span><span class="p">),</span>
+        <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">GLfloat</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_device</span><span class="o">-&gt;</span><span class="n">get_viewport</span><span class="p">().</span><span class="n">height</span><span class="p">),</span>
+        <span class="mf">0.f</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.f</span><span class="p">,</span> <span class="mf">1.f</span><span class="p">);</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_viewportTransform</span> <span class="o">=</span> <span class="n">viewportTransform</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_isStarted</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_sampler</span><span class="o">-&gt;</span><span class="n">changeFilter</span><span class="p">(</span><span class="n">filter</span><span class="p">);</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_sampler</span><span class="o">-&gt;</span><span class="n">changeWrap</span><span class="p">(</span><span class="n">wrap</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Jak możemy zauważyć najważniejsze jest ustalenie Viewportu i samplera. Druga macierz służy do nałożenia  transformacji kamery  ale to w innym artykule napiszę na ten temat. Po wywołaniu kolejnych funkcji draw() wywołujemy funkcje end ()która wykonuje właściwe rysowanie. </p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">SpriteBatch</span><span class="o">::</span><span class="n">end</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">//draw to frame buffer</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_currentTarget</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_currentTarget</span><span class="o">-&gt;</span><span class="n">begin</span><span class="p">();</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">drawBatch</span><span class="p">();</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_currentTarget</span><span class="o">-&gt;</span><span class="n">end</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="c1">//draw to backbuffer</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">drawBatch</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Jeżeli mamy nałożony render target to cały batch jest rysowany to niego jeżeli nie to rysujemy na backbuffer. Funkcja drawBatch() która rysuje cały bufor ma następującą implementację: </p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">SpriteBatch</span><span class="o">::</span><span class="n">drawBatch</span><span class="p">()</span>
+<span class="p">{</span>
+
+    <span class="k">switch</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_sortMode</span><span class="p">)</span>
+    <span class="p">{</span>
+    <span class="k">case</span> <span class="n">SortMode</span><span class="o">::</span><span class="nl">FRONT_TO_BACK</span><span class="p">:</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">sort</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_items</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_items</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span>
+            <span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">SpriteBatchItem</span><span class="o">*</span> <span class="n">item1</span><span class="p">,</span> <span class="n">SpriteBatchItem</span><span class="o">*</span> <span class="n">item2</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">item1</span><span class="o">-&gt;</span><span class="n">drawOrder</span> <span class="o">&lt;</span> <span class="n">item2</span><span class="o">-&gt;</span><span class="n">drawOrder</span><span class="p">;</span> <span class="p">});</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">SortMode</span><span class="o">::</span><span class="nl">BACK_TO_FRONT</span><span class="p">:</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">sort</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_items</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_items</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span>
+            <span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">SpriteBatchItem</span><span class="o">*</span> <span class="n">item1</span><span class="p">,</span> <span class="n">SpriteBatchItem</span><span class="o">*</span> <span class="n">item2</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">item1</span><span class="o">-&gt;</span><span class="n">drawOrder</span> <span class="o">&gt;</span> <span class="n">item2</span><span class="o">-&gt;</span><span class="n">drawOrder</span><span class="p">;</span> <span class="p">});</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_viewport</span> <span class="o">==</span> <span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">GLint</span> <span class="n">display</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+        <span class="n">glGetIntegerv</span><span class="p">(</span><span class="n">GL_VIEWPORT</span><span class="p">,</span> <span class="n">display</span><span class="p">);</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_viewport</span> <span class="o">=</span> <span class="n">glm</span><span class="o">::</span><span class="n">ortho</span><span class="p">(</span><span class="mf">0.f</span><span class="p">,</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">display</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">display</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mf">0.f</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">GLuint</span> <span class="n">currentProgram</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_customShader</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_customShader</span><span class="o">-&gt;</span><span class="n">use</span><span class="p">();</span>
+        <span class="n">currentProgram</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_customShader</span><span class="o">-&gt;</span><span class="n">get_programId</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_defaultShader</span><span class="o">-&gt;</span><span class="n">use</span><span class="p">();</span>
+        <span class="n">currentProgram</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_defaultShader</span><span class="o">-&gt;</span><span class="n">get_programId</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="n">glm</span><span class="o">::</span><span class="n">mat4</span>  <span class="n">full_viewProj</span> <span class="o">=</span>  <span class="k">this</span><span class="o">-&gt;</span><span class="n">_viewport</span> <span class="o">*</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_viewportTransform</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="n">viewport</span> <span class="o">=</span> <span class="n">glm</span><span class="o">::</span><span class="n">value_ptr</span><span class="p">(</span><span class="n">full_viewProj</span><span class="p">);</span>
+    <span class="n">glUniformMatrix4fv</span><span class="p">(</span><span class="n">glGetUniformLocation</span><span class="p">(</span><span class="n">currentProgram</span><span class="p">,</span> <span class="s">&quot;projection&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">GL_FALSE</span><span class="p">,</span> <span class="n">viewport</span><span class="p">);</span>
+
+    <span class="n">glBindVertexArray</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_vao</span><span class="p">);</span>
+
+    <span class="n">glBindBuffer</span><span class="p">(</span><span class="n">GL_ARRAY_BUFFER</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vbo</span><span class="p">);</span>
+    <span class="n">glBindBuffer</span><span class="p">(</span><span class="n">GL_ELEMENT_ARRAY_BUFFER</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_ebo</span><span class="p">);</span>
+
+    <span class="kt">size_t</span> <span class="n">spritesCount</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_items</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="kt">size_t</span> <span class="n">batchesToDraw</span> <span class="o">=</span> <span class="n">spritesCount</span> <span class="o">/</span> <span class="n">MAX_BATCH_ITEMS</span><span class="p">;</span>
+
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_sampler</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">();</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">batchNumber</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">batchNumber</span> <span class="o">&lt;</span> <span class="n">batchesToDraw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">batchNumber</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">size_t</span> <span class="n">spriteNumber</span> <span class="o">=</span> <span class="n">spritesCount</span> <span class="o">-</span> <span class="p">(</span><span class="n">batchNumber</span> <span class="o">*</span> <span class="n">MAX_BATCH_ITEMS</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">spriteNumber</span> <span class="o">&gt;</span> <span class="n">MAX_BATCH_ITEMS</span><span class="p">)</span>
+            <span class="n">spriteNumber</span> <span class="o">=</span> <span class="n">MAX_BATCH_ITEMS</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="n">batchNumber</span> <span class="o">*</span> <span class="n">MAX_BATCH_ITEMS</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">batchNumber</span> <span class="o">*</span> <span class="n">MAX_BATCH_ITEMS</span> <span class="o">+</span> <span class="n">spriteNumber</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">auto</span> <span class="n">item</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_items</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+            <span class="kt">size_t</span> <span class="n">newI</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">MAX_BATCH_ITEMS</span> <span class="o">*</span> <span class="n">MAX_BATCH_ITEMS</span><span class="p">))</span> <span class="o">*</span> <span class="mi">32</span><span class="p">;</span>
+
+            <span class="c1">//top left</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">postions</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">postions</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">texcoords</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">texcoords</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">z</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+            <span class="c1">//top right</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">postions</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">9</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">postions</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">texcoords</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">texcoords</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">13</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">z</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+            <span class="c1">//top left</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">postions</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">17</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">postions</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">18</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">texcoords</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">19</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">texcoords</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">20</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">21</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">22</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">z</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">23</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+            <span class="c1">//top right</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">24</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">postions</span><span class="p">[</span><span class="mi">3</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">25</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">postions</span><span class="p">[</span><span class="mi">3</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">26</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">texcoords</span><span class="p">[</span><span class="mi">3</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">27</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">texcoords</span><span class="p">[</span><span class="mi">3</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">28</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">29</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">30</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">z</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="n">newI</span> <span class="o">+</span> <span class="mi">31</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">-&gt;</span><span class="n">color</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kt">size_t</span> <span class="n">fullSize</span> <span class="o">=</span> <span class="n">spritesCount</span> <span class="o">-</span> <span class="n">batchNumber</span> <span class="o">*</span> <span class="n">MAX_BATCH_ITEMS</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">fullSize</span> <span class="o">&gt;</span> <span class="n">MAX_BATCH_ITEMS</span><span class="p">)</span>
+            <span class="n">fullSize</span> <span class="o">=</span> <span class="n">MAX_BATCH_ITEMS</span><span class="p">;</span>
+
+        <span class="n">glBufferSubData</span><span class="p">(</span><span class="n">GL_ARRAY_BUFFER</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fullSize</span><span class="o">*</span> <span class="p">(</span><span class="mi">32</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">GLfloat</span><span class="p">)),</span>
+            <span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_vertexBuffer</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+
+        <span class="k">auto</span> <span class="n">lastTex</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_items</span><span class="p">[</span><span class="n">batchNumber</span> <span class="o">*</span> <span class="n">MAX_BATCH_ITEMS</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">texture</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="n">SpriteBatchItem</span><span class="o">*</span> <span class="n">spriteItem</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">spriteNumber</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">spriteItem</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_items</span><span class="p">[</span><span class="n">batchNumber</span> <span class="o">*</span> <span class="n">MAX_BATCH_ITEMS</span> <span class="o">+</span> <span class="n">i</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">spriteItem</span><span class="o">-&gt;</span><span class="n">texture</span><span class="o">-&gt;</span><span class="n">get_textureId</span><span class="p">()</span> <span class="o">!=</span> <span class="n">lastTex</span><span class="o">-&gt;</span><span class="n">get_textureId</span><span class="p">())</span>
+            <span class="p">{</span>
+                <span class="n">lastTex</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">();</span>
+                <span class="n">glDrawElements</span><span class="p">(</span><span class="n">GL_TRIANGLES</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span> <span class="o">*</span> <span class="mi">6</span><span class="p">,</span>
+                    <span class="n">GL_UNSIGNED_INT</span><span class="p">,</span> <span class="p">(</span><span class="n">GLvoid</span><span class="o">*</span><span class="p">)(</span><span class="n">offset</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">GLuint</span><span class="p">)));</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+                <span class="n">lastTex</span> <span class="o">=</span> <span class="n">spriteItem</span><span class="o">-&gt;</span><span class="n">texture</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">lastTex</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">();</span>
+        <span class="n">glDrawElements</span><span class="p">(</span><span class="n">GL_TRIANGLES</span><span class="p">,</span> <span class="p">(</span><span class="n">spriteNumber</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span> <span class="o">*</span> <span class="mi">6</span><span class="p">,</span>
+            <span class="n">GL_UNSIGNED_INT</span><span class="p">,</span> <span class="p">(</span><span class="n">GLvoid</span><span class="o">*</span><span class="p">)(</span><span class="n">offset</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">GLuint</span><span class="p">)));</span>
+    <span class="p">}</span>
+
+    <span class="n">glBindTexture</span><span class="p">(</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">glBindBuffer</span><span class="p">(</span><span class="n">GL_ARRAY_BUFFER</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_sampler</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">();</span>
+
+    <span class="n">glBindVertexArray</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">glUseProgram</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">_isStarted</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">clearBatchItems</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Metoda drawBatch na początku sortuje tekstury, oblicza viewport włącza customowy shader jeżeli  jest on ustawiony. Następnie obliczana jest macierz projekcji i wszystkie dane pakowane są do bufora oraz wysyłane są one do rysowania. Po wszystkim batch jest czyszczony i cały proces zaczyna się od nowa. To chyba na tyle jeżeli chodzi o samego batcha z grafiki została nam jeszcze kamera, którą opiszę w następnym artykule.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+      <a href="http://localhost:8000/tag/opengl.html">OpenGL</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Ostatni post tego cyklu był o zarządzaniu scenami, dziś postaram się nieco napisać o tym co powinno być na scenie, aby gra posiadała jakiś gameplay. Mowa tu będzie o Aktorach, Encjach lub GameObjetach w zależności od biblioteki/engine&#39;u nazwa może się różnić, ale to ciągle to samo. Takim elementem może …" />
+<meta name="keywords" content="DSP2017, Gamedev">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Ogólna architektura silnika - system Encji/GameObject&#39;ów"/>
+<meta property="og:description" content="Ostatni post tego cyklu był o zarządzaniu scenami, dziś postaram się nieco napisać o tym co powinno być na scenie, aby gra posiadała jakiś gameplay. Mowa tu będzie o Aktorach, Encjach lub GameObjetach w zależności od biblioteki/engine&#39;u nazwa może się różnić, ale to ciągle to samo. Takim elementem może …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/ogolna-architektura-silnika-system-encjigameobjectow.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-03-21 18:20:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Ogólna architektura silnika - system Encji/GameObject&#39;ów</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="ogolna-architektura-silnika-system-encjigameobjectow">Ogólna architektura silnika - system Encji/GameObject'ów</h1>
+    <p>
+          Posted on Tue 21 March 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Ostatni post tego cyklu był o zarządzaniu scenami, dziś postaram się nieco napisać o tym co powinno być na scenie, aby gra posiadała jakiś gameplay. Mowa tu będzie o Aktorach, Encjach lub GameObjetach w zależności od biblioteki/engine'u nazwa może się różnić, ale to ciągle to samo. Takim elementem może być na scenie wszystko, od postaci gracza do przeciwników, przedmiotów do zbierania itp.  Istnieją dwie drogi do implementacji GameObject'ów w tym artykule opiszę drogę z dziedziczeniem, natomiast component model będzie opisany oddzielnie. </p>
+<p>Droga implementacji za pomocą dziedziczenia wygląda w następujący sposób:</p>
+<ul>
+<li>tworzymy abstrakcję, która powinna zawierać: pozycję, nazwę , wysokość, szerokość ; jeżeli nie korzystamy z biblioteki fizycznej to należy tu również zdefiniować zmienne potrzebne do jej obsługi. Dodatkowo obiekt powinien zawierać abstrakcje dla aktualizacji oraz rysowania obiektu,</li>
+<li>tworzymy kolejno obiekty dziedzicząc z bazowego,</li>
+<li>w momencie kiedy zauważamy, że dane obiekty mają ze sobą jakieś cechy wspólne tworzymy dla nich wspólną abstrakcje.</li>
+</ul>
+<p>Na tak może wyglądać przykładowa hierarchia:</p>
+<p><img alt="GameObjects" src="/images/go_graph.png"></p>
+<p>Takie podejście ma swoje plusy i minusy. Zacznijmy od tego co uważam za pozytywne strony takiej implementacji. Po pierwsze pozwala ona szybko wystartować, ponieważ na początku nie mamy skonceptualizowanego całego gameplay'u, chcemy np. zrobić platformówkę to pomoże nam to zrobić prototyp w parę dni. Jeżeli projekt jest mały to również to podejście się sprawdzi, ponieważ nie będzie miał on dużej ilości elementów. Problem tego podejścia zaczyna się kiedy gra zaczyna rosnąć, ponieważ każdy nowy GameObject wymaga nowej klasy a każda kategoria GameObject'ów dodatkowej abstrakcji. Prowadzi to do bardzo dużej ilości plików oraz skomplikowanej i nieraz wielopoziomowej hierarchii dziedziczenia. Taki kod staje się trudny do utrzymania. Dodatkowo testowanie tak stworzonych encji jest prawie niemożliwe. Poza tym problematyczne staje się dodawanie nowych funkcji go istniejących GameObject'ów, gdy chcemy coś dodać musimy modyfikować istniejący kod, co w efekcie może prowadzić do zepsucia już działających funkcji. 
+Mimo tego co napisałem polecam to podejście, jeżeli zaczynasz swoją przygodę z grami. Pozwoli Ci to jak już pisałem szybko wystartować i szybko pokazać prototyp innym ludziom, co jest bardzo istotne pod względem zbierania feedbacku na temat gry. Jeśli jednak wasza gra stanie się większa powinniście iść w stronę component modelu, który opisze w następnym poście.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

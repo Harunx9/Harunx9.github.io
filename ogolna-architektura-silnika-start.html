@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Jak już pisałem wcześniej chciałbym tego bloga poprowadzić bardziej w stronę tematów związanych z tworzeniem gier komputerowych. Zacznę od ogólnej architektury, czyli tego jak ja bym wydział to jak zaimplementować silnik. Doświadczenia może nie mam dużego, ale już parę mniejszych gierek napisałem z lepszym lub gorszym skutkiem, więc wyciągnołem jakieś …" />
+<meta name="keywords" content="DSP2017, Gamedev">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Ogólna architektura silnika - start"/>
+<meta property="og:description" content="Jak już pisałem wcześniej chciałbym tego bloga poprowadzić bardziej w stronę tematów związanych z tworzeniem gier komputerowych. Zacznę od ogólnej architektury, czyli tego jak ja bym wydział to jak zaimplementować silnik. Doświadczenia może nie mam dużego, ale już parę mniejszych gierek napisałem z lepszym lub gorszym skutkiem, więc wyciągnołem jakieś …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/ogolna-architektura-silnika-start.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-02-27 01:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Ogólna architektura silnika - start</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="ogolna-architektura-silnika-start">Ogólna architektura silnika - start</h1>
+    <p>
+          Posted on Mon 27 February 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Jak już pisałem wcześniej chciałbym tego bloga poprowadzić bardziej w stronę tematów związanych z tworzeniem gier komputerowych. Zacznę od ogólnej architektury, czyli tego jak ja bym wydział to jak zaimplementować silnik. Doświadczenia może nie mam dużego, ale już parę mniejszych gierek napisałem z lepszym lub gorszym skutkiem, więc wyciągnołem jakieś wnioski i postaram się je zaprezentować. Jeżeli ktoś z was ma jakieś ciekawe przemyślenia to liczę na dyskusję. Całość podzielę na kilka artykułów, aby łatwiej się było odnaleźć, dodatkowo przykłady postaram oprzeć nie o kod a o rysunki, ponieważ to o czym będę pisał jest niezależne od języka czy paradygmatu programowania.
+Lista tematów:</p>
+<ul>
+<li><a href="https://harunx9.github.io/ogolna-architektura-silnika-petla-gry.html">pętla gry</a>,</li>
+<li><a href="https://harunx9.github.io/ogolna-architektura-silnika-system-scen.html">system scen</a>,</li>
+<li>system encji/GameObject'ów,</li>
+<li>system zawartości,</li>
+<li>sztuczna inteligencja,</li>
+<li>dźwięki i muzyka.</li>
+</ul>
+<p>Ps. Posty z tej serii zaczną ukazywać się już w tym tygodniu</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

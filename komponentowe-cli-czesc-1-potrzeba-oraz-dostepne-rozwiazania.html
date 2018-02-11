@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. Ostatni post o automatycznej rejestracji komponentów w Autofac był jedynie wstępem do tego co chcę osiągnąć w narzędziach, które obecnie pisze. Co do samych narzędzi to chciałbym mieć takie oto rozwiązania: Texture packer - narzędzie do pakowanie spritesheetów i animacji, które będzie rozumiał 2DXngine, Project generator - generuje podstawowy projekt 2DXngine …" />
+<meta name="keywords" content="blog, .net, programming, c#, .netcore, cli">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Komponentowe CLI część 1. Potrzeba oraz dostępne rozwiązania"/>
+<meta property="og:description" content="Cześć. Ostatni post o automatycznej rejestracji komponentów w Autofac był jedynie wstępem do tego co chcę osiągnąć w narzędziach, które obecnie pisze. Co do samych narzędzi to chciałbym mieć takie oto rozwiązania: Texture packer - narzędzie do pakowanie spritesheetów i animacji, które będzie rozumiał 2DXngine, Project generator - generuje podstawowy projekt 2DXngine …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/komponentowe-cli-czesc-1-potrzeba-oraz-dostepne-rozwiazania.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-08-27 12:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content=".NET"/>
+<meta property="article:tag" content="blog"/>
+<meta property="article:tag" content=".net"/>
+<meta property="article:tag" content="programming"/>
+<meta property="article:tag" content="c#"/>
+<meta property="article:tag" content=".netcore"/>
+<meta property="article:tag" content="cli"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Komponentowe CLI część 1. Potrzeba oraz dostępne rozwiązania</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="komponentowe-cli-czesc-1-potrzeba-oraz-dostepne-rozwiazania">Komponentowe CLI część 1. Potrzeba oraz dostępne rozwiązania</h1>
+    <p>
+          Posted on Sun 27 August 2017 in <a href="http://localhost:8000/category/net.html">.NET</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. Ostatni post o automatycznej rejestracji komponentów w Autofac był jedynie wstępem do tego co chcę osiągnąć w narzędziach, które obecnie pisze. Co do samych narzędzi to chciałbym mieć takie oto rozwiązania:</p>
+<ul>
+<li>Texture packer - narzędzie do pakowanie spritesheetów i animacji, które będzie rozumiał 2DXngine,</li>
+<li>Project generator - generuje podstawowy projekt 2DXngine z odpowiednią wersją silnika. Tworzy podstawową strukturę plików, kompiluje projekt, itp.,</li>
+<li>Asset Packer - jak już uda mi się jakoś zaimplementować to w C++, to chciałbym mieć możliwość spakowania wszystkich assetów do jakiegoś formatu binarnego, tak żeby zajmowały mniej miejsca i gra się do nich szybciej odwoływała.</li>
+</ul>
+<p>Jak widomo im dalej w las tym więcej rośnie drzew, więc pewnie jeszcze mi jakieś pomysły dojdą. Ale po kolei. Myśląc nad tym jak takie toole z commandline zaprojektować doszedłem do wniosku, że fajne by było jakby miały one architekturę bazującą na pluginach. Co to znaczy? Chciałbym, aby sam program odpalał to co znajdzie sobie w swoim katalogu lub katalogu plugins w DLL i zarejestruje do kontenera zależności. Pozwoli mi to na bardzo wygodne dodawanie nowych komend czy zmienianie istniejących np. poprzez dodanie nowych algorytmów pakujących bez ingerencji w kod już istniejący. </p>
+<p>Przykładem niech będzie pakowanie tekstur. Najprostszym algorytmem pakowania jest pakowanie takich samych obrazów bez ich przycinania. Takie jakie znajdujemy w folderze pakujemy, generujemy XML i zwracamy, np. jakiś user potrzebuje algorytm pakowania takich samych tekstur z wycinaniem pustych pikseli, żeby zaoszczędzić miejsce. Bierze on wtedy IDE, dociąga Nuget z bazowymi typami, implementuje algorytm i w komendzie dokłada swoją DLL do katalogu z texture packer'em. Przy starcie program powinien dodać do kontenera Di nowy algorytm i jeżeli w parametrach pojawi się dodatkowo crop na true to zostanie on wykonany. Jak widzimy funkcjonalność zostanie dodana bez dodatkowych ingerencji w podstawowy kod, przynajmniej w teorii. Dodatkowym ograniczeniem mojego pomysłu jest multiplatfromowość, ponieważ chciałbym, aby narzędzia działały na każdej platformie.</p>
+<p>Drugim problem dość łatwo rozwiązałem wybierając .NET Core, który w teorii ma działać nie tylko na różnych wersjach okienek, ale i na Linuksie i Apple. Tak jak napisałem teoretycznie, bo na razie tego nie sprawdzałem i opieram się na tym co Microsoft pisze na swoich stronach. </p>
+<p>Co do frameworków ułatwiających tworzenei aplikacji CLI to nie mam dużego doświadczenia, ale dokonałem przeglądu i na .NET Core znalazłem coś takiego jak <a href="https://github.com/gsscoder/commandline">commandline</a> jest to bardzo dobra ,ponieważ korzystałem z niej kiedyś implementując migrator do mongo dla jednego z projektów. Pozwala ona tworzyć komendy jako klasy i potem za pomocą parsera je wytwarzać, niestety dodanie nowej komendy powoduje dodanie nowej linijki na reakcje, co zrobić kiedy się ona sparsuje. W kodzie wygląda to w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="na">[Verb(&quot;add&quot;, HelpText = &quot;Add file contents to the index.&quot;)]</span>
+<span class="k">class</span> <span class="nc">AddOptions</span> <span class="p">{</span>
+  <span class="c1">//normal options here</span>
+<span class="p">}</span>
+<span class="na">[Verb(&quot;commit&quot;, HelpText = &quot;Record changes to the repository.&quot;)]</span>
+<span class="k">class</span> <span class="nc">CommitOptions</span> <span class="p">{</span>
+  <span class="c1">//normal options here</span>
+<span class="p">}</span>
+<span class="na">[Verb(&quot;clone&quot;, HelpText = &quot;Clone a repository into a new directory.&quot;)]</span>
+<span class="k">class</span> <span class="nc">CloneOptions</span> <span class="p">{</span>
+  <span class="c1">//normal options here</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">CommandLine</span><span class="p">.</span><span class="n">Parser</span><span class="p">.</span><span class="n">Default</span><span class="p">.</span><span class="n">ParseArguments</span><span class="p">&lt;</span><span class="n">AddOptions</span><span class="p">,</span> <span class="n">CommitOptions</span><span class="p">,</span> <span class="n">CloneOptions</span><span class="p">&gt;(</span><span class="n">args</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">MapResult</span><span class="p">(</span>
+      <span class="p">(</span><span class="n">AddOptions</span> <span class="n">opts</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">RunAddAndReturnExitCode</span><span class="p">(</span><span class="n">opts</span><span class="p">),</span>
+      <span class="p">(</span><span class="n">CommitOptions</span> <span class="n">opts</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">RunCommitAndReturnExitCode</span><span class="p">(</span><span class="n">opts</span><span class="p">),</span>
+      <span class="p">(</span><span class="n">CloneOptions</span> <span class="n">opts</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">RunCloneAndReturnExitCode</span><span class="p">(</span><span class="n">opts</span><span class="p">),</span>
+      <span class="n">errs</span> <span class="p">=&gt;</span> <span class="m">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Dodawanie kolejnych wywołań zdyskwalifikowało niestety tą bibliotekę. Oprócz tego znalazłem kilka praserów, ale niczego co spełniło by moje oczekiwania. W takim wypadku postanowiłem sam zaimplementować rozwiązanie bazujące na pluginach. </p>
+<p>W kolejnym artykule przejdziemy do implementacji mojego rozwiązania, Tak z ciekawości czy zna ktoś ewentualnie jakieś podobne rozwiązanie pozwalające na łatwe tworzenie pluginów z DI. Jak coś to piszcie w komentarzach, bo ja sam nie umiałem nic sensownego znaleźć, a poświęciłem temu trochę czasu.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/blog.html">blog</a>
+      <a href="http://localhost:8000/tag/net.html">.net</a>
+      <a href="http://localhost:8000/tag/programming.html">programming</a>
+      <a href="http://localhost:8000/tag/c.html">c#</a>
+      <a href="http://localhost:8000/tag/netcore.html">.netcore</a>
+      <a href="http://localhost:8000/tag/cli.html">cli</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

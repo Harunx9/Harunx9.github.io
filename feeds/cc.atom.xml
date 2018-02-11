@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Programming warfare - C/C++</title><link href="http://localhost:8000/" rel="alternate"></link><link href="http://localhost:8000/feeds/cc.atom.xml" rel="self"></link><id>http://localhost:8000/</id><updated>2017-10-11T19:00:00+02:00</updated><entry><title>PugiXML, czyli proste prasowanie XML w C/C++</title><link href="http://localhost:8000/pugixml-czyli-proste-prasowanie-xml-w-cc.html" rel="alternate"></link><published>2017-10-11T19:00:00+02:00</published><updated>2017-10-11T19:00:00+02:00</updated><author><name>Szymon Wanot</name></author><id>tag:localhost,2017-10-11:/pugixml-czyli-proste-prasowanie-xml-w-cc.html</id><summary type="html">&lt;p&gt;Cześć. Jakiś czas temu stanąłem przed potrzebą wyboru jakiegoś rozwiązania do pracy z plikami XML. W C/C++ jest kilka bibliotek do obsługi XML'i:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TinyXML,&lt;/li&gt;
+&lt;li&gt;RapidXML,&lt;/li&gt;
+&lt;li&gt;LibXML2,&lt;/li&gt;
+&lt;li&gt;BoostXML,&lt;/li&gt;
+&lt;li&gt;PugiXML.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Jak pewnie można się domyślić po tytule, to mój wybór padł na bibliotekę &lt;a href="https://pugixml.org/"&gt;pugixml&lt;/a&gt;. Wybrałem tak dlatego, że jej Api najbardziej …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cześć. Jakiś czas temu stanąłem przed potrzebą wyboru jakiegoś rozwiązania do pracy z plikami XML. W C/C++ jest kilka bibliotek do obsługi XML'i:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TinyXML,&lt;/li&gt;
+&lt;li&gt;RapidXML,&lt;/li&gt;
+&lt;li&gt;LibXML2,&lt;/li&gt;
+&lt;li&gt;BoostXML,&lt;/li&gt;
+&lt;li&gt;PugiXML.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Jak pewnie można się domyślić po tytule, to mój wybór padł na bibliotekę &lt;a href="https://pugixml.org/"&gt;pugixml&lt;/a&gt;. Wybrałem tak dlatego, że jej Api najbardziej przypomina to co mamy w C# pod nazwą XDocument i jest to składająca się z 3 plików biblioteka, więc możemy ją po prostu wrzucić w projekt i  nie trzeba się bawić z dodawaniem lib i dll co w C++ jest momentami nieco trudne. Skoro już wiadomo co i jak to przyjrzyjmy się jak można używać biblioteki. Przykłady będą oparte na wczytywaniu spritesheet'a animacji w 2DXngine, ponieważ tam też tej biblioteki użyłem. Załóżmy, że mamy oto taki XML:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nt"&gt;&amp;lt;animations&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;animation&lt;/span&gt; &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;animationName1&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;frame&lt;/span&gt; &lt;span class="na"&gt;number=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;x=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;y=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;width=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;height=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsetx=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsety=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;frame&lt;/span&gt; &lt;span class="na"&gt;number=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;x=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;y=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;width=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;height=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsetx=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsety=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;frame&lt;/span&gt; &lt;span class="na"&gt;number=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;x=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;y=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;width=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;height=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsetx=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsety=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;frame&lt;/span&gt; &lt;span class="na"&gt;number=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;x=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;y=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;width=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;height=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsetx=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsety=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;/animation&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;animation&lt;/span&gt; &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;animationName2&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;frame&lt;/span&gt; &lt;span class="na"&gt;number=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;x=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;y=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;width=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;height=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsetx=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsety=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;frame&lt;/span&gt; &lt;span class="na"&gt;number=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;x=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;y=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;width=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;height=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsetx=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsety=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;frame&lt;/span&gt; &lt;span class="na"&gt;number=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;x=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;y=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;width=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;height=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsetx=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsety=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;frame&lt;/span&gt; &lt;span class="na"&gt;number=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;x=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;y=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;width=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;height=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;50&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsetx=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;offsety=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;/animation&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/animations&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Aby zaczytać pliczek musimy napisać takie oto linijki kodu:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;pugi&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;xml_document&lt;/span&gt; &lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;pugi&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;xml_parse_result&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load_file&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;/path/to/file.xml&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Następnie wyciągamy główny element animation który pozwoli nam potem iterować po kolejnych animacjach:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt;  &lt;span class="n"&gt;root&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;child&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;animations&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="nl"&gt;animation&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;children&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;animation&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;//impl&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Do atrybutów możemy się odnieść w następujący sposób:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;x&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;as_int&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;y&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;as_int&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;width&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;as_int&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;height&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;as_int&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;offsetx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;offsetx&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;as_int&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;offsety&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;attribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;offsety&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;as_int&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Całkiem fajną funkcjonalnością jest możliwość wymuszenia rzutowania na porządany typ. Co do zapisywania XML, to nie testowałem tego sam, ponieważ nie mam takiej potrzeby, ale w &lt;a href="https://pugixml.org/docs/quickstart.html"&gt;dokumentacji&lt;/a&gt; jest napisane, że się da i jakieś mega skomplikowane nie jest. Biblioteka działa szybko, co było jednym z wyznaczników kiedy wybierałem to rozwiązanie. 
+To w sumie na tyle. A wy jakich bibliotek używacie do obsługi XML?&lt;/p&gt;</content><category term="programming"></category><category term="Gamedev"></category></entry><entry><title>Konfiguracja aplikacji za pomocą plików ini</title><link href="http://localhost:8000/konfiguracja-aplikacji-za-pomoca-plikow-ini.html" rel="alternate"></link><published>2017-07-21T21:00:00+02:00</published><updated>2017-07-21T21:00:00+02:00</updated><author><name>Szymon Wanot</name></author><id>tag:localhost,2017-07-21:/konfiguracja-aplikacji-za-pomoca-plikow-ini.html</id><summary type="html">&lt;p&gt;Cześć. Dziś zajmiemy się konfiguracją aplikacji w C++. Temat przedstawię od strony mojego silnika 2DXngine. W przypadku C++ temat zewnętrznej konfiguracji nie jest tak oczywisty jak w przypadku C# i .NET, gdzie mamy pliki App i Web config. Taką konfiguracje w C++ możemy zapisać w plikach XML, ale jest to …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cześć. Dziś zajmiemy się konfiguracją aplikacji w C++. Temat przedstawię od strony mojego silnika 2DXngine. W przypadku C++ temat zewnętrznej konfiguracji nie jest tak oczywisty jak w przypadku C# i .NET, gdzie mamy pliki App i Web config. Taką konfiguracje w C++ możemy zapisać w plikach XML, ale jest to moim zdaniem format nie do końca czytelny dla człowieka. W swoich aplikacjach w C++ preferuję format ini, który wygląda następująco:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[NazwaSekcji1]&lt;/span&gt;
+&lt;span class="na"&gt;Właściwość1&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;Wartość1&lt;/span&gt;
+&lt;span class="na"&gt;Właściwość2&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;Wartość2&lt;/span&gt;
+&lt;span class="na"&gt;Właściwość3&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;Wartość3&lt;/span&gt;
+&lt;span class="na"&gt;Właściwość4&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;Wartość4&lt;/span&gt;
+&lt;span class="k"&gt;[NazwaSekcji2]&lt;/span&gt;
+&lt;span class="na"&gt;Właściwość1&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;Wartość1&lt;/span&gt;
+&lt;span class="na"&gt;Właściwość2&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;Wartość2&lt;/span&gt;
+&lt;span class="na"&gt;Właściwość3&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;Wartość3&lt;/span&gt;
+&lt;span class="na"&gt;Właściwość4&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;Wartość4&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Jak dla mnie ten format jest dużo bardziej czytelny niż XML i dlatego go stosuje. W przypadku C++ w bibliotece standardowej nie ma klas i funkcji parsujących ini, musimy posilić się jakąś gotową biblioteką lub samemu napisać parsowanie takich plików. Jako, że programista powinien być leniwy w swojej pracy, to i ja zdecydowałem się skorzystać z czegoś gotowego. W C++ mamy sporo takich bibliotek ze względu na to, że potrzebowałam oprócz parsowania jeszcze dodatkowo zapis plików ini zdecydowałem się na &lt;a href="https://github.com/brofield/simpleini"&gt;SimpleIni&lt;/a&gt;. Sama nazwa już mówi ze biblioteka jest dość mała. Całość to właściwie jeden plik nagłówkowy, nop jeszcze 2 pliki pomocne przy encodingu UTF8 i to tyle. Z tego powodu nie budowałem biblioteki jaklo .lib tylko dodałem jej pliki do projektu. Teraz jak to wykorzystać:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;CSimpleIniA&lt;/span&gt; &lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; 
+&lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;cfg.ini&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// wczytanie pliku&lt;/span&gt;
+&lt;span class="c1"&gt;//wczytanie wartości z pliku&lt;/span&gt;
+&lt;span class="kt"&gt;bool&lt;/span&gt; &lt;span class="n"&gt;isFullScreen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;GetBoolValue&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Graphics&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;FullScreen&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;windowWidth&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;GetLongValue&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Graphics&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;WindowWidth&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;640&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;windowHeight&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;GetLongValue&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Graphics&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;WindowHeight&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;360&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;openGLMinorVerion&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;GetLongValue&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Graphics&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;GLMinor&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;openGLMajorVerion&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;GetLongValue&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Graphics&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;GLMajor&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;doubleBufferToggle&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;GetLongValue&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Graphics&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;DoubleBuffer&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Jak widać odczyt danych jest dość prosty podajemy nazwę sekcji i nazwę właściwości oraz wartość która ma się pojawić defaultowo jak nie będzie jej w pliku. Jeżeli chcemy coś zapisać to musimy postąpić w następujący sposób:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;CSimpleIniA&lt;/span&gt; &lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SetBoolValue&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Graphics&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;FullScreen&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SetLongValue&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Graphics&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;WindowWidth&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;640&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SetLongValue&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Graphics&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;WindowHeight&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;360&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="n"&gt;inifile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SaveFile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;newcfg.ini&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Zapisywanie wartości jest również dość proste, podobnie jak w odczycie podajemy nazwę sekcji, nazwę pola i wartość jaka ma być do niego zapisana. Na koniec wywołujemy funkcję save file ze ścieżką do  pliku w którym ma być to zapisane. W tym miejscu należy wspomnieć jak to działa w systemie Windows. Mianowicie jak mamy aplikacje zainstalowana w program files, to nie możemy tam zapisać plików bez uprawnień administratora, dlatego należy zapisywać dane w katalogu lokalnego użytkownika. W większości przypadków będzie to ścieżka:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;C:/Users/NazwaUsera/Documents/
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;SDL pozwala na pobranie ścieżki to tego katalogu za pomocą funkcji SDL_GetPrefPath("companyname", "appname"); więc jeżeli chcemy instalować u kogoś innego naszą aplikację należy o tym pamiętać, żeby konfiguracja użytkownika mogła zostać zapisana. To na razie na tyle jeżeli chodzi o konfigurację. Oczywiście samo SimpleIni powinno się opakować w jakieś własne klasy konfiguracyjne, tak żeby można było mieć to tego jakiś wygodny dostęp wszędzie w programie.&lt;/p&gt;</content><category term="programming"></category><category term="Gamedev"></category></entry><entry><title>C/C++: Instrukcje warunkowe if i switch</title><link href="http://localhost:8000/cc-instrukcje-warunkowe-if-i-switch.html" rel="alternate"></link><published>2016-11-29T01:00:00+01:00</published><updated>2016-11-29T01:00:00+01:00</updated><author><name>Szymon Wanot</name></author><id>tag:localhost,2016-11-29:/cc-instrukcje-warunkowe-if-i-switch.html</id><summary type="html">&lt;p&gt;Zdaję sobie sprawę z tego,że ostatni post był nieco przydługi i zostało w nim przekazane więcej elementów, dlatego zdecydowałem się na nieco mniejsze objętościowo posty (jeżeli jakiś temat będzie nieco dłuższy to podzielę go na kilka postów, zamiast starać się upchać wszystko razem). 
+W trzeciej już części artykułów  o …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Zdaję sobie sprawę z tego,że ostatni post był nieco przydługi i zostało w nim przekazane więcej elementów, dlatego zdecydowałem się na nieco mniejsze objętościowo posty (jeżeli jakiś temat będzie nieco dłuższy to podzielę go na kilka postów, zamiast starać się upchać wszystko razem). 
+W trzeciej już części artykułów  o C++ omówimy dwie konstrukcje tego języka. Jako pierwszą na tapetę weźmiemy konstrukcje warunkową if..else. Instrukcja służy do rozgałęziania naszego kodu w zależności od spełnionego warunku. Podstawowa konstrukcja ma następującą budowę:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;warunek&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;//kod wykona się, jeżeli warunek jest prawdziwy&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;else&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+   &lt;span class="c1"&gt;//kod wykona się, jeżeli warunek nie jest prawdziwy&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Przyjrzyjmy się na poniższy przykład: &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;age&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;18&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;age&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;masz mniej niz 20 lat&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;masz 20 lub wiecej lat&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Powyższy kod wypisze “masz mniej niż 20 lat”, ponieważ zmienna age ma przypisaną wartość 18. W ramach instrukcji warunkowej if możemy kolejne wywołania if deklarować bezpośrednio po else:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;age&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;age&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;masz mniej niz 20 lat&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;age&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;masz 20 lat&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;masz 20 lub wiecej lat&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;W tym przypadku prawdziwy jest środkowy warunek, czyli “age == 20”, więc do konsoli zostanie wpisany tekst “masz 20 lat”. W C/C++ używana jest jeszcze jedna konstrukcja warunkowa a mianowicie switch. Podstawowa jej budowa wygląda w następujący sposób:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;switch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;input&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="nl"&gt;elem1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="c1"&gt;// kod wykona się , jeżeli element input jest równy elem1&lt;/span&gt;
+        &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;elem&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="c1"&gt;// kod wykona się, jeżeli element input jest równy elem2&lt;/span&gt;
+        &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;default&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="c1"&gt;// kod wykona się, jeżeli element input nie &lt;/span&gt;
+        &lt;span class="c1"&gt;//został dopasowany z żadnym elementem powyżej&lt;/span&gt;
+        &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Popatrzmy na kolejny przykład:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;item_count&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="k"&gt;switch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;item_count&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Nie masz zadnych przedmiotow&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Masz 1 przedmiot&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Masz 2 przedmioty&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;default&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Masz więcej niż 2 przedmioty&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;W tym przypadku na konsole zostanie wypisany tekst “Masz 2 przedmioty”, ponieważ zmienna item_count ma wpisaną wartość 2. Spróbuj sam zmienić wartość zmiennej item_count, aby zobaczyć różnice kiedy będzie posiadała wartość 0, 1, oraz 3 i więcej.
+Konstrukcja switch jest jednak najczęściej wykorzystywana z typem wyliczeniowym, czyli “enum”. Enum tak w największym uproszczeniu pozwala na nazwanie nam liczb, które mają znaczenie w naszej logice. Typ enum konstruujemy w następujący sposób:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;enum&lt;/span&gt; &lt;span class="n"&gt;NazwaTypu&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;Opcja1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;Opcja2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;Opcja3&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Przykładem niech będzie wypisanie typu broni w grze:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="k"&gt;enum&lt;/span&gt; &lt;span class="n"&gt;WeaponType&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;MELLE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;RANGE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;THROW&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;WeaponType&lt;/span&gt; &lt;span class="n"&gt;type&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;WeaponType&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;RANGE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="k"&gt;switch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;WeaponType&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="nl"&gt;MELLE&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Bron do walki w zwarciu&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;WeaponType&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="nl"&gt;RANGE&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Bron do walki zasiegowej&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;WeaponType&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="nl"&gt;THROW&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Bron rzucana&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;W dużej grze taki kod oczywiście nie miałby racji bytu, ale dla unaocznienia jak działa typ wyliczeniowy nadaje się jak najbardziej. W tym poście to byłoby na tyle do zobaczenia w kolejnej części kursu C/C++&lt;/p&gt;</content><category term="blog"></category><category term="tutorial"></category><category term="programming"></category></entry><entry><title>C/C++: Typy danych, zmienne i operatory</title><link href="http://localhost:8000/cc-typy-danych-zmienne-i-operatory.html" rel="alternate"></link><published>2016-10-31T01:00:00+01:00</published><updated>2016-10-31T01:00:00+01:00</updated><author><name>Szymon Wanot</name></author><id>tag:localhost,2016-10-31:/cc-typy-danych-zmienne-i-operatory.html</id><summary type="html">&lt;p&gt;Witam ponownie, jeżeli to czytasz to znaczy, że wróciłeś po więcej C++. W tym wpisie postaram się przedstawić typy danych, operatory i koncepcję zmiennej. Zaczniemy od tego jakie możemy mieć zmienne w C++. 
+Typów podstawowych jest sporo, więc postaram się omówić najpopularniejsze i najczęściej używane:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;int min: -2147483648 max: 2147483647 …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;Witam ponownie, jeżeli to czytasz to znaczy, że wróciłeś po więcej C++. W tym wpisie postaram się przedstawić typy danych, operatory i koncepcję zmiennej. Zaczniemy od tego jakie możemy mieć zmienne w C++. 
+Typów podstawowych jest sporo, więc postaram się omówić najpopularniejsze i najczęściej używane:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;int min: -2147483648 max: 2147483647 (liczby całkowite),&lt;/li&gt;
+&lt;li&gt;float min: 1.17549e-38 max: 3.40282e+38 (liczby zmiennoprzecinkowe pojedynczej precyzji),&lt;/li&gt;
+&lt;li&gt;double min: 2.22507e-308 max: 1.79769e+308 (liczby zmiennoprzecinkowe pojedynczej precyzji),&lt;/li&gt;
+&lt;li&gt;short min: -32768 max: 32767 (małe liczby całkowite),&lt;/li&gt;
+&lt;li&gt;long min: -2147483648 max: 2147483647 (duże liczby całkowite),&lt;/li&gt;
+&lt;li&gt;char min: -127 max: 127 (typ do zapisu znaków),&lt;/li&gt;
+&lt;li&gt;bool (typ logiczny posiadający dwie wartości: true (prawda) oraz false (fałsz)).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Do typów liczbowych możemy dodatkowo dodać przedrostek unsigned, co spowoduje, iż typ będzie mógł reprezentować tylko liczby dodatnie. Nie są to wszystkie możliwe typy danych, ale na początek powinno wystarczyć. &lt;/p&gt;
+&lt;p&gt;Kolejną sprawą, którą chciałem omówić są zmienne i operatory. Zmienne mówiąc najprościej są to pojemniki w których przechowuje się różne wartości. Ponieważ C++ jest językiem silnie typowanym każda zmienna musi mieć jasno określony typ. W kodzie możemy zapisać to w następujący sposób:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;myVariable&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// deklaracja zmiennej&lt;/span&gt;
+    &lt;span class="n"&gt;myVariable&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// przypisanie wartości do zmiennej&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;myVariable&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// wypisanie wartości zmiennej na konsole&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Co ważne, jeśli nie przypiszemy wartości do zmiennej podczas uruchomienia programu otrzymamy błąd. Cały zapis da się nieco uprościć do niniejszej postaci:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;myVariable&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// definicja zmiennej zmiennej&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;myVariable&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// wypisanie wartości zmiennej na konsole&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Jak można zauważyć deklaracja zmiennej z przypisaniem do niej wartości to tzw. definicja zmiennej. Spoko już wiemy czym są zmienne, możemy przejść do operatorów. Dzielą się one na kilka typów. Jako pierwsze na tapetę weźmiemy operatory matematyczne:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;   &lt;span class="c1"&gt;//dodawanie&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;   &lt;span class="c1"&gt;//odejmowanie&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;   &lt;span class="c1"&gt;//mnożenie&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="mf"&gt;3.0&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;//dzielenie&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;   &lt;span class="c1"&gt;//modulo&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;pre: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot; post: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;   &lt;span class="c1"&gt;// pre i post inkrementacja&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;pre: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot; post: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;--&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;   &lt;span class="c1"&gt;// pre i post dekrementacja&lt;/span&gt;
+    &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// operator łączony w tym przypadku oznacza a = a + b&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;  
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Poza operatorami matematycznymi C++ posiada również operatory logiczne:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;bool&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kt"&gt;bool&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;false&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="kt"&gt;bool&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// lub&lt;/span&gt;
+    &lt;span class="kt"&gt;bool&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;  &lt;span class="c1"&gt;// i&lt;/span&gt;
+
+
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// negacja&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Kolejną grupą są operatory służące do porównywania wartości:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// czy a jest równe b&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;    &lt;span class="c1"&gt;// czy a mniejsze od b&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;dd&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="c1"&gt;// czy a mniejsze lub równe b&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;    &lt;span class="c1"&gt;// czy a większe od b&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;ff&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="c1"&gt;// czy a większe lub równe b&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;    &lt;span class="c1"&gt;// czy a różne od b&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Pozostaje jeszcze kwestia operatorów bitowych, ale ze względu na złożoność tematu zostaną one omówione w późniejszych wpisach. W obecnym momencie nie będą one potrzebne do omawiania kolejnych elementów języka C++.&lt;/p&gt;</content><category term="blog"></category><category term="tutorial"></category><category term="programming"></category></entry><entry><title>C/C++: Konfiguracja środowiska</title><link href="http://localhost:8000/cc-konfiguracja-srodowiska.html" rel="alternate"></link><published>2016-10-16T01:00:00+02:00</published><updated>2016-10-16T01:00:00+02:00</updated><author><name>Szymon Wanot</name></author><id>tag:localhost,2016-10-16:/cc-konfiguracja-srodowiska.html</id><summary type="html">&lt;p&gt;No i stało się, pierwszy techniczny post na blogu. Na samym początku muszę się Wam do czegoś przyznać, a mianowicie od mojego ostatniego razu z C/C++ minęły około 2 lata. Wracam do tego języka pisząc niewielkich rozmiarów silnik do gier. Doszedłem do wniosku, że fajnym pomysłem będzie szybkie przejście …&lt;/p&gt;</summary><content type="html">&lt;p&gt;No i stało się, pierwszy techniczny post na blogu. Na samym początku muszę się Wam do czegoś przyznać, a mianowicie od mojego ostatniego razu z C/C++ minęły około 2 lata. Wracam do tego języka pisząc niewielkich rozmiarów silnik do gier. Doszedłem do wniosku, że fajnym pomysłem będzie szybkie przejście przez podstawowe elementy tego języka. A nuż jeszcze ktoś na tym skorzysta. &lt;/p&gt;
+&lt;p&gt;Całość kursu będzie oparta o Visual Studio 2015 Community i system operacyjny Windows 10. Osoby, które używają Linuksa, również powinny z tego materiału skorzystać (niestety konfigurację środowiska musicie zrobić w własnym zakresie). Ze swojej strony proponuję zapoznać się ze środowiskiem Code Blocks na Linuksa (z tego co pamiętam to nie jest ono złe).  &lt;/p&gt;
+&lt;p&gt;Na ten moment wydaje się być wszystko jasne, więc startujemy z konfiguracją    środowiska Visual Studio 2015 Community. Konfigurację należy pobrać z oficjalnej strony Microsoftu: https://www.visualstudio.com/vs/ . 
+Co ważne Visual Studio 2015 Community nie instaluje kompilatora C++ automatycznie, więc należy zaznaczyć to w instalatorze, tak jak na poniższym screenie:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt install" src="/images/cpp1/vsIntall.PNG"&gt;&lt;/p&gt;
+&lt;p&gt;Po instalacji, która zajmie trochę czasu, należy uruchomić Visual Studio 2015 Community i zalogować się na konto Microsoft. Gdy już wszystko mamy skończone, klikamy File &amp;gt; New &amp;gt; Project. Naszym oczom powinno ukazać się następujące okienko, z którego wybieramy Win32 Console Application:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt install" src="/images/cpp1/Createcppproj.PNG"&gt;&lt;/p&gt;
+&lt;p&gt;Gdy wszystko poszło zgodnie z planem, powinno wyświetlić się nam następujące okienko dialogowe, w którym klikamy Next:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt install" src="/images/cpp1/cppproj1.PNG"&gt;&lt;/p&gt;
+&lt;p&gt;Na następnym dialogu wybieramy opcje, tak jak na poniższym screenie, aby utworzyć pusty projekt C++:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt install" src="/images/cpp1/cppproj2.PNG"&gt;&lt;/p&gt;
+&lt;p&gt;Po wcześniejszych operacjach powinieneś otrzymać pusty projekt, do którego trzeba dodać nasz pierwszy plik z kodem źródłowym programu. Zrobimy to naciskając prawym klawiszem myszy na ikonie projektu:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt install" src="/images/cpp1/fileadd.PNG"&gt;&lt;/p&gt;
+&lt;p&gt;Powinno się nam rozwinąć Menu kontekstowe, z którego wybieramy Add &amp;gt; New Item. 
+Z dialogu wybieramy .cpp file i nazywamy plik main.cpp., klikamy ok i w ten oto sposób mamy pierwszy plik.
+Każdy program w C/C++ zaczyna się od funkcji main, która musi mieć pewną zdefiniowaną strukturę:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Po naciśnięciu Ctrl + F5 rozpocznie się kompilacja, która jeśli się powiedzie pojawi się puste okienko wiersza poleceń. Nasz program uruchomił się i wykonał, oczywiście nic nie widzimy poza pustym ekranem, ponieważ nasz program nic jeszcze nie robi. By zmienić ten stan rzeczy wypiszemy standardowe “Hello World”. W związku z tym musimy do istniejącej funkcji main odrobinę dopisać:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Hello World&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Widzimy, że pojawiło się trochę nowych rzeczy, które po kolei omówię. Dyrektywa #include &lt;iosteram&gt; mówi, że do naszego programu importujemy moduł wejścia wyjścia w naszym przypadku będzie to wyjście na konsole systemową. Kolejna linijka, czyli using namespace std; to powiedzenie kompilatorowi, że ma nam pozwolić używać ad hoc funkcji ze standardowej przestrzeni nazw. O przestrzeniach nazw powiem jeszcze w dalszej części kursu. Linijka cout &amp;lt;&amp;lt; "Hello World" &amp;lt;&amp;lt; endl; jest opowiedzialna za wypisanie na wyście konsoli systemowej napisu “Hello World” i przejście kursora do nowej lini. 
+To tyle w tej części za niedługo kolejne zmagania z C++.&lt;/p&gt;</content><category term="blog"></category><category term="tutorial"></category><category term="programming"></category></entry></feed>

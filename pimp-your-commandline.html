@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć, dziś chciałem nieco odejść od tematu programowania na rzecz pokazania możliwości modyfikacji narzędzi pracy programisty. Oprócz ulubionego IDE na podorędziu każdego developera powinna znajdować się konsola czy też tzw. commandline. Systemy Uniksopodobne (Linux, OSX, FreeBSD, itp) mogą poszczycić się masą dodatków do swoich terminali tak Windowsy od zawsze miały …" />
+<meta name="keywords" content="inne, tools">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Pimp your commandline"/>
+<meta property="og:description" content="Cześć, dziś chciałem nieco odejść od tematu programowania na rzecz pokazania możliwości modyfikacji narzędzi pracy programisty. Oprócz ulubionego IDE na podorędziu każdego developera powinna znajdować się konsola czy też tzw. commandline. Systemy Uniksopodobne (Linux, OSX, FreeBSD, itp) mogą poszczycić się masą dodatków do swoich terminali tak Windowsy od zawsze miały …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/pimp-your-commandline.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-11-06 00:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Inne, tools"/>
+<meta property="article:tag" content="inne"/>
+<meta property="article:tag" content="tools"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Pimp your commandline</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="pimp-your-commandline">Pimp your commandline</h1>
+    <p>
+          Posted on Sun 06 November 2016 in <a href="http://localhost:8000/category/inne-tools.html">Inne, tools</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć, dziś chciałem nieco odejść od tematu programowania na rzecz pokazania możliwości modyfikacji narzędzi pracy programisty. Oprócz ulubionego IDE na podorędziu każdego developera powinna znajdować się konsola czy też tzw. commandline. Systemy Uniksopodobne (Linux, OSX, FreeBSD, itp) mogą poszczycić się masą dodatków do swoich terminali tak Windowsy od zawsze miały w na tym polu nieco gorzej. Od pewnego czasu sytuacja ta zaczęła się zmieniać za pomocą ciekawych alternatyw dla cmd.exe czy niebieskiego powershella. </p>
+<p>Pierwsza i chyba najstarszą alternatywą jest emulator basha z gita. Ja sam trochę z tego korzystałem, ale jakoś nie do końca mi ta alternatywa odpowiadała, mimo wszystko należy o niej z obowiązku wspomnieć. Po wielu bojach i próbach ucywilizowania windowsowego cmd poddałem się i obecnie korzystam z cmder’a (zbudowany na emulatorze ConEmu w tandemie z powershellem). Teminal można znaleźć pod adresem: http://cmder.net/.
+Efekt po przeróbkach powinien prezentować się w taki oto sposób:</p>
+<p><img alt="Alt posh" src="/images/posh.gif"></p>
+<p>Dodatkowo aby poprawić wygląd tak jak jest to pokazane powyżej korzystać z następujących dodatków powershella: </p>
+<ul>
+<li>posh-git - czyli dodatek do gita w powershell dostępny pod: <a href="https://github.com/dahlbyk/posh-git">https://github.com/dahlbyk/posh-git</a></li>
+<li>oh-my-posh - czyli powerline dla powershella plus parę innych udogodnień: <a href="https://github.com/JanJoris/oh-my-posh">https://github.com/JanJoris/oh-my-posh</a></li>
+<li>font - fira code: <a href="https://github.com/tonsky/FiraCode">https://github.com/tonsky/FiraCode</a></li>
+</ul>
+<p>Po instalacji wszystkiego należy ustawić oh my posh jako skrypt startowy cmder’a. Aby tego dokonać należy wejść do {instalacja cmder}\config i do pliku user-profile.ps1 oddać linie:</p>
+<div class="highlight"><pre><span></span><span class="nb">Import-Module</span> <span class="n">oh-my-posh</span>
+</pre></div>
+
+
+<p>Jeżeli wszystko poszło ok to pozostaje tylko dostosować kolory i tyle.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/inne.html">inne</a>
+      <a href="http://localhost:8000/tag/tools.html">tools</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

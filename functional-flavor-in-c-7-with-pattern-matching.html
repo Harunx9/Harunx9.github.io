@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="With many great features C# 7 comes with new and shiny pattern matching. I know that this feature is less usable then in other languages, but it add new possibilities to coding. In this article I want to share with you my experiments with monads. Optional I believe that some …" />
+<meta name="keywords" content="blog, .net, programming, c#, functional pregramming, pattern matching">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Functional flavor in C# 7 with pattern matching"/>
+<meta property="og:description" content="With many great features C# 7 comes with new and shiny pattern matching. I know that this feature is less usable then in other languages, but it add new possibilities to coding. In this article I want to share with you my experiments with monads. Optional I believe that some …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/functional-flavor-in-c-7-with-pattern-matching.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2019-02-11 18:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content=".NET"/>
+<meta property="article:tag" content="blog"/>
+<meta property="article:tag" content=".net"/>
+<meta property="article:tag" content="programming"/>
+<meta property="article:tag" content="c#"/>
+<meta property="article:tag" content="functional pregramming"/>
+<meta property="article:tag" content="pattern matching"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Functional flavor in C# 7 with pattern matching</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="functional-flavor-in-c-7-with-pattern-matching">Functional flavor in C# 7 with pattern matching</h1>
+    <p>
+          Posted on Mon 11 February 2019 in <a href="http://localhost:8000/category/net.html">.NET</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>With many great features C# 7 comes with new and shiny pattern matching. I know that this feature is less usable then in other languages, but it add new possibilities to coding. In this article I want to share with you my experiments with monads.</p>
+<h3>Optional<T></h3>
+<p>I believe that some of you know that null exception is big pain in developer life. I hear that even null creator say that this was a "billion-dollar mistake" to invent null. In other hand some languages like F# or Rust try to decrees of null using provide Optional monad. This monad have two possibilities happen:</p>
+<ul>
+<li>Some - indicate that we have some value, </li>
+<li>None - we do not have any value in this optional.</li>
+</ul>
+<p>So I try to implement this using OOP in C# like that:</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">interface</span> <span class="n">IOptional</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="k">class</span>
+<span class="p">{</span>
+    <span class="n">T</span> <span class="n">Value</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Optional</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">:</span> <span class="n">IOptional</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
+    <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="k">class</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">abstract</span> <span class="n">T</span> <span class="n">Value</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">IOptional</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">Some</span><span class="p">(</span><span class="n">T</span> <span class="k">value</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">Some</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="k">value</span><span class="p">);</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">IOptional</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">None</span><span class="p">()</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">None</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;();</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">sealed</span> <span class="k">class</span> <span class="nc">Some</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
+    <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="k">class</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">override</span> <span class="n">T</span> <span class="n">Value</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="nf">Some</span><span class="p">(</span><span class="n">T</span> <span class="k">value</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Value</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">sealed</span> <span class="k">class</span> <span class="nc">None</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
+    <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="k">class</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">override</span> <span class="n">T</span> <span class="n">Value</span> <span class="p">=&gt;</span> <span class="k">throw</span> <span class="k">new</span> <span class="n">NotSupportedException</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>And also I implement some simple test:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Person</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">Person</span><span class="p">(</span><span class="kt">string</span> <span class="n">name</span><span class="p">,</span> <span class="kt">string</span> <span class="n">surname</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Name</span> <span class="p">=</span> <span class="n">name</span><span class="p">;</span>
+        <span class="n">Surname</span> <span class="p">=</span> <span class="n">surname</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Surname</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Program</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">IOptional</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="n">GetPerson</span><span class="p">(</span><span class="kt">bool</span> <span class="n">isSome</span><span class="p">)</span> 
+    <span class="p">=&gt;</span> <span class="n">isSome</span> <span class="p">?</span>
+        <span class="n">Optional</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;.</span><span class="n">Some</span><span class="p">(</span><span class="k">new</span> <span class="n">Person</span><span class="p">(</span><span class="s">&quot;Adam&quot;</span><span class="p">,</span> <span class="s">&quot;Kowalski&quot;</span><span class="p">))</span> <span class="p">:</span>
+        <span class="n">Optional</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;.</span><span class="n">None</span><span class="p">();</span>
+
+    <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">opt</span> <span class="p">=</span> <span class="n">GetPerson</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+
+        <span class="k">switch</span> <span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">case</span> <span class="n">Some</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="n">p</span><span class="p">:</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="err">$</span><span class="s">&quot;{p.Value.Name} {p.Value.Surname} is present&quot;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="n">None</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="n">n</span><span class="p">:</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;No one is present&quot;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>I believe this simple implementation can be used to get rid of many nulls in code. Also when it will be use with new pattern matching feature as you see in example above. Maybe in next step I try to make some extension to LINQ to have possibility to use this with collections.</p>
+<h3>Result<E> and Result<T, E></h3>
+<p>Other monad I try to experiment with is Result. At first I meet this when I try to learn Rust programming language. What is Result then and how to use that in your code? So many functions take data and save it to database or filesystem. For most time this methods are void and if any problem occurs exception will be throw from it. On top of it we should catch that exception or leave it as it is and pray nothing will happen of have try and bunch of catch statements to have possibility to react of each individually or one catch statement to log and forget every exception. It's not like that I think that using exceptions in a bad thing. There are some places where exception are handy like validating in constructor in value objects but error handling could be done without of try catch hell. 
+I implement two solutions one for void function and one for result with data:</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">interface</span> <span class="n">IResult</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="n">E</span> <span class="n">Error</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Result</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;</span> <span class="p">:</span> <span class="n">IResult</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">abstract</span> <span class="n">E</span> <span class="n">Error</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="n">IResult</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;</span> <span class="n">Ok</span><span class="p">()</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">Ok</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;();</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">IResult</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;</span> <span class="n">Err</span><span class="p">(</span><span class="n">E</span> <span class="n">error</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">Err</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;(</span><span class="n">error</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">sealed</span> <span class="k">class</span> <span class="nc">Ok</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;</span> <span class="p">:</span> <span class="n">Result</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">override</span> <span class="n">E</span> <span class="n">Error</span> <span class="p">=&gt;</span> <span class="k">throw</span> <span class="k">new</span> <span class="n">NotSupportedException</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">sealed</span> <span class="k">class</span> <span class="nc">Err</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;</span> <span class="p">:</span> <span class="n">Result</span><span class="p">&lt;</span><span class="n">E</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">override</span> <span class="n">E</span> <span class="n">Error</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="nf">Err</span><span class="p">(</span><span class="n">E</span> <span class="n">error</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Error</span> <span class="p">=</span> <span class="n">error</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">interface</span> <span class="n">IResult</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="n">T</span> <span class="n">Outcome</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">E</span> <span class="n">Error</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Result</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;</span> <span class="p">:</span> <span class="n">IResult</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">abstract</span> <span class="n">T</span> <span class="n">Outcome</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="k">abstract</span> <span class="n">E</span> <span class="n">Error</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">static</span> <span class="n">IResult</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;</span> <span class="n">Ok</span><span class="p">(</span><span class="n">T</span> <span class="n">outcome</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">Ok</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;(</span><span class="n">outcome</span><span class="p">);</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">IResult</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;</span> <span class="n">Err</span><span class="p">(</span><span class="n">E</span> <span class="n">error</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">Err</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;(</span><span class="n">error</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">sealed</span> <span class="k">class</span> <span class="nc">Ok</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;</span> <span class="p">:</span> <span class="n">Result</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">override</span> <span class="n">T</span> <span class="n">Outcome</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="k">override</span> <span class="n">E</span> <span class="n">Error</span> <span class="p">=&gt;</span> <span class="k">throw</span> <span class="k">new</span> <span class="n">NotSupportedException</span><span class="p">();</span>
+
+    <span class="k">public</span> <span class="nf">Ok</span><span class="p">(</span><span class="n">T</span> <span class="n">outcome</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Outcome</span> <span class="p">=</span> <span class="n">outcome</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">sealed</span> <span class="k">class</span> <span class="nc">Err</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;</span> <span class="p">:</span> <span class="n">Result</span><span class="p">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">override</span> <span class="n">T</span> <span class="n">Outcome</span> <span class="p">=&gt;</span> <span class="k">throw</span> <span class="k">new</span> <span class="n">NotSupportedException</span><span class="p">();</span>
+    <span class="k">public</span> <span class="k">override</span> <span class="n">E</span> <span class="n">Error</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="nf">Err</span><span class="p">(</span><span class="n">E</span> <span class="n">error</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Error</span> <span class="p">=</span> <span class="n">error</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Implementation Result<E> we can use in situation when we want to write void function to get that if all operations was executed correctly:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Program</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">IResult</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">GetResult</span><span class="p">(</span><span class="kt">bool</span> <span class="n">isOk</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">isOk</span> <span class="p">?</span> 
+        <span class="n">Result</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;.</span><span class="n">Ok</span><span class="p">():</span>
+        <span class="n">Result</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;.</span><span class="n">Err</span><span class="p">(</span><span class="s">&quot;Ooops we got error&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">res</span> <span class="p">=</span> <span class="n">GetResult</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+
+        <span class="k">switch</span> <span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">case</span> <span class="n">Ok</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">ok</span><span class="p">:</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Everything is fine&quot;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="n">Err</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">err</span><span class="p">.</span><span class="n">Error</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>In other hand Result<T, E> used when you want to implement function that actually return something, but in this case we also get error when something wrong happens:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Program</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">IResult</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">GetResult</span><span class="p">(</span><span class="kt">bool</span> <span class="n">isOk</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">isOk</span> <span class="p">?</span> 
+        <span class="n">Result</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;.</span><span class="n">Ok</span><span class="p">(</span><span class="m">1</span><span class="p">):</span>
+        <span class="n">Result</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;.</span><span class="n">Err</span><span class="p">(</span><span class="s">&quot;Ooops we got error&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">res</span> <span class="p">=</span> <span class="n">GetResult</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+
+        <span class="k">switch</span> <span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">case</span> <span class="n">Ok</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">ok</span><span class="p">:</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="err">$</span><span class="s">&quot;Lucky number is {ok.Outcome}&quot;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="n">Err</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">err</span><span class="p">.</span><span class="n">Error</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>One thing I cannot resolve that I can't hide Error in Ok response and Outcome in Error. I workaround that witch NotSupportedException, but maybe you can help me with that. 
+At the end I want to give you Github Gist where all code with test programs are available: </p>
+<ul>
+<li><a href="https://gist.github.com/Harunx9/94e0473fd41e749431cb1a3b266d0917">Optional<T></a></li>
+<li><a href="https://gist.github.com/Harunx9/e972f3662ec2ed7ed376c49fda941502">Result<E></a></li>
+<li><a href="https://gist.github.com/Harunx9/ddd029364ab42da15e1aa3208f0d6598">Result<T, E></a></li>
+</ul>
+<p>If you also experiment with monads with C# 7 please share with me your experiences with that. 
+As always I invite you to comments section to discuss article. See you next time!</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/blog.html">blog</a>
+      <a href="http://localhost:8000/tag/net.html">.net</a>
+      <a href="http://localhost:8000/tag/programming.html">programming</a>
+      <a href="http://localhost:8000/tag/c.html">c#</a>
+      <a href="http://localhost:8000/tag/functional-pregramming.html">functional pregramming</a>
+      <a href="http://localhost:8000/tag/pattern-matching.html">pattern matching</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

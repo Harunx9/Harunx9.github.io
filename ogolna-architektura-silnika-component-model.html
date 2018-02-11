@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Poprzedni post z tego cyklu traktował o tym jak tworzyć GameObjecty za pomocą hierarchii dziedziczenia. Jak już pisałem sposób ten staje się nieczytelny, w miarę rozwoju projektu, ale pozwala szybko wystartować. Dla większych gier GameObjecty tworzymy w nieco inny sposób używając nie dziedziczenia, a kompozycji stąd nazwa component model. W …" />
+<meta name="keywords" content="DSP2017, Gamedev">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Ogólna architektura silnika - component model"/>
+<meta property="og:description" content="Poprzedni post z tego cyklu traktował o tym jak tworzyć GameObjecty za pomocą hierarchii dziedziczenia. Jak już pisałem sposób ten staje się nieczytelny, w miarę rozwoju projektu, ale pozwala szybko wystartować. Dla większych gier GameObjecty tworzymy w nieco inny sposób używając nie dziedziczenia, a kompozycji stąd nazwa component model. W …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/ogolna-architektura-silnika-component-model.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-04-11 18:20:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Gamedev"/>
+<meta property="article:tag" content="DSP2017"/>
+<meta property="article:tag" content="Gamedev"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Ogólna architektura silnika - component model</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="ogolna-architektura-silnika-component-model">Ogólna architektura silnika - component model</h1>
+    <p>
+          Posted on Tue 11 April 2017 in <a href="http://localhost:8000/category/gamedev.html">Gamedev</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Poprzedni post z tego cyklu traktował o tym jak tworzyć GameObjecty za pomocą hierarchii dziedziczenia. Jak już pisałem sposób ten staje się nieczytelny, w miarę rozwoju projektu, ale pozwala szybko wystartować. Dla większych gier GameObjecty tworzymy w nieco inny sposób używając nie dziedziczenia, a kompozycji stąd nazwa component model. W tej implementacji GameObject sam z siebie jest tylko agregatorem dla komponentów. To one nadają mu właściwe funkcjonalności. Przykładowo  jak do obiektu dodamy komponenty:</p>
+<ul>
+<li>tekstura z animacjami nietoperza,</li>
+<li>odtwarzacz animacji poklatkowych,</li>
+<li>kontroler sztucznej inteligencji,</li>
+<li>drzewo zachowań dla SI latających.</li>
+</ul>
+<p>Tak otrzymamy nietoperza, który będzie latał zgodnie z konfiguracją SI. Już na pierwszy rzut oka widać, że component model daje możliwości pewnej separacji i ponownego użycia raz napisanej logiki GameObjectów - jeżeli zrobimy logikę podążania za graczem, to może jej używać kilka obiektów na scenie itp. Jak już wiemy jak to mniej więcej ma wyglądać teoretycznie to przyjrzymy się jakie elementy są potrzebne, aby wygodnie się tak skonstruowanym systemem GameObjectów posługiwać. Ja zawsze implementuję takie elementy:</p>
+<ul>
+<li>GameObjectManager - Manager posiada wszystkie GameObjecty na scenie, można się do niego odwołać ze samej sceny, podsystemów sceny, i gameobjectów. Jest to obiekt zarządzający całą hierarchią, można za jego pomocą dodawać, wyszukiwać i usuwać obiekty, </li>
+<li>GameObject - w tym podejściu jest on jedynie kontenerem na komponenty i nie wykonuje sam żadnej logiki. Można za jego pomocą dodawać, usuwać i wyszukiwać komponenty oraz dodawać nowe gameobjecty jako dzieci. Celowo napisałem również, że nie wykonuje on żadnej logiki. Ja w swoich implementacjach stosuje update serivce i draw service, który ma listę komponentów do aktualizacji i rysowania. W razie jakiś zmian komponenty są na nowo zbierane ze wszystkich gameobjectów. Jest to bardziej optymalne od strony wykonania i zgodne z zasadami Data-Oriented Design.</li>
+</ul>
+<p>Jeśli chodzi o komponenty to je również dziele na grupy:</p>
+<ul>
+<li>Behaviors - komponenty aktualizowane co klatkę, może to by np. kontroler postaci czy kontroler sztucznej inteligencji,</li>
+<li>Drawables - komponenty graficzne, które będą rysowane co klatkę, np. sprite'y, animacje, efekty,</li>
+<li>DataComponents - komponenty przechowujące dane, do których odwołują się inne komponenty, np. komponent przechowujący informacje o położeniu gameobjetu na scenie.</li>
+</ul>
+<p>Jako, że komponenty mogą korzystać z innych komponentów w ramach jednego gameobjectu lub hierarchii rodzic - dziecko, należy zaimplementować jakiś system rozwiązywania zależności przy inicjalizacji komponentu. Można to zależnie od języka programowania zaimplementować na kilka sposobów. 
+Component model jest, więc dość złożoną, ale jednocześnie skalowalną implementacją struktury sceny. Pracowałem z jego pomocą nad paroma produkcjami. W razie jakichś niejasności lub pytań zapraszam do komentowania.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/dsp2017.html">DSP2017</a>
+      <a href="http://localhost:8000/tag/gamedev.html">Gamedev</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

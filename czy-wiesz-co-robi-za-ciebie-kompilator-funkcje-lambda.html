@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć, kiedyś ludzie mówili mi, że nie należy wkładać palców między drzwi, bo może zaboleć. Niestety jakoś tak wychodzi, że jestem ciekawy jak działa to z czym pracuję, więc zacząłem się nieco przyglądać jak wygląda .NET pod maską i nawet mi się spodobało. Na pierwszy ogień pójdą dziś funkcje lambda …" />
+<meta name="keywords" content="blog, .net, programming, c#">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Czy wiesz co robi za Ciebie kompilator?: Funkcje lambda"/>
+<meta property="og:description" content="Cześć, kiedyś ludzie mówili mi, że nie należy wkładać palców między drzwi, bo może zaboleć. Niestety jakoś tak wychodzi, że jestem ciekawy jak działa to z czym pracuję, więc zacząłem się nieco przyglądać jak wygląda .NET pod maską i nawet mi się spodobało. Na pierwszy ogień pójdą dziś funkcje lambda …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/czy-wiesz-co-robi-za-ciebie-kompilator-funkcje-lambda.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-10-24 00:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content=".NET"/>
+<meta property="article:tag" content="blog"/>
+<meta property="article:tag" content=".net"/>
+<meta property="article:tag" content="programming"/>
+<meta property="article:tag" content="c#"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Czy wiesz co robi za Ciebie kompilator?: Funkcje lambda</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="czy-wiesz-co-robi-za-ciebie-kompilator-funkcje-lambda">Czy wiesz co robi za Ciebie kompilator?: Funkcje lambda</h1>
+    <p>
+          Posted on Mon 24 October 2016 in <a href="http://localhost:8000/category/net.html">.NET</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć, kiedyś ludzie mówili mi, że nie należy wkładać palców między drzwi, bo może zaboleć. Niestety jakoś tak wychodzi, że jestem ciekawy jak
+działa to z czym pracuję, więc zacząłem się nieco przyglądać jak wygląda .NET pod maską i nawet mi się spodobało.
+Na pierwszy ogień pójdą dziś funkcje lambda w C# i to co kompilator sprytnie dodaje za programistę. Rozpatrzmy zatem oto taki prosty kodzik: </p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Person</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Surname</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Program</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">list</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;();</span>
+        <span class="n">list</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">Person</span> <span class="p">{</span> <span class="n">Name</span> <span class="p">=</span> <span class="s">&quot;John&quot;</span><span class="p">,</span> <span class="n">Surname</span> <span class="p">=</span> <span class="s">&quot;Doe&quot;</span> <span class="p">});</span>
+
+        <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Surname</span> <span class="p">==</span> <span class="s">&quot;Doe&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Po skompilowaniu w konfiguracji Debug zdekompilowaniu ILSpy otrzymamy coś takiego:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Program</span>
+<span class="p">{</span>
+<span class="na">    [CompilerGenerated]</span>
+<span class="na">    [Serializable]</span>
+    <span class="k">private</span> <span class="k">sealed</span> <span class="k">class</span> <span class="p">&lt;&gt;</span><span class="n">c</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">Program</span><span class="p">.&lt;&gt;</span><span class="n">c</span> <span class="p">&lt;&gt;</span><span class="m">9</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Program</span><span class="p">.&lt;&gt;</span><span class="n">c</span><span class="p">();</span>
+
+        <span class="k">public</span> <span class="k">static</span> <span class="n">Func</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">,</span> <span class="kt">bool</span><span class="p">&gt;</span> <span class="p">&lt;&gt;</span><span class="m">9</span><span class="n">__0_0</span><span class="p">;</span>
+
+        <span class="k">internal</span> <span class="kt">bool</span> <span class="p">&lt;</span><span class="n">Main</span><span class="p">&gt;</span><span class="n">b__0_0</span><span class="p">(</span><span class="n">Person</span> <span class="n">x</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="n">x</span><span class="p">.</span><span class="n">Surname</span> <span class="p">==</span> <span class="s">&quot;Doe&quot;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="n">arg_4B_0</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span>
+        <span class="p">{</span>
+            <span class="k">new</span> <span class="n">Person</span>
+            <span class="p">{</span>
+                <span class="n">Name</span> <span class="p">=</span> <span class="s">&quot;John&quot;</span><span class="p">,</span>
+                <span class="n">Surname</span> <span class="p">=</span> <span class="s">&quot;Doe&quot;</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+        <span class="n">Func</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">,</span> <span class="kt">bool</span><span class="p">&gt;</span> <span class="n">arg_4B_1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">arg_4B_1</span> <span class="p">=</span> <span class="n">Program</span><span class="p">.&lt;&gt;</span><span class="n">c</span><span class="p">.&lt;&gt;</span><span class="m">9</span><span class="n">__0_0</span><span class="p">)</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">arg_4B_1</span> <span class="p">=</span> <span class="p">(</span><span class="n">Program</span><span class="p">.&lt;&gt;</span><span class="n">c</span><span class="p">.&lt;&gt;</span><span class="m">9</span><span class="n">__0_0</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Func</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">,</span> <span class="kt">bool</span><span class="p">&gt;(</span><span class="n">Program</span><span class="p">.&lt;&gt;</span><span class="n">c</span><span class="p">.&lt;&gt;</span><span class="m">9.</span><span class="p">&lt;</span><span class="n">Main</span><span class="p">&gt;</span><span class="n">b__0_0</span><span class="p">));</span>
+        <span class="p">}</span>
+        <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;</span> <span class="n">result</span> <span class="p">=</span> <span class="n">arg_4B_0</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">arg_4B_1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Jak można zauważyć funktory w C# generują dodatkowe klasy, które implementują funkcję lambda zapisaną przez nas w listingu pierwszym. Do tego odkrycia doszedłem w sumie przez przypadek. Pewnie taka
+implementacja jest jak najbardziej ok, nie mniej jednak warto wiedzieć jak kod wygląda po kompilacji. W powyższym przypadku kod skompilowany w konfiguracji Release niewiele się różni, więc nie ma sensu
+pokazywanie go. Powyższy przykład zmotywował mnie do poszukania większej ilości przykładów, więc jeśli coś znajdę to niezwłocznie opublikuję. A tym czasem życzę miłej lektury i do następnego razu. </p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/blog.html">blog</a>
+      <a href="http://localhost:8000/tag/net.html">.net</a>
+      <a href="http://localhost:8000/tag/programming.html">programming</a>
+      <a href="http://localhost:8000/tag/c.html">c#</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

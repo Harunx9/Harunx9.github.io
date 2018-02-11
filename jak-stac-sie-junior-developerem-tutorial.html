@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Cześć. Ostatnio nie mam zbyt wiele czasu pisać, ale jest jeden temat na który powinienem się wypowiedzieć. Kilku moich znajomych próbuje się przekwalifikować z jakieś innej dziedziny na programistę lub dostać prace w it, więc zadają mi pytania jak to zrobić. Jestem dość specyficzną osobą, to znaczy odnalazłem pasję w …" />
+<meta name="keywords" content="blog, inne, it, praca">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Jak stać się junior developerem - Tutorial"/>
+<meta property="og:description" content="Cześć. Ostatnio nie mam zbyt wiele czasu pisać, ale jest jeden temat na który powinienem się wypowiedzieć. Kilku moich znajomych próbuje się przekwalifikować z jakieś innej dziedziny na programistę lub dostać prace w it, więc zadają mi pytania jak to zrobić. Jestem dość specyficzną osobą, to znaczy odnalazłem pasję w …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/jak-stac-sie-junior-developerem-tutorial.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-11-20 00:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="Inne"/>
+<meta property="article:tag" content="blog"/>
+<meta property="article:tag" content="inne"/>
+<meta property="article:tag" content="it"/>
+<meta property="article:tag" content="praca"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Jak stać się junior developerem - Tutorial</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="jak-stac-sie-junior-developerem-tutorial">Jak stać się junior developerem - Tutorial</h1>
+    <p>
+          Posted on Mon 20 November 2017 in <a href="http://localhost:8000/category/inne.html">Inne</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Cześć. Ostatnio nie mam zbyt wiele czasu pisać, ale jest jeden temat na który powinienem się wypowiedzieć. Kilku moich znajomych próbuje się przekwalifikować z jakieś innej dziedziny na programistę lub dostać prace w it, więc zadają mi pytania jak to zrobić. Jestem dość specyficzną osobą, to znaczy odnalazłem pasję w programowaniu i poza pracą prowadzę tego oto bloga, rozwijam swój autorski silnik do gier oraz narzędzia do niego, więc poświęcam na swój rozwój sporo czasu i zdaje sobie sprawę, że nie każdy tak chce/może/jest w stanie. Zastrzegę na początku, że to co tu pisze to moje prywatne opinie i mogą się one różnić od tego co jest na rynku pracy w Twojej miejscowości. Będę sporo odwoływał się do wymagań na .NET developera, ponieważ taką technologią zajmuje się w pracy, choć postaram się to zminimalizować i jak najbardziej uogólnić.</p>
+<h3>Co trzeba umieć?</h3>
+<p>To jest punkt tak na prawdę najtrudniejszy, ponieważ rozbija się o technologię i w tym momencie powiem nieco co trzeba umieć jako taki początkujący .NET developer. Po pierwsze niezależne od technologii warto by znać:</p>
+<ul>
+<li>język w którym będziemy programować - wiem banalne i głupie, ale jak ktoś by chciał programować jako .NET/C# to miło żeby ogarniał elementy języka takie jak - Linq, delegaty, funkcje lambda, bo jest to jakiś wyróżnik C# względem innych języków i te elementy na co dzień się stosuje w normalnej pracy.</li>
+<li>programowanie obiektowe - teraz widzę to święte oburzenie, ale nie znajomość języka to nie to samo co programowanie obiektowe, bo można znać C# i pisać klasy po 5k linijek nie korzystać z kompozycji, polimorfimzu i jakichkolwiek dobrych praktyk separacji kodu w klasy. Mimo, że nie mam bardzo długiego stażu, to przeszedłem kilka projektów i cześć z nich nie miała nic wspólnego z programowaniem obiektowych mimo, że były klasy.</li>
+<li>wzorce projektowe - to jest nieco dla mnie kontrowersyjne, bo sam ich na pamięć nie znam. Bardziej jest to na takiej zasadzie, że mam jakieś zadanie i nie mam na niego pomysły to sięgam do wzorców i często tam znajduję jakieś pomysły na implementacje</li>
+<li>SOLID - są to ogóle zasady dobrego programowania sprowadzające się do dobrych praktyk. Jeżeli znasz SOLID to jesteś w stanie za ich pomocą zaimplementować wzorce projektowe nie znając ich.</li>
+<li>system kontroli wersji  GIT/SVN - jest to narzędzie niezwiązane z samym programowaniem. Pomaga ono we współpracy wielu developerów. Generalnie działa ono tak, że jest jakieś jedno centralne repozytorium, gdzie przechowuje się kod i można tam za ich pomocą ten kod dodawać. Git i SVN są najbardziej popularne generalnie polecam zacząć od Git'a, ale SVN też można jeszcze gdzie nie gdzie spotkać.</li>
+</ul>
+<p>To jest moim zdaniem takie minimum, które należałoby umieć. Co do wzorców to tak jak napisałem może nie tyle żeby na pamięć je znać tylko bardziej tak orientować się, że są i że jak mamy problem z jakąś implementacją to mogą nam pomóc.</p>
+<p>Poza tymi rzeczami teraz taki Junior .NET Developer powinien liznąć co nieco ekosystemu, czyli wiedzieć coś o NuGET, Visual Studio itp. Kolejną sprawą są frameworki. Ja miałem akurat takie szczęście, że na uczelni przeszliśmy właściwie przez wszystko odnoście .NET, czyli aplikacje konsolowe, okienkowe i webowe. Każdy język ma jakieś swoje frameworki, które trzeba znać. Tu oczywiście też nie na pamięć, ale jak aplikujemy do aplikacji webowych to takie MVC i WebAPI trzeba znać.</p>
+<h3>Czy studia pomogą?</h3>
+<p>Tu będzie mocno kontrowersyjnie, ale moim zdaniem studnia niczego sensownego was nie nauczą. Sam nieco żałuje, że nie zrezygnowałem po pierwszym roku studiów,ponieważ programowania uczyłem się głównie sam w domu po pracy. Później zwolniłem się i siedziałem przez około 6 miesięcy ucząc się po 8 godzin dziennie. Myślę, że regularna codzienna nauka a nie studia pozwoliły mi wcześnie znaleźć pracę. Studia owszem są fajne, ponieważ dają możliwość znalezienia ludzi, dzięki którym uczymy się szybciej, ale sam proces nauki to jednak i tak nasz wysiłek, którego nikt za nas nie wykona. </p>
+<h3>To co w takim razie zrobić ?</h3>
+<p>Teraz odpowiem na to znienawidzonym "to zależy". Jeżeli masz do 30 lub koło 30 lat i nie masz zobowiązań to idź na te studia. Tak jak napisałem powyżej nikt Ci tam wiedzy do głowy nie włoży, ale jak sam będziesz pracował to masz szanse poznać ludzi dzięki którym szybciej się rozwiniesz. Jeżeli nie masz czasu na studia to polecam najpierw jakiś kurs pokroju SoloLearn, TreeHouse, Code School. Część jest darmowa część jest płatana. Takie kursy dobrze uczą składni języka przez kolejne przykłady. Potem można sobie znaleźć jakieś ćwiczenia z danego języka i próbować je robić.</p>
+<p>Alternatywą do dalszych ćwiczeń jest wymyślenie sobie jakiegoś projektu i próba jego implementacji. Pewnie zanim coś powstanie to wyrzucicie kod milion razy do kosza, ale dzięki temu nauczycie się najlepiej. Ważnym jest też żeby to co robicie było widoczne. I w tym miejscu polecam takie coś jak GgitHub. Jest to portal gdzie za darmo możecie sobie hostować wasze repozytoria gitowe. Generalnie należy wyróżnić się wśród kandydatów na stanowisko pracy. Jeżeli pokażemy własny projekt, pasję z jaką go realizujemy, to że się interesujemy tym programowaniem. Mamy dzięki temu większe szanse na dostanie się do pracy niż statystyczny magister informatyki nawet jeżeli ma 5 i wyróżnienie na dyplomie.</p>
+<p>I teraz tak na zakończenie najważniejsza porada już na rozmowę kwalifikacyjną. Programista, który będzie Cię rekrutował to też człowiek i on też nie wie wszystkiego. Generalnie ważne jest to żeby nie wyidealizować sobie ludzi pracujących w tym zawodzie. Pozwoli to na większy luz podczas rozmowy co przełoży się na lepszy odbiór twojej osoby przez rekrutrów. Warto też pamiętać o tym, że my też nie musimy wiedzieć wszystkiego. Każdy ma jakąś specjalizacje, używał takich czy innych bibliotek, więc należy wyluzować, bo jak używałeś Autofac to Structure Map czy Castle Windsor też będzie używał bez problemu.</p>
+<p>Podsumowując co należy zrobić to pisać kod po trzykroć, ponieważ programowanie to nauka przez powtarzanie. Im więcej piszemy tym lepiej piszemy. Po drugie warto znaleźć swoje zainteresowanie w programowaniu, ponieważ jak się czymś interesujemy to łatwiej przychodzi nam nauka. Ja odnalazłem swoje zainteresowanie w gamedevie i mimo, że na co dzień nie pracuje przy grach, to wykorzystuje masę zdobytej wiedzy w codziennej pracy. To czy iść na studia jest sprawą indywidualną. Sam znam kilku programistów, którzy studiów nie ukończyli i w niczym im to nie przeszkadza. </p>
+<p>To chyba na tyle. Jeżeli macie jakieś pytania czy uwagi to jak zawsze zapraszam do sekcji komentarzy.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/blog.html">blog</a>
+      <a href="http://localhost:8000/tag/inne.html">inne</a>
+      <a href="http://localhost:8000/tag/it.html">it</a>
+      <a href="http://localhost:8000/tag/praca.html">praca</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

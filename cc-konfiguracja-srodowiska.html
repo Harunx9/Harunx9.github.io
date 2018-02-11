@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="No i stało się, pierwszy techniczny post na blogu. Na samym początku muszę się Wam do czegoś przyznać, a mianowicie od mojego ostatniego razu z C/C++ minęły około 2 lata. Wracam do tego języka pisząc niewielkich rozmiarów silnik do gier. Doszedłem do wniosku, że fajnym pomysłem będzie szybkie przejście …" />
+<meta name="keywords" content="blog, tutorial, programming">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="C/C++: Konfiguracja środowiska"/>
+<meta property="og:description" content="No i stało się, pierwszy techniczny post na blogu. Na samym początku muszę się Wam do czegoś przyznać, a mianowicie od mojego ostatniego razu z C/C++ minęły około 2 lata. Wracam do tego języka pisząc niewielkich rozmiarów silnik do gier. Doszedłem do wniosku, że fajnym pomysłem będzie szybkie przejście …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/cc-konfiguracja-srodowiska.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-10-16 01:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content="C/C++"/>
+<meta property="article:tag" content="blog"/>
+<meta property="article:tag" content="tutorial"/>
+<meta property="article:tag" content="programming"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; C/C++: Konfiguracja środowiska</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="cc-konfiguracja-srodowiska">C/C++: Konfiguracja środowiska</h1>
+    <p>
+          Posted on Sun 16 October 2016 in <a href="http://localhost:8000/category/cc.html">C/C++</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>No i stało się, pierwszy techniczny post na blogu. Na samym początku muszę się Wam do czegoś przyznać, a mianowicie od mojego ostatniego razu z C/C++ minęły około 2 lata. Wracam do tego języka pisząc niewielkich rozmiarów silnik do gier. Doszedłem do wniosku, że fajnym pomysłem będzie szybkie przejście przez podstawowe elementy tego języka. A nuż jeszcze ktoś na tym skorzysta. </p>
+<p>Całość kursu będzie oparta o Visual Studio 2015 Community i system operacyjny Windows 10. Osoby, które używają Linuksa, również powinny z tego materiału skorzystać (niestety konfigurację środowiska musicie zrobić w własnym zakresie). Ze swojej strony proponuję zapoznać się ze środowiskiem Code Blocks na Linuksa (z tego co pamiętam to nie jest ono złe).  </p>
+<p>Na ten moment wydaje się być wszystko jasne, więc startujemy z konfiguracją    środowiska Visual Studio 2015 Community. Konfigurację należy pobrać z oficjalnej strony Microsoftu: https://www.visualstudio.com/vs/ . 
+Co ważne Visual Studio 2015 Community nie instaluje kompilatora C++ automatycznie, więc należy zaznaczyć to w instalatorze, tak jak na poniższym screenie:</p>
+<p><img alt="Alt install" src="/images/cpp1/vsIntall.PNG"></p>
+<p>Po instalacji, która zajmie trochę czasu, należy uruchomić Visual Studio 2015 Community i zalogować się na konto Microsoft. Gdy już wszystko mamy skończone, klikamy File &gt; New &gt; Project. Naszym oczom powinno ukazać się następujące okienko, z którego wybieramy Win32 Console Application:</p>
+<p><img alt="Alt install" src="/images/cpp1/Createcppproj.PNG"></p>
+<p>Gdy wszystko poszło zgodnie z planem, powinno wyświetlić się nam następujące okienko dialogowe, w którym klikamy Next:</p>
+<p><img alt="Alt install" src="/images/cpp1/cppproj1.PNG"></p>
+<p>Na następnym dialogu wybieramy opcje, tak jak na poniższym screenie, aby utworzyć pusty projekt C++:</p>
+<p><img alt="Alt install" src="/images/cpp1/cppproj2.PNG"></p>
+<p>Po wcześniejszych operacjach powinieneś otrzymać pusty projekt, do którego trzeba dodać nasz pierwszy plik z kodem źródłowym programu. Zrobimy to naciskając prawym klawiszem myszy na ikonie projektu:</p>
+<p><img alt="Alt install" src="/images/cpp1/fileadd.PNG"></p>
+<p>Powinno się nam rozwinąć Menu kontekstowe, z którego wybieramy Add &gt; New Item. 
+Z dialogu wybieramy .cpp file i nazywamy plik main.cpp., klikamy ok i w ten oto sposób mamy pierwszy plik.
+Każdy program w C/C++ zaczyna się od funkcji main, która musi mieć pewną zdefiniowaną strukturę:</p>
+<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Po naciśnięciu Ctrl + F5 rozpocznie się kompilacja, która jeśli się powiedzie pojawi się puste okienko wiersza poleceń. Nasz program uruchomił się i wykonał, oczywiście nic nie widzimy poza pustym ekranem, ponieważ nasz program nic jeszcze nie robi. By zmienić ten stan rzeczy wypiszemy standardowe “Hello World”. W związku z tym musimy do istniejącej funkcji main odrobinę dopisać:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Hello World&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Widzimy, że pojawiło się trochę nowych rzeczy, które po kolei omówię. Dyrektywa #include <iosteram> mówi, że do naszego programu importujemy moduł wejścia wyjścia w naszym przypadku będzie to wyjście na konsole systemową. Kolejna linijka, czyli using namespace std; to powiedzenie kompilatorowi, że ma nam pozwolić używać ad hoc funkcji ze standardowej przestrzeni nazw. O przestrzeniach nazw powiem jeszcze w dalszej części kursu. Linijka cout &lt;&lt; "Hello World" &lt;&lt; endl; jest opowiedzialna za wypisanie na wyście konsoli systemowej napisu “Hello World” i przejście kursora do nowej lini. 
+To tyle w tej części za niedługo kolejne zmagania z C++.</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/blog.html">blog</a>
+      <a href="http://localhost:8000/tag/tutorial.html">tutorial</a>
+      <a href="http://localhost:8000/tag/programming.html">programming</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>

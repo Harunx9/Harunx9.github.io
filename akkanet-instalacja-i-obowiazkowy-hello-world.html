@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Jakiś czas temu pisałem na temat aktor model z perspektywy pracy z nim. Osoby, które spotykają się z tym tematem po raz pierwszy odsyłam do poprzedniego posta. W tej serii mam zamiar przedstawić Wam Akka.NET, czy port aktor modelu prosto z JVM. Zabawę zaczniemy od prostego “Hello world”. W …" />
+<meta name="keywords" content="blog, .net, programming, c#, actror model, Akka.NET, Akka">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="Akka.NET: Instalacja i obowiązkowy “Hello world”"/>
+<meta property="og:description" content="Jakiś czas temu pisałem na temat aktor model z perspektywy pracy z nim. Osoby, które spotykają się z tym tematem po raz pierwszy odsyłam do poprzedniego posta. W tej serii mam zamiar przedstawić Wam Akka.NET, czy port aktor modelu prosto z JVM. Zabawę zaczniemy od prostego “Hello world”. W …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://localhost:8000/akkanet-instalacja-i-obowiazkowy-hello-world.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-12-06 00:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:section" content=".NET"/>
+<meta property="article:tag" content="blog"/>
+<meta property="article:tag" content=".net"/>
+<meta property="article:tag" content="programming"/>
+<meta property="article:tag" content="c#"/>
+<meta property="article:tag" content="actror model"/>
+<meta property="article:tag" content="Akka.NET"/>
+<meta property="article:tag" content="Akka"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; Akka.NET: Instalacja i obowiązkowy “Hello world”</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://localhost:8000">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="http://localhost:8000"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="akkanet-instalacja-i-obowiazkowy-hello-world">Akka.NET: Instalacja i obowiązkowy “Hello world”</h1>
+    <p>
+          Posted on Tue 06 December 2016 in <a href="http://localhost:8000/category/net.html">.NET</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Jakiś czas temu pisałem na temat aktor model z perspektywy pracy z nim. Osoby, które spotykają się z tym tematem po raz pierwszy odsyłam do poprzedniego posta.
+W tej serii mam zamiar przedstawić Wam Akka.NET, czy port aktor modelu prosto z JVM. Zabawę zaczniemy od prostego “Hello world”. W  późniejszym czasie stworzymy w Akka nowy projekt konsolowy.
+Instalacja Akka w konsoli Package Manager wygląda następująco:</p>
+<div class="highlight"><pre><span></span><span class="n">Install-Package</span> <span class="n">akka</span>
+</pre></div>
+
+
+<p>Jak wszystko zrobiliśmy poprawnie to powinniśmy mieć zainstalowaną w projekcie bibliotekę Akka i jej zależności. Zaczniemy nieco od tyłu, ponieważ zdefiniujemy wiadomość, którą nasz pierwszy aktor otrzyma:</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">HelloWorldMsg</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Message</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="nf">HelloWorldMsg</span><span class="p">(</span><span class="kt">string</span> <span class="n">message</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Message</span> <span class="p">=</span> <span class="n">message</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Tak skonstruowany komunikat powinien spełniać założenie o niezmienności wiadomości. Istnieje jeszcze jeden sposób napisania obiektu readonly, ale na razie taka forma powinna nam wystarczyć. Przejdźmy teraz do setupu aktora, który będzie odbierał nasze wiadomości. 
+Akka posiada 3 typy podstawowe dla aktorów: ReceiveActor, TypedActor, UntypedActor. Do naszego “Hello world” użyjemy ReceiveActor :</p>
+<div class="highlight"><pre><span></span><span class="k">public</span> <span class="k">class</span> <span class="nc">HelloWorldActor</span> <span class="p">:</span> <span class="n">ReceiveActor</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="nf">HelloWorldActor</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Receive</span><span class="p">&lt;</span><span class="n">HelloWorldMsg</span><span class="p">&gt;(</span><span class="n">msg</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="n">Message</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Każdy aktor w systemie musi dziedziczyć po jednym z dwóch wymienionych wyżej typów. Receive działa w taki sposób, iż rejestrujemy za pomocą generycznej funkcji Receive<T>(Action<T> handler) typ wiadomości i reakcję na to kiedy dany typ przyjdzie do aktora. W naszym przypadku jest to wypisanie na ekran konsoli tego co przyszło w property Message w naszej powitalnej wiadomości. Aby skorzystać z naszego przygotowanego aktora należy skonstruować funkcję main w następujący sposób:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Program</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">&quot;TutorialSystem&quot;</span><span class="p">);</span>
+
+        <span class="kt">var</span> <span class="n">actor</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">HelloWorldAcxtor</span><span class="p">&gt;(</span><span class="s">&quot;HelloActor&quot;</span><span class="p">);</span>
+
+        <span class="n">actor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="k">new</span> <span class="n">HelloWorldMsg</span><span class="p">(</span><span class="s">&quot;Hello actor system world&quot;</span><span class="p">));</span>
+
+        <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Jeżeli wszytko poszło zgodnie z planem to powinniśmy otrzymać w naszej konsoli wypisane "Hello actor system world". W tym pierwszym wprowadzającym poście to na tyle. W kolejnym zajmiemy się możliwościami komunikacji z aktorami oraz tworzeniem nieco większej ich liczby. </p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://localhost:8000/tag/blog.html">blog</a>
+      <a href="http://localhost:8000/tag/net.html">.net</a>
+      <a href="http://localhost:8000/tag/programming.html">programming</a>
+      <a href="http://localhost:8000/tag/c.html">c#</a>
+      <a href="http://localhost:8000/tag/actror-model.html">actror model</a>
+      <a href="http://localhost:8000/tag/akkanet.html">Akka.NET</a>
+      <a href="http://localhost:8000/tag/akka.html">Akka</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "http://localhost:8000",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>
