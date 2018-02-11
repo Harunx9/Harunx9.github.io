@@ -10,18 +10,28 @@
 
   <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
 
-    <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/stylesheet/style.min.css">
+    <link rel="stylesheet" type="text/css" href="https://harunx9.github.io/theme/stylesheet/style.min.css">
 
-  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/pygments/github.min.css">
-  <link rel="stylesheet" type="text/css" href="http://localhost:8000/theme/font-awesome/css/font-awesome.min.css">
-
-
-    <link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
-
-    <link href="http://localhost:8000/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+  <link rel="stylesheet" type="text/css" href="https://harunx9.github.io/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="https://harunx9.github.io/theme/font-awesome/css/font-awesome.min.css">
 
 
+    <link href="https://harunx9.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
 
+    <link href="https://harunx9.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85776912-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
 
 <meta name="author" content="Szymon Wanot" />
 <meta name="description" content="Cześć. Jako, że od pewnego czasu actor model staje się coraz bardziej popularny w technologii .NET chciałem nieco więcej opowiedzieć o pracy z takim rozwiązaniem. W pierwszym poście chciałem wprowadzić nieco moich przemyśleń i teorii bez kodu. Gdyby zdarzyło się tak, iż, jeszcze nie wiesz co to jest actor model …" />
@@ -31,11 +41,11 @@
 <meta property="og:title" content="O actor model z perspektywy paru miesięcy pracy"/>
 <meta property="og:description" content="Cześć. Jako, że od pewnego czasu actor model staje się coraz bardziej popularny w technologii .NET chciałem nieco więcej opowiedzieć o pracy z takim rozwiązaniem. W pierwszym poście chciałem wprowadzić nieco moich przemyśleń i teorii bez kodu. Gdyby zdarzyło się tak, iż, jeszcze nie wiesz co to jest actor model …"/>
 <meta property="og:locale" content="en_US"/>
-<meta property="og:url" content="http://localhost:8000/o-actor-model-z-perspektywy-paru-miesiecy-pracy.html"/>
+<meta property="og:url" content="https://harunx9.github.io/o-actor-model-z-perspektywy-paru-miesiecy-pracy.html"/>
 <meta property="og:type" content="article"/>
 <meta property="article:published_time" content="2016-11-13 00:00:00+01:00"/>
 <meta property="article:modified_time" content=""/>
-<meta property="article:author" content="http://localhost:8000/author/szymon-wanot.html">
+<meta property="article:author" content="https://harunx9.github.io/author/szymon-wanot.html">
 <meta property="article:section" content=".NET"/>
 <meta property="article:tag" content="blog"/>
 <meta property="article:tag" content=".net"/>
@@ -52,15 +62,15 @@
 <body>
   <aside>
     <div>
-      <a href="http://localhost:8000">
+      <a href="https://harunx9.github.io">
         <img src="/images/avatar.jpg" alt="" title="">
       </a>
-      <h1><a href="http://localhost:8000"></a></h1>
+      <h1><a href="https://harunx9.github.io"></a></h1>
 
 
       <nav>
         <ul class="list">
-          <li><a href="http://localhost:8000/pages/o-mnie.html#o-mnie">O mnie</a></li>
+          <li><a href="https://harunx9.github.io/pages/o-mnie.html#o-mnie">O mnie</a></li>
 
         </ul>
       </nav>
@@ -83,7 +93,7 @@
       
     <h1 id="o-actor-model-z-perspektywy-paru-miesiecy-pracy">O actor model z perspektywy paru miesięcy pracy</h1>
     <p>
-          Posted on Sun 13 November 2016 in <a href="http://localhost:8000/category/net.html">.NET</a>
+          Posted on Sun 13 November 2016 in <a href="https://harunx9.github.io/category/net.html">.NET</a>
 
 
     </p>
@@ -113,13 +123,13 @@ Załóżmy jednak, że  twój system obsługuje jakieś procesy biznesowe, a do 
   </div>
   <div class="tag-cloud">
     <p>
-      <a href="http://localhost:8000/tag/blog.html">blog</a>
-      <a href="http://localhost:8000/tag/net.html">.net</a>
-      <a href="http://localhost:8000/tag/programming.html">programming</a>
-      <a href="http://localhost:8000/tag/c.html">c#</a>
-      <a href="http://localhost:8000/tag/actror-model.html">actror model</a>
-      <a href="http://localhost:8000/tag/akkanet.html">Akka.NET</a>
-      <a href="http://localhost:8000/tag/akka.html">Akka</a>
+      <a href="https://harunx9.github.io/tag/blog.html">blog</a>
+      <a href="https://harunx9.github.io/tag/net.html">.net</a>
+      <a href="https://harunx9.github.io/tag/programming.html">programming</a>
+      <a href="https://harunx9.github.io/tag/c.html">c#</a>
+      <a href="https://harunx9.github.io/tag/actror-model.html">actror model</a>
+      <a href="https://harunx9.github.io/tag/akkanet.html">Akka.NET</a>
+      <a href="https://harunx9.github.io/tag/akka.html">Akka</a>
     </p>
   </div>
 
@@ -159,7 +169,7 @@ Załóżmy jednak, że  twój system obsługuje jakieś procesy biznesowe, a do 
   "@context" : "http://schema.org",
   "@type" : "Blog",
   "name": " Programming warfare ",
-  "url" : "http://localhost:8000",
+  "url" : "https://harunx9.github.io",
   "image": "/images/avatar.jpg",
   "description": ""
 }
