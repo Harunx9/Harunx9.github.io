@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"><title>Programming warfare - .NET</title><link href="https://harunx9.github.io/" rel="alternate"></link><link href="https://harunx9.github.io/feeds/net.atom.xml" rel="self"></link><id>https://harunx9.github.io/</id><updated>2019-02-11T18:00:00+01:00</updated><entry><title>Functional flavor in C# 7 with pattern matching</title><link href="https://harunx9.github.io/functional-flavor-in-c-7-with-pattern-matching.html" rel="alternate"></link><published>2019-02-11T18:00:00+01:00</published><updated>2019-02-11T18:00:00+01:00</updated><author><name>Szymon Wanot</name></author><id>tag:harunx9.github.io,2019-02-11:/functional-flavor-in-c-7-with-pattern-matching.html</id><summary type="html">&lt;p&gt;With many great features C# 7 comes with new and shiny pattern matching. I know that this feature is less usable then in other languages, but it add new possibilities to coding. In this article I want to share with you my experiments with monads.&lt;/p&gt;
-&lt;h3&gt;Optional&lt;T&gt;&lt;/h3&gt;
-&lt;p&gt;I believe that some …&lt;/p&gt;</summary><content type="html">&lt;p&gt;With many great features C# 7 comes with new and shiny pattern matching. I know that this feature is less usable then in other languages, but it add new possibilities to coding. In this article I want to share with you my experiments with monads.&lt;/p&gt;
-&lt;h3&gt;Optional&lt;T&gt;&lt;/h3&gt;
+&lt;h3&gt;&lt;code&gt;Optional&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;I believe that …&lt;/p&gt;</summary><content type="html">&lt;p&gt;With many great features C# 7 comes with new and shiny pattern matching. I know that this feature is less usable then in other languages, but it add new possibilities to coding. In this article I want to share with you my experiments with monads.&lt;/p&gt;
+&lt;h3&gt;&lt;code&gt;Optional&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/h3&gt;
 &lt;p&gt;I believe that some of you know that null exception is big pain in developer life. I hear that even null creator say that this was a "billion-dollar mistake" to invent null. In other hand some languages like F# or Rust try to decrees of null using provide Optional monad. This monad have two possibilities happen:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Some - indicate that we have some value, &lt;/li&gt;
@@ -79,7 +79,7 @@
 
 
 &lt;p&gt;I believe this simple implementation can be used to get rid of many nulls in code. Also when it will be use with new pattern matching feature as you see in example above. Maybe in next step I try to make some extension to LINQ to have possibility to use this with collections.&lt;/p&gt;
-&lt;h3&gt;Result&lt;E&gt; and Result&lt;T, E&gt;&lt;/h3&gt;
+&lt;h3&gt;&lt;code&gt;Result&amp;lt;E&amp;gt;&lt;/code&gt; and &lt;code&gt;Result&amp;lt;T, E&amp;gt;&lt;/code&gt;&lt;/h3&gt;
 &lt;p&gt;Other monad I try to experiment with is Result. At first I meet this when I try to learn Rust programming language. What is Result then and how to use that in your code? So many functions take data and save it to database or filesystem. For most time this methods are void and if any problem occurs exception will be throw from it. On top of it we should catch that exception or leave it as it is and pray nothing will happen of have try and bunch of catch statements to have possibility to react of each individually or one catch statement to log and forget every exception. It's not like that I think that using exceptions in a bad thing. There are some places where exception are handy like validating in constructor in value objects but error handling could be done without of try catch hell. 
 I implement two solutions one for void function and one for result with data:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;public&lt;/span&gt; &lt;span class="k"&gt;interface&lt;/span&gt; &lt;span class="n"&gt;IResult&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;E&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
@@ -208,9 +208,9 @@ I implement two solutions one for void function and one for result with data:&lt
 &lt;p&gt;One thing I cannot resolve that I can't hide Error in Ok response and Outcome in Error. I workaround that witch NotSupportedException, but maybe you can help me with that. 
 At the end I want to give you Github Gist where all code with test programs are available: &lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="https://gist.github.com/Harunx9/94e0473fd41e749431cb1a3b266d0917"&gt;Optional&lt;T&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://gist.github.com/Harunx9/e972f3662ec2ed7ed376c49fda941502"&gt;Result&lt;E&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://gist.github.com/Harunx9/ddd029364ab42da15e1aa3208f0d6598"&gt;Result&lt;T, E&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://gist.github.com/Harunx9/94e0473fd41e749431cb1a3b266d0917"&gt;&lt;code&gt;Optional&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://gist.github.com/Harunx9/e972f3662ec2ed7ed376c49fda941502"&gt;&lt;code&gt;Result&amp;lt;E&amp;gt;&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://gist.github.com/Harunx9/ddd029364ab42da15e1aa3208f0d6598"&gt;&lt;code&gt;Result&amp;lt;T, E&amp;gt;&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;If you also experiment with monads with C# 7 please share with me your experiences with that. 
 As always I invite you to comments section to discuss article. See you next time!&lt;/p&gt;</content><category term="blog"></category><category term=".net"></category><category term="programming"></category><category term="c#"></category><category term="functional pregramming"></category><category term="pattern matching"></category></entry><entry><title>.NET klasy internal a testy jednostkowe</title><link href="https://harunx9.github.io/net-klasy-internal-a-testy-jednostkowe.html" rel="alternate"></link><published>2017-09-18T19:00:00+02:00</published><updated>2017-09-18T19:00:00+02:00</updated><author><name>Szymon Wanot</name></author><id>tag:harunx9.github.io,2017-09-18:/net-klasy-internal-a-testy-jednostkowe.html</id><summary type="html">&lt;p&gt;Cześć. Dużo się ostatnio naoglądałem i naczytałem o DDD i architekturze port-adapter i tak zacząłem rozmyślać jak to osiągnąć, choćby w kontekście tooli, które piszę do swojego silnika.&lt;/p&gt;
