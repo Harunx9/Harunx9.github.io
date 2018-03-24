@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="https://harunx9.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="https://harunx9.github.io/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="https://harunx9.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="https://harunx9.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Programming warfare Atom">
+
+    <link href="https://harunx9.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="Programming warfare RSS">
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85776912-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+<meta name="author" content="Szymon Wanot" />
+<meta name="description" content="Hi Everyone ! About year ago I try to implement events for 2DXngine. Right now when I try to implement game I realize that this implementation is insufficient for my current needs. Previous events need to store binding in order to unsubscribe, use macro to create bindings and so on. This …" />
+<meta name="keywords" content="blog, .net, programming, c#, functional pregramming, pattern matching">
+
+<meta property="og:site_name" content="Programming warfare"/>
+<meta property="og:title" content="C# like events in C++ - second approach"/>
+<meta property="og:description" content="Hi Everyone ! About year ago I try to implement events for 2DXngine. Right now when I try to implement game I realize that this implementation is insufficient for my current needs. Previous events need to store binding in order to unsubscribe, use macro to create bindings and so on. This …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://harunx9.github.io/c-like-events-in-c-second-approach.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2018-03-24 16:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="https://harunx9.github.io/author/szymon-wanot.html">
+<meta property="article:section" content=".NET"/>
+<meta property="article:tag" content="blog"/>
+<meta property="article:tag" content=".net"/>
+<meta property="article:tag" content="programming"/>
+<meta property="article:tag" content="c#"/>
+<meta property="article:tag" content="functional pregramming"/>
+<meta property="article:tag" content="pattern matching"/>
+<meta property="og:image" content="/images/avatar.jpg">
+
+  <title>Programming warfare &ndash; C# like events in C++ - second approach</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="https://harunx9.github.io">
+        <img src="/images/avatar.jpg" alt="" title="">
+      </a>
+      <h1><a href="https://harunx9.github.io"></a></h1>
+
+
+      <nav>
+        <ul class="list">
+          <li><a href="https://harunx9.github.io/pages/o-mnie.html#o-mnie">O mnie</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/Harunx9" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-linkedin" href="https://pl.linkedin.com/in/szymon-wanot-b0a146ab" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/szwanot" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/szymon.wanot" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="c-like-events-in-c-second-approach">C# like events in C++ - second approach</h1>
+    <p>
+          Posted on Sat 24 March 2018 in <a href="https://harunx9.github.io/category/net.html">.NET</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>Hi Everyone ! About year ago I try to implement events for 2DXngine. Right now when I try to implement game I realize that this implementation is insufficient for my current needs. Previous events need to store binding in order to unsubscribe, use macro to create bindings and so on. This lead me to try to implement new events. Let see how I want to use events:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TestPublisherClass</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+
+    <span class="n">Event</span><span class="o">&lt;</span><span class="n">EventArgs</span><span class="o">&gt;</span> <span class="n">evt</span><span class="p">;</span>
+
+    <span class="kt">void</span> <span class="nf">fire</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">evt</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">EventArgs</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">TestSubscriberClass</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">OnEventFired</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span><span class="o">*</span> <span class="n">sender</span><span class="p">,</span> <span class="n">EventArgs</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>As you see when publisher call <code>fire()</code> counter will increase by one. To subscribe and unsubscribe to event I want to use <code>+=</code> and <code>-=</code> operator like in C#. To have some base requirements i wrote three tests:</p>
+<div class="highlight"><pre><span></span><span class="n">TEST</span><span class="p">(</span><span class="n">when_evt_is_assigned</span><span class="p">,</span> <span class="n">then_event_should_be_fired_and_subscriber_counter_will_increase</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//Arrnge</span>
+    <span class="k">auto</span> <span class="n">pub</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestPublisherClass</span><span class="p">();</span>
+    <span class="k">auto</span> <span class="n">sub</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestSubscriberClass</span><span class="p">();</span>
+
+    <span class="n">pub</span><span class="o">-&gt;</span><span class="n">evt</span> <span class="o">+=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Delegate</span><span class="o">&lt;</span><span class="n">EventArgs</span><span class="p">,</span><span class="n">TestSubscriberClass</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">TestSubscriberClass</span><span class="o">::</span><span class="n">OnEventFired</span><span class="p">);</span>
+    <span class="c1">//Act</span>
+    <span class="n">pub</span><span class="o">-&gt;</span><span class="n">fire</span><span class="p">();</span>
+    <span class="c1">//Assert</span>
+    <span class="n">ASSERT_EQ</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sub</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">TEST</span><span class="p">(</span><span class="n">when_evt_is_assigned_to_multiple_subs</span><span class="p">,</span> <span class="n">then_event_should_be_fired_and_subscribers_counter_will_increase</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//Arrange</span>
+    <span class="k">auto</span> <span class="n">pub</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestPublisherClass</span><span class="p">();</span>
+    <span class="k">auto</span> <span class="n">sub1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestSubscriberClass</span><span class="p">();</span>
+    <span class="k">auto</span> <span class="n">sub2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestSubscriberClass</span><span class="p">();</span>
+
+    <span class="n">pub</span><span class="o">-&gt;</span><span class="n">evt</span> <span class="o">+=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Delegate</span><span class="o">&lt;</span><span class="n">EventArgs</span><span class="p">,</span><span class="n">TestSubscriberClass</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">sub1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">TestSubscriberClass</span><span class="o">::</span><span class="n">OnEventFired</span><span class="p">);</span>
+    <span class="n">pub</span><span class="o">-&gt;</span><span class="n">evt</span> <span class="o">+=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Delegate</span><span class="o">&lt;</span><span class="n">EventArgs</span><span class="p">,</span><span class="n">TestSubscriberClass</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">sub2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">TestSubscriberClass</span><span class="o">::</span><span class="n">OnEventFired</span><span class="p">);</span>
+    <span class="c1">//Act</span>
+    <span class="n">pub</span><span class="o">-&gt;</span><span class="n">fire</span><span class="p">();</span>
+    <span class="c1">//Assert</span>
+    <span class="n">ASSERT_EQ</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sub1</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">);</span>
+    <span class="n">ASSERT_EQ</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sub2</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">TEST</span><span class="p">(</span><span class="n">when_not_template_evt_is_assigned_to_multiple_subs_and_unsub_one_sub</span><span class="p">,</span> <span class="n">then_event_should_be_fired</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//Arrange </span>
+    <span class="k">auto</span> <span class="n">pub</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestPublisherClass</span><span class="p">();</span>
+    <span class="k">auto</span> <span class="n">sub1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestSubscriberClass</span><span class="p">();</span>
+    <span class="k">auto</span> <span class="n">sub2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestSubscriberClass</span><span class="p">();</span>
+
+    <span class="n">pub</span><span class="o">-&gt;</span><span class="n">evt</span> <span class="o">+=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Delegate</span><span class="o">&lt;</span><span class="n">EventArgs</span><span class="p">,</span><span class="n">TestSubscriberClass</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">sub1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">TestSubscriberClass</span><span class="o">::</span><span class="n">OnEventFired</span><span class="p">);</span>
+    <span class="n">pub</span><span class="o">-&gt;</span><span class="n">evt</span> <span class="o">+=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Delegate</span><span class="o">&lt;</span><span class="n">EventArgs</span><span class="p">,</span><span class="n">TestSubscriberClass</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">sub2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">TestSubscriberClass</span><span class="o">::</span><span class="n">OnEventFired</span><span class="p">);</span>
+    <span class="n">pub</span><span class="o">-&gt;</span><span class="n">evt</span> <span class="o">-=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Delegate</span><span class="o">&lt;</span><span class="n">EventArgs</span><span class="p">,</span> <span class="n">TestSubscriberClass</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">sub1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">TestSubscriberClass</span><span class="o">::</span><span class="n">OnEventFired</span><span class="p">);</span>
+    <span class="c1">//Act</span>
+    <span class="n">pub</span><span class="o">-&gt;</span><span class="n">fire</span><span class="p">();</span>
+    <span class="c1">//Assert</span>
+    <span class="n">ASSERT_EQ</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sub1</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">);</span>
+    <span class="n">ASSERT_EQ</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sub2</span><span class="o">-&gt;</span><span class="n">counter</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Originally, implementation use raw pointers, but I try to use smart equivalent. I don't know much about them, but I think my usage not cause any memory leaks. If you see some possibilities of mem leaks write comment and i will try to fix that.
+At first let's take a look on <code>Delegate&lt;&gt;</code> implementation:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">EventArgs</span>
+<span class="p">{</span>
+<span class="p">};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">TArgs</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">DelegateBase</span>
+<span class="p">{</span>
+  <span class="k">public</span><span class="o">:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">invoke</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">sender</span><span class="p">,</span> <span class="n">TArgs</span> <span class="n">args</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">TArgs</span><span class="p">,</span> <span class="k">class</span> <span class="nc">TSubscriber</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nl">Delegate</span> <span class="p">:</span> <span class="k">public</span> <span class="n">DelegateBase</span><span class="o">&lt;</span><span class="n">TArgs</span><span class="o">&gt;</span>
+<span class="p">{</span>
+  <span class="k">public</span><span class="o">:</span>
+    <span class="k">typedef</span> <span class="kt">void</span> <span class="p">(</span><span class="n">TSubscriber</span><span class="o">::*</span><span class="n">HandlerType</span><span class="p">)(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="n">TArgs</span><span class="p">);</span>
+    <span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="n">TArgs</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">bound_handler</span><span class="p">;</span>
+
+    <span class="n">Delegate</span><span class="p">(</span><span class="n">TSubscriber</span> <span class="o">*</span><span class="n">subscriber</span><span class="p">,</span> <span class="n">HandlerType</span> <span class="n">callback</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_subscriber</span> <span class="o">=</span> <span class="n">subscriber</span><span class="p">;</span>
+        <span class="n">_handler</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">placeholders</span><span class="o">::</span><span class="n">_1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">placeholders</span><span class="o">::</span><span class="n">_2</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="o">~</span><span class="n">Delegate</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_subscriber</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">bool</span> <span class="n">equal</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Delegate</span><span class="o">&gt;</span> <span class="n">del</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">auto</span> <span class="n">addr1</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">addressof</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_subscriber</span><span class="p">);</span>
+        <span class="k">auto</span> <span class="n">addr2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">addressof</span><span class="p">(</span><span class="n">del</span><span class="o">-&gt;</span><span class="n">_subscriber</span><span class="p">);</span>
+        <span class="k">return</span> <span class="o">*</span><span class="n">addr1</span> <span class="o">==</span> <span class="o">*</span><span class="n">addr2</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">invoke</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">sender</span><span class="p">,</span> <span class="n">TArgs</span> <span class="n">args</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_handler</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span> <span class="p">}</span>
+
+  <span class="k">private</span><span class="o">:</span>
+    <span class="n">TSubscriber</span> <span class="o">*</span><span class="n">_subscriber</span><span class="p">;</span>
+    <span class="n">bound_handler</span> <span class="n">_handler</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>As you can see my delegate wrap specific member function pointer and call it when invoke method will be called. To have possibility to find specific delegate by subscriber instance. Last element in implementation is <code>Event&lt;&gt;</code> itself:</p>
+<div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">TArgs</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">Event</span>
+<span class="p">{</span>
+  <span class="k">public</span><span class="o">:</span>
+    <span class="n">Event</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="n">Event</span><span class="p">(</span><span class="n">Event</span> <span class="o">&amp;</span><span class="n">other</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="n">Event</span><span class="p">(</span><span class="n">Event</span> <span class="o">&amp;&amp;</span><span class="n">other</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="o">~</span><span class="n">Event</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_subscribers</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="k">operator</span><span class="p">()(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">sender</span><span class="p">,</span> <span class="n">TArgs</span> <span class="n">args</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="nl">subscriber</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_subscribers</span><span class="p">)</span>
+            <span class="n">subscriber</span><span class="o">-&gt;</span><span class="n">invoke</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">TSubscriber</span><span class="o">&gt;</span>
+    <span class="n">Event</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Delegate</span><span class="o">&lt;</span><span class="n">TArgs</span><span class="p">,</span> <span class="n">TSubscriber</span><span class="o">&gt;&gt;</span> <span class="n">handler</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_subscribers</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">handler</span><span class="p">);</span>
+        <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">TSubscriber</span><span class="o">&gt;</span>
+    <span class="n">Event</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">-=</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Delegate</span><span class="o">&lt;</span><span class="n">TArgs</span><span class="p">,</span> <span class="n">TSubscriber</span><span class="o">&gt;&gt;</span> <span class="n">handler</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">auto</span> <span class="n">iterToRemove</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">remove_if</span><span class="p">(</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">begin</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_subscribers</span><span class="p">),</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">end</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">_subscribers</span><span class="p">),</span>
+            <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DelegateBase</span><span class="o">&lt;</span><span class="n">TArgs</span><span class="o">&gt;&gt;</span> <span class="n">del</span><span class="p">)</span> 
+            <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handler</span><span class="o">-&gt;</span><span class="n">equal</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">Delegate</span><span class="o">&lt;</span><span class="n">TArgs</span><span class="p">,</span> <span class="n">TSubscriber</span><span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">del</span><span class="p">));</span> <span class="p">});</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">_subscribers</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">iterToRemove</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DelegateBase</span><span class="o">&lt;</span><span class="n">TArgs</span><span class="o">&gt;&gt;&gt;</span> <span class="n">_subscribers</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>I test this implementation a little and it seems to fit my current requirements. What do you think about this events implementation, maybe you have better solution. As always I invite you to comments section. See you !</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="https://harunx9.github.io/tag/blog.html">blog</a>
+      <a href="https://harunx9.github.io/tag/net.html">.net</a>
+      <a href="https://harunx9.github.io/tag/programming.html">programming</a>
+      <a href="https://harunx9.github.io/tag/c.html">c#</a>
+      <a href="https://harunx9.github.io/tag/functional-pregramming.html">functional pregramming</a>
+      <a href="https://harunx9.github.io/tag/pattern-matching.html">pattern matching</a>
+    </p>
+  </div>
+
+
+
+    <div class="addthis_relatedposts_inline">
+
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'programmingwarfare';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+        Please enable JavaScript to view comments.
+
+</noscript>
+<!-- End Disqus -->
+</article>
+
+    <footer>
+<p>&copy;  </p>
+<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Programming warfare ",
+  "url" : "https://harunx9.github.io",
+  "image": "/images/avatar.jpg",
+  "description": ""
+}
+</script>
+
+</body>
+</html>
